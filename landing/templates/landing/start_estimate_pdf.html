@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Estimate #{{ estimate_number }} — {{ business_name }}</title>
+  {% include "landing/partials/estimate_document_styles.html" %}
+  <style>
+    body.estimate-pdf-page {
+      margin: 0;
+      background: #eef1f4;
+      color: #0b1f3a;
+      -webkit-font-smoothing: antialiased;
+      font-family: ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+    }
+
+    .estimate-pdf-shell {
+      max-width: 8.5in;
+      margin: 0 auto;
+      padding: 0.75rem;
+    }
+
+    .estimate-pdf-actions {
+      margin: 0 0 0.65rem;
+      text-align: center;
+    }
+
+    .estimate-pdf-actions a {
+      color: #1a6dff;
+      font-size: 0.875rem;
+      font-weight: 600;
+      text-decoration: none;
+    }
+
+    /* Screen preview matches Letter content box (page margin applied via @page when printing) */
+    .estimate-pdf-paper {
+      background: #fff;
+      box-sizing: border-box;
+      width: 8.5in;
+      min-height: 11in;
+      max-width: 100%;
+      padding: 0.5in;
+      border: 1px solid #d7dee7;
+    }
+
+    @page {
+      size: Letter portrait;
+      margin: 0.5in;
+    }
+
+    @media print {
+      html, body.estimate-pdf-page {
+        background: #fff !important;
+        margin: 0 !important;
+        padding: 0 !important;
+      }
+
+      .estimate-pdf-shell {
+        max-width: none;
+        margin: 0;
+        padding: 0;
+      }
+
+      .estimate-pdf-actions,
+      .no-print {
+        display: none !important;
+      }
+
+      .estimate-pdf-paper {
+        border: none !important;
+        width: auto !important;
+        max-width: none !important;
+        height: auto !important;
+        min-height: 0 !important;
+        padding: 0 !important;
+        box-shadow: none !important;
+      }
+    }
+  </style>
+</head>
+<body class="estimate-pdf-page">
+  <div class="estimate-pdf-shell">
+    {% if pdf_back_url %}
+      <p class="estimate-pdf-actions no-print">
+        <a href="{{ pdf_back_url }}">Back to review</a>
+      </p>
+    {% endif %}
+    <div class="estimate-pdf-paper">
+      {% include "landing/partials/estimate_document.html" %}
+    </div>
+  </div>
+</body>
+</html>

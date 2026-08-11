@@ -1,0 +1,83 @@
+{% extends "landing/start_base.html" %}
+
+{% block title %}Pay deposit — Estimate #{{ estimate_number }} — Seymy{% endblock %}
+
+{% block content %}
+  <p class="text-[0.625rem] font-semibold tracking-[0.08em] text-seymy">ESTIMATE #{{ estimate_number }}</p>
+  <h1 class="mt-2 text-[1.75rem] font-bold tracking-tight text-navy sm:text-3xl">
+    {{ business_name }}
+  </h1>
+
+  <dl class="mt-6 space-y-3 rounded-2xl border border-line bg-white p-4 text-sm sm:p-5">
+    <div class="flex items-baseline justify-between gap-3">
+      <dt class="text-navy-muted">Estimate total</dt>
+      <dd class="shrink-0 font-semibold tabular-nums text-navy">${{ total }}</dd>
+    </div>
+    <div class="flex items-baseline justify-between gap-3">
+      <dt class="text-navy-muted">{{ pay_due_label|default:"Deposit due today" }}</dt>
+      <dd class="shrink-0 text-lg font-bold tabular-nums text-navy">${{ deposit_amount }}</dd>
+    </div>
+  </dl>
+
+  {% if error %}
+    <p class="mt-4 text-sm text-red-600" role="alert">{{ error }}</p>
+  {% endif %}
+
+  {% if already_accepted %}
+    <div class="mt-6 rounded-2xl border border-line bg-white p-5">
+      <p class="text-sm font-medium text-ready">✓ Estimate accepted</p>
+      <p class="mt-1 text-sm font-medium text-ready">✓ ${{ deposit_amount }} {{ pay_received_label|default:"deposit received" }}</p>
+      <a
+        href="{% url 'customer_pay_success' token=token %}"
+        class="mt-4 inline-flex min-h-11 w-full items-center justify-center rounded-xl bg-seymy px-6 text-base font-semibold text-white"
+      >
+        View confirmation
+      </a>
+    </div>
+  {% else %}
+    <form method="post" action="{% url 'customer_pay' token=token %}" class="mt-6" id="pay-accept-form">
+      {% csrf_token %}
+      <label class="flex items-start gap-3 text-sm text-navy">
+        <input
+          type="checkbox"
+          name="agree_terms"
+          id="agree_terms"
+          value="1"
+          class="mt-1 h-4 w-4 rounded border-line text-seymy focus:ring-seymy"
+          {% if agree_checked %}checked{% endif %}
+        >
+        <span>
+          I have reviewed and agree to the
+          <a
+            href="{% url 'customer_estimate_document' token=token %}"
+            target="_blank"
+            rel="noopener"
+            class="font-medium text-seymy underline underline-offset-2"
+          >Estimate and Terms &amp; Conditions</a>.
+        </span>
+      </label>
+
+      <button
+        type="submit"
+        id="pay-accept-cta"
+        disabled
+        class="mt-6 inline-flex min-h-11 w-full items-center justify-center rounded-xl bg-seymy px-6 text-base font-semibold text-white transition-opacity disabled:cursor-not-allowed disabled:opacity-40 hover:bg-seymy-dark focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-seymy"
+      >
+        {{ pay_cta_verb|default:"Pay" }} ${{ deposit_amount }} &amp; Accept Estimate
+      </button>
+    </form>
+
+    <script>
+      (function () {
+        var box = document.getElementById('agree_terms');
+        var btn = document.getElementById('pay-accept-cta');
+        if (!box || !btn) return;
+        function sync() {
+          btn.disabled = !box.checked;
+        }
+        box.addEventListener('change', sync);
+        sync();
+      })();
+    </script>
+  {% endif %}
+{% endblock %}

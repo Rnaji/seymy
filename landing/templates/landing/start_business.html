@@ -1,0 +1,166 @@
+{% extends "landing/start_base.html" %}
+
+{% block title %}Business setup — Seymy{% endblock %}
+
+{% block content %}
+  <h1 class="text-[1.75rem] font-bold tracking-tight text-navy sm:text-3xl">
+    One last thing.
+  </h1>
+  <p class="mt-2 text-[0.9375rem] text-navy-muted sm:text-base">
+    We need your business details to create your professional estimate.
+  </p>
+  <p class="mt-1 text-sm font-medium text-navy">
+    You’ll only do this once.
+  </p>
+
+  <form method="post" action="{% url 'start_business' %}" class="mt-6 space-y-4" novalidate>
+    {% csrf_token %}
+
+    <div>
+      <label for="business_name" class="block text-sm font-semibold text-navy">Business name</label>
+      <input
+        type="text"
+        id="business_name"
+        name="business_name"
+        value="{{ business_name }}"
+        placeholder="Miller Plumbing"
+        autocomplete="organization"
+        required
+        aria-invalid="{% if errors.business_name %}true{% else %}false{% endif %}"
+        class="mt-2 min-h-11 w-full rounded-xl border border-line bg-white px-4 text-base text-navy placeholder:text-navy-muted/50 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-seymy {% if errors.business_name %}border-red-500{% endif %}"
+      >
+      {% if errors.business_name %}
+        <p class="mt-1.5 text-sm text-red-600">{{ errors.business_name }}</p>
+      {% endif %}
+    </div>
+
+    <div>
+      <label for="business_address" class="block text-sm font-semibold text-navy">Business address</label>
+      <input
+        type="text"
+        id="business_address"
+        name="business_address"
+        value="{{ business_address }}"
+        placeholder="100 Trade Way"
+        autocomplete="street-address"
+        required
+        class="mt-2 min-h-11 w-full rounded-xl border border-line bg-white px-4 text-base text-navy placeholder:text-navy-muted/50 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-seymy {% if errors.business_address %}border-red-500{% endif %}"
+      >
+      {% if errors.business_address %}
+        <p class="mt-1.5 text-sm text-red-600">{{ errors.business_address }}</p>
+      {% endif %}
+    </div>
+
+    <div class="grid gap-4 sm:grid-cols-2">
+      <div>
+        <label for="business_city" class="block text-sm font-semibold text-navy">City</label>
+        <input
+          type="text"
+          id="business_city"
+          name="business_city"
+          value="{{ business_city }}"
+          placeholder="Orlando"
+          autocomplete="address-level2"
+          required
+          class="mt-2 min-h-11 w-full rounded-xl border border-line bg-white px-4 text-base text-navy placeholder:text-navy-muted/50 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-seymy {% if errors.business_city %}border-red-500{% endif %}"
+        >
+        {% if errors.business_city %}
+          <p class="mt-1.5 text-sm text-red-600">{{ errors.business_city }}</p>
+        {% endif %}
+      </div>
+      <div>
+        <label for="state" class="block text-sm font-semibold text-navy">State</label>
+        <select
+          id="state"
+          name="state"
+          required
+          class="mt-2 min-h-11 w-full rounded-xl border border-line bg-white px-4 text-base text-navy focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-seymy {% if errors.state %}border-red-500{% endif %}"
+        >
+          <option value="" {% if not state %}selected{% endif %}>Select state</option>
+          {% for code, name in states %}
+            <option value="{{ code }}" {% if state == code %}selected{% endif %}>{{ name }}</option>
+          {% endfor %}
+        </select>
+        {% if errors.state %}
+          <p class="mt-1.5 text-sm text-red-600">{{ errors.state }}</p>
+        {% endif %}
+      </div>
+    </div>
+
+    <div>
+      <label for="business_zip" class="block text-sm font-semibold text-navy">ZIP code</label>
+      <input
+        type="text"
+        id="business_zip"
+        name="business_zip"
+        value="{{ business_zip }}"
+        placeholder="32801"
+        autocomplete="postal-code"
+        required
+        class="mt-2 min-h-11 w-full rounded-xl border border-line bg-white px-4 text-base text-navy placeholder:text-navy-muted/50 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-seymy {% if errors.business_zip %}border-red-500{% endif %}"
+      >
+      {% if errors.business_zip %}
+        <p class="mt-1.5 text-sm text-red-600">{{ errors.business_zip }}</p>
+      {% endif %}
+    </div>
+
+    <div>
+      <label for="business_phone" class="block text-sm font-semibold text-navy">Phone</label>
+      <input
+        type="tel"
+        id="business_phone"
+        name="business_phone"
+        value="{{ business_phone }}"
+        placeholder="(407) 555-0100"
+        autocomplete="tel"
+        required
+        class="mt-2 min-h-11 w-full rounded-xl border border-line bg-white px-4 text-base text-navy placeholder:text-navy-muted/50 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-seymy {% if errors.business_phone %}border-red-500{% endif %}"
+      >
+      {% if errors.business_phone %}
+        <p class="mt-1.5 text-sm text-red-600">{{ errors.business_phone }}</p>
+      {% endif %}
+    </div>
+
+    <div>
+      <label for="business_email" class="block text-sm font-semibold text-navy">Email</label>
+      <input
+        type="email"
+        id="business_email"
+        name="business_email"
+        value="{{ business_email }}"
+        placeholder="hello@millerplumbing.com"
+        autocomplete="email"
+        required
+        class="mt-2 min-h-11 w-full rounded-xl border border-line bg-white px-4 text-base text-navy placeholder:text-navy-muted/50 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-seymy {% if errors.business_email %}border-red-500{% endif %}"
+      >
+      {% if errors.business_email %}
+        <p class="mt-1.5 text-sm text-red-600">{{ errors.business_email }}</p>
+      {% endif %}
+    </div>
+
+    <div>
+      <label for="license_number" class="block text-sm font-semibold text-navy">
+        Contractor license number <span class="font-normal text-navy-muted">(optional)</span>
+      </label>
+      <input
+        type="text"
+        id="license_number"
+        name="license_number"
+        value="{{ license_number }}"
+        placeholder="CFC1234567"
+        class="mt-2 min-h-11 w-full rounded-xl border border-line bg-white px-4 text-base text-navy placeholder:text-navy-muted/50 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-seymy"
+      >
+    </div>
+
+    <p class="text-xs leading-relaxed text-navy-muted">
+      Estimates are valid for 30 days by default. Logo upload can be added later from your business profile.
+    </p>
+
+    <button
+      type="submit"
+      class="inline-flex min-h-11 w-full items-center justify-center rounded-xl bg-seymy px-6 text-base font-semibold text-white shadow-[0_8px_20px_rgba(26,109,255,0.28)] transition-colors hover:bg-seymy-dark focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-seymy"
+    >
+      Continue
+    </button>
+  </form>
+{% endblock %}

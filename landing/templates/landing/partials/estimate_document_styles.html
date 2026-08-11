@@ -1,0 +1,440 @@
+<style>
+  :root {
+    --estimate-navy: #0b1f3a;
+    --estimate-muted: #5a6a7c;
+    --estimate-line: #e2e8ef;
+    --estimate-blue: #1a6dff;
+    --estimate-tint: #f7f9fc;
+    --estimate-mono: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+    --estimate-sans: ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+  }
+
+  .estimate-doc {
+    width: 100%;
+    box-sizing: border-box;
+    margin: 0 auto;
+    padding: 0;
+    background: #fff;
+    color: var(--estimate-navy);
+    font-family: var(--estimate-sans);
+    font-size: 10.75px;
+    line-height: 1.42;
+    border: none;
+    box-shadow: none;
+  }
+
+  .estimate-doc__header {
+    display: grid;
+    grid-template-columns: 1fr auto;
+    gap: 12px 24px;
+    align-items: start;
+  }
+
+  .estimate-doc__identity {
+    display: flex;
+    gap: 10px;
+    min-width: 0;
+  }
+
+  .estimate-doc__logo {
+    width: 2.1rem;
+    height: 2.1rem;
+    object-fit: contain;
+    flex-shrink: 0;
+  }
+
+  .estimate-doc__business-name {
+    margin: 0;
+    font-size: 22px;
+    line-height: 1.12;
+    font-weight: 700;
+    letter-spacing: -0.01em;
+    color: var(--estimate-navy);
+  }
+
+  .estimate-doc__identity-meta {
+    margin-top: 5px;
+    font-size: 10.5px;
+    line-height: 1.4;
+    color: var(--estimate-muted);
+  }
+
+  .estimate-doc__meta {
+    text-align: right;
+    min-width: 9.25rem;
+  }
+
+  .estimate-doc__estimate-label {
+    margin: 0;
+    font-size: 12px;
+    font-weight: 700;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--estimate-blue);
+  }
+
+  .estimate-doc__estimate-number {
+    margin: 0.18rem 0 0;
+    font-family: var(--estimate-mono);
+    font-size: 20px;
+    line-height: 1.2;
+    font-weight: 700;
+    letter-spacing: 0.01em;
+    color: var(--estimate-navy);
+  }
+
+  .estimate-doc__meta-list {
+    margin: 0.5rem 0 0;
+    display: grid;
+    gap: 0.18rem;
+  }
+
+  .estimate-doc__meta-list > div {
+    display: flex;
+    justify-content: flex-end;
+    gap: 0.45rem;
+    font-size: 10.5px;
+  }
+
+  .estimate-doc__meta-list dt {
+    margin: 0;
+    font-family: var(--estimate-mono);
+    font-size: 9.5px;
+    font-weight: 600;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+    color: var(--estimate-muted);
+  }
+
+  .estimate-doc__meta-list dd {
+    margin: 0;
+    font-weight: 600;
+    color: var(--estimate-navy);
+  }
+
+  .estimate-doc__header-rule {
+    height: 0;
+    margin: 16px 0;
+    border: 0;
+    border-top: 1.5px solid var(--estimate-blue);
+  }
+
+  .estimate-doc__section {
+    margin: 0;
+  }
+
+  .estimate-doc__parties {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 8px 28px;
+    margin: 0 0 16px;
+    padding: 8px 10px;
+    background: var(--estimate-tint);
+    border: 1px solid var(--estimate-line);
+    border-radius: 2px;
+  }
+
+  .estimate-doc__label {
+    margin: 0 0 0.28rem;
+    font-family: var(--estimate-mono);
+    font-size: 9.5px;
+    font-weight: 600;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--estimate-muted);
+  }
+
+  .estimate-doc__party-name {
+    margin: 0;
+    font-size: 12px;
+    font-weight: 700;
+    line-height: 1.3;
+    color: var(--estimate-navy);
+  }
+
+  .estimate-doc__party-line {
+    margin: 0.12rem 0 0;
+    font-size: 10.5px;
+    color: var(--estimate-muted);
+  }
+
+  .estimate-doc__scope {
+    margin: 0 0 14px;
+    padding-bottom: 12px;
+    border-bottom: 1px solid var(--estimate-line);
+  }
+
+  .estimate-doc__lines {
+    margin: 0 0 4px;
+  }
+
+  .estimate-doc__lines table {
+    width: 100%;
+    border-collapse: collapse;
+  }
+
+  .estimate-doc__lines th {
+    padding: 0 0 6px;
+    border-bottom: 1px solid var(--estimate-navy);
+    font-family: var(--estimate-mono);
+    font-size: 9.5px;
+    font-weight: 600;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--estimate-muted);
+  }
+
+  .estimate-doc__lines td {
+    padding: 6px 0;
+    border-bottom: 1px solid var(--estimate-line);
+    vertical-align: top;
+    font-size: 11px;
+  }
+
+  .estimate-doc__lines td.text-right {
+    padding-left: 0.75rem;
+    white-space: nowrap;
+  }
+
+  .estimate-doc__item-title {
+    display: block;
+    font-weight: 650;
+    color: var(--estimate-navy);
+  }
+
+  .estimate-doc__item-detail {
+    display: block;
+    margin-top: 0.1rem;
+    font-size: 10px;
+    color: var(--estimate-muted);
+  }
+
+  .estimate-doc__totals-wrap {
+    display: flex;
+    justify-content: flex-end;
+    margin: 6px 0 14px;
+  }
+
+  .estimate-doc__totals {
+    width: 100%;
+    max-width: 16.25rem;
+    margin: 0;
+  }
+
+  .estimate-doc__totals > div {
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+    gap: 1rem;
+    padding: 3px 0;
+  }
+
+  .estimate-doc__totals dt {
+    margin: 0;
+    font-size: 10.5px;
+    color: var(--estimate-muted);
+  }
+
+  .estimate-doc__totals dd {
+    margin: 0;
+    font-size: 11.5px;
+    font-weight: 650;
+    color: var(--estimate-navy);
+  }
+
+  .estimate-doc__grand-total {
+    margin-top: 0.1rem;
+    padding-top: 0.38rem !important;
+    border-top: 1px solid var(--estimate-line);
+  }
+
+  .estimate-doc__grand-total dt {
+    font-size: 13px;
+    font-weight: 700;
+    color: var(--estimate-navy);
+  }
+
+  .estimate-doc__grand-total dd {
+    font-size: 14.5px;
+    font-weight: 700;
+    color: var(--estimate-blue);
+  }
+
+  .estimate-doc__deposit-row {
+    margin-top: 0.1rem;
+    padding-top: 0.35rem !important;
+    border-top: 1px solid var(--estimate-line);
+  }
+
+  .estimate-doc__deposit-row dt,
+  .estimate-doc__deposit-row dd {
+    font-weight: 700;
+    color: var(--estimate-navy);
+  }
+
+  .estimate-doc__pay-schedule {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 8px 28px;
+    align-items: start;
+    margin: 0 0 14px;
+    padding-top: 12px;
+    border-top: 1px solid var(--estimate-line);
+  }
+
+  .estimate-doc__pay-schedule > .estimate-doc__section:only-child {
+    grid-column: 1 / -1;
+  }
+
+  .estimate-doc__prose {
+    margin: 0;
+    font-size: 11px;
+    line-height: 1.45;
+    color: var(--estimate-navy);
+  }
+
+  .estimate-doc__prose--tight {
+    margin-bottom: 0.28rem;
+  }
+
+  .estimate-doc__prose--tight:last-child {
+    margin-bottom: 0;
+  }
+
+  .estimate-doc__fineprint {
+    margin: 0.32rem 0 0;
+    font-size: 9.5px;
+    line-height: 1.4;
+    color: var(--estimate-muted);
+  }
+
+  .estimate-doc__schedule {
+    margin: 0;
+    display: grid;
+    gap: 0.25rem;
+  }
+
+  .estimate-doc__schedule > div {
+    display: flex;
+    justify-content: space-between;
+    gap: 0.85rem;
+    align-items: baseline;
+  }
+
+  .estimate-doc__schedule dt {
+    margin: 0;
+    font-size: 10.5px;
+    color: var(--estimate-muted);
+  }
+
+  .estimate-doc__schedule dd {
+    margin: 0;
+    font-size: 11px;
+    font-weight: 650;
+    color: var(--estimate-navy);
+  }
+
+  .estimate-doc__terms {
+    margin: 0 0 12px;
+    padding-top: 12px;
+    border-top: 1px solid var(--estimate-line);
+  }
+
+  .estimate-doc__terms-body {
+    font-size: 10.5px;
+    line-height: 1.45;
+    color: var(--estimate-navy);
+  }
+
+  /* linebreaksbr emits <br>; consecutive breaks get breathing room between paragraphs */
+  .estimate-doc__terms-body br + br {
+    display: block;
+    content: "";
+    margin-top: 6px;
+  }
+
+  .estimate-doc__acceptance {
+    margin: 0 0 8px;
+    padding-top: 10px;
+    border-top: 1px solid var(--estimate-line);
+  }
+
+  .estimate-doc__acceptance-copy {
+    margin: 2px 0 0;
+    font-size: 9.75px;
+    line-height: 1.4;
+    color: var(--estimate-muted);
+  }
+
+  .estimate-doc__footer {
+    margin-top: 0;
+    padding-top: 8px;
+    border-top: 1px solid var(--estimate-line);
+    text-align: center;
+  }
+
+  .estimate-doc__footer-brand {
+    margin: 0;
+    font-size: 9.5px;
+    line-height: 1.35;
+    color: var(--estimate-muted);
+  }
+
+  .estimate-doc__powered {
+    margin: 4px 0 0;
+    font-size: 8px;
+    font-weight: 600;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--estimate-blue);
+    opacity: 0.55;
+  }
+
+  .estimate-doc .text-left { text-align: left; }
+  .estimate-doc .text-right { text-align: right; }
+  .estimate-doc .tabular-nums { font-variant-numeric: tabular-nums; }
+
+  /* Screen preview framing only — not printed */
+  .estimate-doc-frame {
+    background: #fff;
+    border: 1px solid var(--estimate-line);
+  }
+
+  @media (max-width: 640px) {
+    .estimate-doc__header,
+    .estimate-doc__parties,
+    .estimate-doc__pay-schedule {
+      grid-template-columns: 1fr;
+    }
+    .estimate-doc__meta {
+      text-align: left;
+      min-width: 0;
+    }
+    .estimate-doc__meta-list > div {
+      justify-content: flex-start;
+    }
+  }
+
+  @media print {
+    .estimate-doc {
+      font-size: 10.5px;
+    }
+
+    .estimate-doc__totals-wrap,
+    .estimate-doc__pay-schedule,
+    .estimate-doc__acceptance {
+      break-inside: avoid;
+      page-break-inside: avoid;
+    }
+
+    .estimate-doc__footer {
+      break-inside: avoid;
+      page-break-inside: avoid;
+    }
+
+    .estimate-doc__lines,
+    .estimate-doc__terms-body {
+      break-inside: auto;
+    }
+  }
+</style>

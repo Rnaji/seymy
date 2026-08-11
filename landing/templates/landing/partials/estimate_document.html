@@ -1,0 +1,193 @@
+{# Professional US Letter contractor estimate. Dynamic data only. Omit empty optional fields. #}
+<article class="estimate-doc">
+  <header class="estimate-doc__header">
+    <div class="estimate-doc__identity">
+      {% if business_logo_url %}
+        <img src="{{ business_logo_url }}" alt="" class="estimate-doc__logo">
+      {% endif %}
+      <div class="estimate-doc__identity-text">
+        <h1 class="estimate-doc__business-name">{{ business_name }}</h1>
+        <div class="estimate-doc__identity-meta">
+          {% if business_license_number or business_credentials %}
+            <div>
+              {% if business_license_number %}License #{{ business_license_number }}{% endif %}{% if business_license_number and business_credentials %} · {% endif %}{% if business_credentials %}{{ business_credentials }}{% endif %}
+            </div>
+          {% endif %}
+          {% if business_phone or business_email %}
+            <div>
+              {% if business_phone %}{{ business_phone }}{% endif %}{% if business_phone and business_email %} · {% endif %}{% if business_email %}{{ business_email }}{% endif %}
+            </div>
+          {% endif %}
+          {% if business_address or business_city_line %}
+            <div>
+              {% if business_address %}{{ business_address }}{% endif %}{% if business_address and business_city_line %}, {% endif %}{% if business_city_line %}{{ business_city_line }}{% endif %}
+            </div>
+          {% endif %}
+        </div>
+      </div>
+    </div>
+
+    <div class="estimate-doc__meta">
+      <p class="estimate-doc__estimate-label">Estimate</p>
+      <p class="estimate-doc__estimate-number">#{{ estimate_number }}</p>
+      <dl class="estimate-doc__meta-list">
+        <div>
+          <dt>Issued:</dt>
+          <dd>{{ issue_date_display }}</dd>
+        </div>
+        <div>
+          <dt>Valid until:</dt>
+          <dd>{{ expiration_date_display }}</dd>
+        </div>
+      </dl>
+    </div>
+  </header>
+
+  <div class="estimate-doc__header-rule" aria-hidden="true"></div>
+
+  <section class="estimate-doc__parties">
+    <div>
+      <h2 class="estimate-doc__label">Customer</h2>
+      <p class="estimate-doc__party-name">{{ customer_name }}</p>
+      {% if customer_email %}<p class="estimate-doc__party-line">{{ customer_email }}</p>{% endif %}
+      {% if customer_phone %}<p class="estimate-doc__party-line">{{ customer_phone }}</p>{% endif %}
+    </div>
+    {% if job_site_address or job_site_city_line %}
+      <div>
+        <h2 class="estimate-doc__label">Job site</h2>
+        {% if job_site_address %}<p class="estimate-doc__party-name">{{ job_site_address }}</p>{% endif %}
+        {% if job_site_city_line %}<p class="estimate-doc__party-line">{{ job_site_city_line }}</p>{% endif %}
+      </div>
+    {% endif %}
+  </section>
+
+  {% if scope_of_work %}
+    <section class="estimate-doc__section estimate-doc__scope">
+      <h2 class="estimate-doc__label">Scope of work</h2>
+      <p class="estimate-doc__prose">{{ scope_of_work }}</p>
+    </section>
+  {% endif %}
+
+  <section class="estimate-doc__lines">
+    <table>
+      <thead>
+        <tr>
+          <th class="text-left">Description</th>
+          {% if show_qty_rate %}
+            <th class="text-right">Qty</th>
+            <th class="text-right">Rate</th>
+          {% endif %}
+          <th class="text-right">Amount</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for item in line_items %}
+          <tr>
+            <td>
+              <span class="estimate-doc__item-title">{{ item.description }}</span>
+              {% if item.detail %}
+                <span class="estimate-doc__item-detail">{{ item.detail }}</span>
+              {% endif %}
+            </td>
+            {% if show_qty_rate %}
+              <td class="text-right tabular-nums">{% if item.qty %}{{ item.qty }}{% endif %}</td>
+              <td class="text-right tabular-nums">{% if item.rate %}${{ item.rate }}{% endif %}</td>
+            {% endif %}
+            <td class="text-right tabular-nums">${{ item.amount }}</td>
+          </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </section>
+
+  <section class="estimate-doc__totals-wrap">
+    <dl class="estimate-doc__totals">
+      <div>
+        <dt>Subtotal</dt>
+        <dd class="tabular-nums">${{ subtotal }}</dd>
+      </div>
+      {% if tax_configured and tax_amount %}
+        <div>
+          <dt>Sales Tax ({{ tax_rate_display }})</dt>
+          <dd class="tabular-nums">${{ tax_amount }}</dd>
+        </div>
+      {% endif %}
+      <div class="estimate-doc__grand-total">
+        <dt>Total</dt>
+        <dd class="tabular-nums">${{ total }}</dd>
+      </div>
+      {% if deposit_enabled %}
+        <div class="estimate-doc__deposit-row">
+          <dt>{{ deposit_row_label }}</dt>
+          <dd class="tabular-nums">${{ deposit_amount }}</dd>
+        </div>
+        <div>
+          <dt>Remaining balance</dt>
+          <dd class="tabular-nums">${{ remaining_balance }}</dd>
+        </div>
+        <div>
+          <dt>Balance due</dt>
+          <dd>{{ balance_due_label }}</dd>
+        </div>
+      {% endif %}
+    </dl>
+  </section>
+
+  <section class="estimate-doc__pay-schedule">
+    <div class="estimate-doc__section">
+      <h2 class="estimate-doc__label">Payment terms &amp; deposit</h2>
+      {% for line in payment_terms_lines %}
+        <p class="estimate-doc__prose estimate-doc__prose--tight">{{ line }}</p>
+      {% endfor %}
+      {% if pass_card_fees_to_customer %}
+        <p class="estimate-doc__fineprint">
+          Eligible card processing fees may apply where permitted.
+        </p>
+      {% endif %}
+    </div>
+    {% if show_project_schedule %}
+      <div class="estimate-doc__section">
+        <h2 class="estimate-doc__label">Project schedule</h2>
+        <dl class="estimate-doc__schedule">
+          {% if job_start_date_set %}
+            <div>
+              <dt>Estimated Start</dt>
+              <dd>{{ job_start_date_display }}</dd>
+            </div>
+          {% endif %}
+          {% if expected_completion_date_set %}
+            <div>
+              <dt>Expected Completion</dt>
+              <dd>{{ expected_completion_date_display }}</dd>
+            </div>
+          {% endif %}
+        </dl>
+        <p class="estimate-doc__fineprint">
+          Dates shown are estimates, not guarantees.
+        </p>
+      </div>
+    {% endif %}
+  </section>
+
+  {% if terms_and_conditions %}
+    <section class="estimate-doc__section estimate-doc__terms">
+      <h2 class="estimate-doc__label">Terms &amp; conditions</h2>
+      <div class="estimate-doc__terms-body">{{ terms_and_conditions|linebreaksbr }}</div>
+    </section>
+  {% endif %}
+
+  <section class="estimate-doc__section estimate-doc__acceptance">
+    <h2 class="estimate-doc__label">Acceptance &amp; payment</h2>
+    <p class="estimate-doc__acceptance-copy">
+      This estimate may be accepted electronically through the secure payment link provided by the contractor.
+      Payment of the required deposit constitutes acceptance of this estimate and the applicable Terms &amp; Conditions, except where additional signatures or disclosures are required by applicable law.
+    </p>
+  </section>
+
+  <footer class="estimate-doc__footer">
+    <p class="estimate-doc__footer-brand">
+      {{ business_name }}{% if business_phone %} · {{ business_phone }}{% endif %}{% if business_email %} · {{ business_email }}{% endif %}
+    </p>
+    <p class="estimate-doc__powered">Powered by Seymy</p>
+  </footer>
+</article>

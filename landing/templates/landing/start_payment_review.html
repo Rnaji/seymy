@@ -1,0 +1,64 @@
+{% extends "landing/start_base.html" %}
+
+{% block title %}Payment terms — Seymy{% endblock %}
+
+{% block content %}
+  <h1 class="text-[1.75rem] font-bold tracking-tight text-navy sm:text-3xl">
+    Payment terms
+  </h1>
+  <p class="mt-2 text-[0.9375rem] text-navy-muted">
+    Confirm how you want to get paid. Nothing is sent yet.
+  </p>
+
+  <div class="mt-5 rounded-2xl border border-line bg-white p-4 sm:p-5">
+    <p class="text-[0.625rem] font-semibold tracking-[0.08em] text-seymy">PAYMENT TERMS</p>
+    <p class="mt-1 text-base font-semibold text-navy">Customer: {{ customer_name }}</p>
+
+    <dl class="mt-4 space-y-2.5 border-t border-line pt-4 text-sm">
+      <div class="flex items-baseline justify-between gap-3">
+        <dt class="text-navy-muted">Estimate total</dt>
+        <dd class="shrink-0 font-medium tabular-nums text-navy">${{ estimate_total }}</dd>
+      </div>
+
+      {% if deposit_enabled %}
+        <div class="flex items-baseline justify-between gap-3">
+          <dt class="min-w-0 text-navy-muted">{{ deposit_label }}</dt>
+          <dd class="shrink-0 font-medium tabular-nums text-navy">${{ deposit_amount }}</dd>
+        </div>
+        <div class="flex items-baseline justify-between gap-3">
+          <dt class="text-navy-muted">Remaining balance</dt>
+          <dd class="shrink-0 font-medium tabular-nums text-navy">${{ balance_amount }}</dd>
+        </div>
+        <div class="flex items-baseline justify-between gap-3">
+          <dt class="text-navy-muted">Balance due</dt>
+          <dd class="shrink-0 font-medium text-navy">{{ balance_due_date_display }}</dd>
+        </div>
+        {% if pass_card_fees_to_customer %}
+          <div class="flex items-baseline justify-between gap-3 border-t border-line pt-3">
+            <dt class="text-navy-muted">Card fees</dt>
+            <dd class="text-right text-navy">Pass eligible fees to customer</dd>
+          </div>
+        {% endif %}
+      {% else %}
+        <div class="flex items-baseline justify-between gap-3">
+          <dt class="text-navy-muted">Payment</dt>
+          <dd class="font-medium text-navy">Full amount · no deposit</dd>
+        </div>
+      {% endif %}
+    </dl>
+  </div>
+
+  <p class="mt-4 text-xs leading-relaxed text-navy-muted">
+    Seymy charges a 1% platform fee on payments processed through Seymy.
+  </p>
+
+  <form method="post" action="{% url 'start_payment_review' %}" class="mt-5">
+    {% csrf_token %}
+    <button
+      type="submit"
+      class="inline-flex min-h-11 w-full items-center justify-center rounded-xl bg-seymy px-6 text-base font-semibold text-white shadow-[0_8px_20px_rgba(26,109,255,0.28)] transition-colors hover:bg-seymy-dark focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-seymy"
+    >
+      Continue
+    </button>
+  </form>
+{% endblock %}

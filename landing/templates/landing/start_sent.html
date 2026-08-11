@@ -1,0 +1,86 @@
+{% extends "landing/start_base.html" %}
+
+{% block title %}Estimate sent — Seymy{% endblock %}
+
+{% block content %}
+  <h1 class="text-[1.75rem] font-bold tracking-tight text-navy sm:text-3xl">
+    ✓ Estimate sent.
+  </h1>
+
+  {% if payment_send_mode == 'deposit' %}
+    <p class="mt-3 text-[0.9375rem] leading-relaxed text-navy-muted">
+      {{ customer_name }} received estimate #{{ estimate_number }} and the ${{ deposit_amount }} deposit request.
+    </p>
+  {% elif payment_send_mode == 'full_payment' %}
+    <p class="mt-3 text-[0.9375rem] leading-relaxed text-navy-muted">
+      {{ customer_name }} received estimate #{{ estimate_number }} and the ${{ estimate_total }} payment request.
+    </p>
+  {% else %}
+    <p class="mt-3 text-[0.9375rem] leading-relaxed text-navy-muted">
+      {{ customer_name }} received estimate #{{ estimate_number }}.
+    </p>
+  {% endif %}
+
+  <ul class="mt-5 space-y-2 text-sm text-navy">
+    <li class="flex gap-2">
+      <span class="shrink-0 text-ready" aria-hidden="true">✓</span>
+      <span>
+        Customer notified by {% if delivery_is_email %}email{% else %}text{% endif %}
+      </span>
+    </li>
+    {% if contractor_copy_sent %}
+      <li class="flex gap-2">
+        <span class="shrink-0 text-ready" aria-hidden="true">✓</span>
+        <span>Copy of the estimate sent to your email</span>
+      </li>
+    {% endif %}
+  </ul>
+
+  {% if payment_send_mode == 'deposit' %}
+    <div class="mt-8">
+      <p class="text-[0.625rem] font-semibold tracking-[0.08em] text-seymy">WAITING FOR PAYMENT</p>
+      <p class="mt-2 text-xl font-bold tabular-nums text-navy">${{ deposit_amount }} deposit</p>
+      <p class="mt-2 text-sm text-navy-muted">
+        Seymy will notify you when {{ customer_first_name }} pays and automatically follow up if needed.
+      </p>
+      <p class="mt-1 text-xs text-navy-muted/80">
+        Reminders are scheduled for day 2 and day 5.
+      </p>
+    </div>
+  {% elif payment_send_mode == 'full_payment' %}
+    <div class="mt-8">
+      <p class="text-[0.625rem] font-semibold tracking-[0.08em] text-seymy">WAITING FOR PAYMENT</p>
+      <p class="mt-2 text-xl font-bold tabular-nums text-navy">${{ estimate_total }} payment</p>
+      <p class="mt-2 text-sm text-navy-muted">
+        Seymy will notify you when {{ customer_first_name }} pays and automatically follow up if needed.
+      </p>
+      <p class="mt-1 text-xs text-navy-muted/80">
+        Reminders are scheduled for day 2 and day 5.
+      </p>
+    </div>
+  {% endif %}
+
+  <div class="mt-8">
+    <p class="text-[0.625rem] font-semibold tracking-[0.08em] text-navy-muted">NEED IT LATER?</p>
+    <p class="mt-2 text-sm text-navy-muted">
+      You can find any estimate or check a payment anytime. Just ask Seymy.
+    </p>
+    <ul class="mt-4 space-y-2">
+      {% for prompt in ask_prompts %}
+        <li>
+          <a
+            href="{% url 'start_job' %}?ask={{ prompt|urlencode }}"
+            class="block text-sm text-navy-muted transition-colors hover:text-seymy"
+          >“{{ prompt }}”</a>
+        </li>
+      {% endfor %}
+    </ul>
+  </div>
+
+  <a
+    href="{% url 'index' %}"
+    class="mt-8 inline-flex min-h-11 w-full items-center justify-center rounded-xl bg-seymy px-6 text-base font-semibold text-white transition-colors hover:bg-seymy-dark focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-seymy"
+  >
+    Done
+  </a>
+{% endblock %}

@@ -1,0 +1,22 @@
+{% extends "landing/start_base.html" %}
+
+{% block title %}Confirm test payment — Seymy{% endblock %}
+
+{% block content %}
+  <h1 class="text-[1.5rem] font-bold tracking-tight text-navy">Test payment confirmation</h1>
+  <p class="mt-2 text-sm text-navy-muted">
+    Stripe keys are not configured. Completing this step simulates a verified Stripe webhook
+    (<code class="text-xs">payment_intent.succeeded</code>) — it does not mark the estimate
+    accepted from the browser alone.
+  </p>
+  <form method="post" action="{% url 'customer_pay_test_confirm' token=token %}" class="mt-6">
+    {% csrf_token %}
+    <input type="hidden" name="payment_intent_id" value="{{ payment_intent_id }}">
+    <button
+      type="submit"
+      class="inline-flex min-h-11 w-full items-center justify-center rounded-xl bg-seymy px-6 text-base font-semibold text-white"
+    >
+      Simulate verified Stripe payment
+    </button>
+  </form>
+{% endblock %}

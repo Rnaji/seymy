@@ -1,0 +1,41 @@
+{% extends "landing/start_base.html" %}
+
+{% block title %}Estimate accepted — Seymy{% endblock %}
+
+{% block content %}
+  {% if pending_confirmation %}
+    <p class="text-[0.625rem] font-semibold tracking-[0.08em] text-navy-muted">CONFIRMING PAYMENT</p>
+    <h1 class="mt-2 text-[1.75rem] font-bold tracking-tight text-navy sm:text-3xl">
+      Waiting for Stripe…
+    </h1>
+    <p class="mt-3 text-sm text-navy-muted">
+      Your payment is processing. This page will show acceptance once Stripe confirms the deposit.
+    </p>
+    <script>setTimeout(function () { window.location.reload(); }, 2500);</script>
+  {% else %}
+    <p class="text-[0.625rem] font-semibold tracking-[0.08em] text-ready">ESTIMATE ACCEPTED</p>
+    <h1 class="mt-2 text-[1.75rem] font-bold tracking-tight text-navy sm:text-3xl">
+      Deposit paid
+    </h1>
+
+    <div class="mt-6 space-y-2 rounded-2xl border border-line bg-white p-5">
+      <p class="text-sm font-medium text-ready">✓ Estimate accepted</p>
+      <p class="text-sm font-medium text-ready">✓ ${{ deposit_amount }} deposit received</p>
+    </div>
+
+    <dl class="mt-5 space-y-3 rounded-2xl border border-line bg-white p-4 text-sm sm:p-5">
+      <div class="flex items-baseline justify-between gap-3">
+        <dt class="text-navy-muted">Remaining balance</dt>
+        <dd class="shrink-0 font-semibold tabular-nums text-navy">${{ balance_amount }}</dd>
+      </div>
+      <div class="flex items-baseline justify-between gap-3">
+        <dt class="text-navy-muted">Balance due</dt>
+        <dd class="shrink-0 font-semibold text-navy">{{ balance_due_date_display }}</dd>
+      </div>
+    </dl>
+
+    <p class="mt-5 text-center text-sm text-navy-muted">
+      Seymy will remind you when the balance is due.
+    </p>
+  {% endif %}
+{% endblock %}

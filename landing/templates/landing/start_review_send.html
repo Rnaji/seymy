@@ -1,0 +1,379 @@
+{% extends "landing/start_base.html" %}
+
+{% block title %}Ready to send — Seymy{% endblock %}
+
+{% block main_max %}max-w-xl{% endblock %}
+
+{% block content %}
+  {% include "landing/partials/estimate_document_styles.html" %}
+  <style>
+    .estimate-preview-shell {
+      position: relative;
+      width: 100%;
+    }
+
+    .estimate-preview-clip {
+      position: relative;
+      overflow: hidden;
+      max-height: 17.5rem; /* ~280px mobile */
+      transition: max-height 0.45s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+
+    @media (min-width: 640px) {
+      .estimate-preview-clip {
+        max-height: 20rem; /* 320px desktop */
+      }
+    }
+
+    .estimate-preview-shell.is-expanded .estimate-preview-clip {
+      max-height: 2400px;
+    }
+
+    .estimate-preview-doc {
+      width: 100%;
+      box-sizing: border-box;
+    }
+
+    .estimate-preview-fade {
+      position: absolute;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      z-index: 1;
+      height: 7.5rem;
+      pointer-events: none;
+      background: linear-gradient(
+        to bottom,
+        rgba(245, 247, 250, 0) 0%,
+        rgba(245, 247, 250, 0.42) 35%,
+        rgba(245, 247, 250, 0.88) 72%,
+        #f5f7fa 100%
+      );
+      -webkit-backdrop-filter: blur(1.5px);
+      backdrop-filter: blur(1.5px);
+      -webkit-mask-image: linear-gradient(to bottom, transparent 0%, #000 45%);
+      mask-image: linear-gradient(to bottom, transparent 0%, #000 45%);
+      opacity: 1;
+      transition: opacity 0.35s ease;
+    }
+
+    .estimate-preview-shell.is-expanded .estimate-preview-fade {
+      opacity: 0;
+      visibility: hidden;
+    }
+
+    .estimate-preview-toggle {
+      position: absolute;
+      left: 50%;
+      bottom: 0.85rem;
+      z-index: 2;
+      transform: translateX(-50%);
+      margin: 0;
+      padding: 0.35rem 0.75rem;
+      border: 0;
+      background: transparent;
+      color: #4a5d73;
+      font-size: 0.8125rem;
+      font-weight: 600;
+      line-height: 1.3;
+      letter-spacing: 0.01em;
+      cursor: pointer;
+      white-space: nowrap;
+      text-underline-offset: 0.15em;
+      transition: color 0.15s ease, opacity 0.35s ease;
+    }
+
+    .estimate-preview-toggle:hover {
+      color: #1a6dff;
+      text-decoration: underline;
+    }
+
+    .estimate-preview-toggle:focus-visible {
+      outline: 2px solid #1a6dff;
+      outline-offset: 3px;
+      border-radius: 0.25rem;
+    }
+
+    .estimate-preview-shell.is-expanded .estimate-preview-toggle {
+      position: static;
+      display: block;
+      width: fit-content;
+      margin: 0.75rem auto 0;
+      transform: none;
+    }
+  </style>
+
+  {# 1. Real estimate document teaser (collapsed by default) #}
+  <div
+    id="estimate-preview"
+    class="estimate-preview-shell"
+    data-expanded="false"
+  >
+    <div class="estimate-preview-clip" id="estimate-preview-clip">
+      <div class="estimate-doc-frame estimate-preview-doc p-4 sm:p-6">
+        {% include "landing/partials/estimate_document.html" %}
+      </div>
+      <div class="estimate-preview-fade" aria-hidden="true"></div>
+      <button
+        type="button"
+        id="estimate-preview-toggle"
+        class="estimate-preview-toggle"
+        aria-expanded="false"
+        aria-controls="estimate-preview-clip"
+      >
+        Expand estimate ↓
+      </button>
+    </div>
+  </div>
+
+  <form method="post" action="{% url 'start_review_send' %}" class="mt-6 w-full" id="ready-to-send-form">
+    {% csrf_token %}
+    <input type="hidden" name="action" value="send" id="ready-to-send-action">
+
+    {% if show_payment_choice %}
+      {# 2. Payment choice — deposit or full payment terms only #}
+      <fieldset class="min-w-0" id="payment-choice">
+        <legend class="text-[0.625rem] font-semibold tracking-[0.08em] text-seymy">
+          {{ payment_choice_heading }}
+        </legend>
+
+        <label
+          id="payment-choice-seymy"
+          class="mt-3 flex cursor-pointer gap-3 rounded-2xl border px-4 py-2.5 transition-colors {% if payment_request_through_seymy %}border-seymy bg-white shadow-[0_0_0_1px_rgba(26,109,255,0.18)]{% else %}border-line bg-white hover:border-navy-muted/40{% endif %}"
+        >
+          <input
+            type="radio"
+            name="payment_request_through_seymy"
+            value="true"
+            class="mt-1 h-4 w-4 shrink-0 accent-[#1A6DFF]"
+            {% if payment_request_through_seymy %}checked{% endif %}
+            data-payment-choice="true"
+          >
+          <span class="min-w-0 flex-1">
+            <span class="block text-[0.9375rem] font-bold text-navy">
+              {{ payment_choice_seymy_title }}
+            </span>
+            <span class="mt-1 block text-[0.8125rem] font-semibold leading-snug text-navy">
+              ⚡ Get paid faster. Lock in the job sooner.
+            </span>
+            <span class="mt-0.5 block text-[0.6875rem] leading-snug text-navy-muted/75">
+              Card · Apple Pay · Google Pay · Automatic reminders
+            </span>
+            <span class="mt-1.5 inline-flex items-center rounded-md bg-seymy/10 px-1.5 py-0.5 text-[0.625rem] font-semibold tracking-[0.04em] text-seymy">
+              Recommended
+            </span>
+          </span>
+        </label>
+
+        <label
+          id="payment-choice-estimate-only"
+          class="mt-2.5 flex cursor-pointer gap-3 rounded-2xl border px-4 py-3.5 transition-colors {% if not payment_request_through_seymy %}border-navy/25 bg-white{% else %}border-transparent bg-surface/80 hover:border-line{% endif %}"
+        >
+          <input
+            type="radio"
+            name="payment_request_through_seymy"
+            value="false"
+            class="mt-1 h-4 w-4 shrink-0 accent-[#1A6DFF]"
+            {% if not payment_request_through_seymy %}checked{% endif %}
+            data-payment-choice="false"
+          >
+          <span class="min-w-0 flex-1">
+            <span class="block text-[0.9375rem] font-semibold text-navy">
+              Send estimate only
+            </span>
+            <span class="mt-1 block text-sm leading-snug text-navy-muted">
+              {{ payment_choice_estimate_only_detail }}
+            </span>
+          </span>
+        </label>
+      </fieldset>
+
+      {{ payment_choice_previews|json_script:"payment-choice-previews" }}
+    {% endif %}
+
+    {# 3. Recipient #}
+    <div class="{% if show_payment_choice %}mt-6{% else %}mt-0{% endif %}">
+      <p class="text-[0.625rem] font-semibold tracking-[0.08em] text-seymy">READY TO SEND</p>
+      {% if send_recipient_name %}
+        <p class="mt-2 text-base font-semibold text-navy">{{ send_recipient_name }}</p>
+      {% endif %}
+      {% if send_destination_display %}
+        <p class="mt-0.5 text-sm text-navy-muted">{{ send_destination_display }}</p>
+      {% endif %}
+    </div>
+
+    {# 4–5. Customer message preview + explanation #}
+    <div class="mt-6">
+      <p class="text-[0.625rem] font-semibold tracking-[0.08em] text-seymy">WHAT YOUR CUSTOMER WILL RECEIVE</p>
+
+      {% if send_is_email %}
+        <div class="mt-3 overflow-hidden rounded-2xl border border-line bg-white">
+          <div class="space-y-2 border-b border-line bg-surface/60 px-4 py-3 text-sm">
+            <p>
+              <span class="text-navy-muted">To</span>
+              <span class="ml-2 font-medium text-navy">{{ send_destination_detail }}</span>
+            </p>
+            <p>
+              <span class="text-navy-muted">Subject</span>
+              <span class="ml-2 font-medium text-navy" id="customer-email-subject">{{ customer_email_subject }}</span>
+            </p>
+          </div>
+          <div
+            class="px-4 py-4 text-[0.9375rem] leading-relaxed text-navy whitespace-pre-wrap"
+            id="customer-message-body"
+          >{{ customer_message_body }}</div>
+          <div class="border-t border-line px-4 py-3">
+            <a
+              href="{{ customer_secure_link }}"
+              id="customer-secure-link"
+              class="break-all text-sm font-medium text-seymy underline underline-offset-2"
+            >{{ customer_secure_link }}</a>
+          </div>
+        </div>
+      {% else %}
+        <div class="mt-3">
+          <p class="text-[0.625rem] font-semibold tracking-[0.08em] text-navy-muted">
+            SMS TO {{ send_recipient_name|default:customer_first_name|upper }}
+          </p>
+          {% if send_destination_detail %}
+            <p class="mt-1 text-sm text-navy-muted">{{ send_destination_detail }}</p>
+          {% endif %}
+          <div
+            class="mt-2 rounded-2xl border border-line bg-white px-4 py-4 text-[0.9375rem] leading-relaxed text-navy whitespace-pre-wrap"
+            id="customer-message-body"
+          >
+            {{ customer_message_body }}
+          </div>
+        </div>
+      {% endif %}
+
+      <p class="mt-4 text-sm leading-relaxed text-navy-muted" id="customer-message-explanation">
+        {{ customer_message_explanation }}
+      </p>
+    </div>
+
+    {# 6. One explicit primary CTA #}
+    <div class="mt-5 w-full">
+      <button
+        type="submit"
+        id="send-cta-button"
+        class="inline-flex min-h-11 w-full items-center justify-center rounded-xl bg-seymy px-6 text-base font-semibold text-white shadow-[0_8px_20px_rgba(26,109,255,0.28)] transition-colors hover:bg-seymy-dark focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-seymy"
+      >
+        {{ send_cta_label }}
+      </button>
+    </div>
+  </form>
+
+  {# 7. Tell Seymy #}
+  <div class="mt-4 text-center">
+    <a
+      href="{% url 'start_job' %}?mode=edit"
+      class="text-sm font-semibold text-seymy underline-offset-2 hover:underline focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-seymy"
+    >
+      Tell Seymy what to change
+    </a>
+  </div>
+
+  {# 8. Nothing sent until confirm #}
+  <p class="mt-5 text-center text-xs leading-relaxed text-navy-muted">
+    Nothing is sent until you confirm.
+  </p>
+
+  <script>
+  (function () {
+    var shell = document.getElementById('estimate-preview');
+    var clip = document.getElementById('estimate-preview-clip');
+    var toggle = document.getElementById('estimate-preview-toggle');
+    if (!shell || !clip || !toggle) return;
+
+    var EXPAND_LABEL = 'Expand estimate ↓';
+    var COLLAPSE_LABEL = 'Collapse estimate ↑';
+
+    function setExpanded(open) {
+      var scrollY = window.scrollY;
+      shell.classList.toggle('is-expanded', open);
+      shell.setAttribute('data-expanded', open ? 'true' : 'false');
+      toggle.setAttribute('aria-expanded', open ? 'true' : 'false');
+      toggle.textContent = open ? COLLAPSE_LABEL : EXPAND_LABEL;
+      if (!open) {
+        // Preserve approximate scroll so collapse does not yank the viewport.
+        window.scrollTo(0, scrollY);
+        requestAnimationFrame(function () {
+          var rect = shell.getBoundingClientRect();
+          if (rect.bottom < 64) {
+            window.scrollTo({
+              top: Math.max(0, window.scrollY + rect.top - 12),
+              behavior: 'smooth',
+            });
+          }
+        });
+      }
+    }
+
+    toggle.addEventListener('click', function () {
+      setExpanded(!shell.classList.contains('is-expanded'));
+    });
+  })();
+  </script>
+
+  {% if show_payment_choice %}
+  <script>
+  (function () {
+    var previewsEl = document.getElementById('payment-choice-previews');
+    if (!previewsEl) return;
+    var previews;
+    try {
+      previews = JSON.parse(previewsEl.textContent);
+    } catch (e) {
+      return;
+    }
+
+    var seymyLabel = document.getElementById('payment-choice-seymy');
+    var onlyLabel = document.getElementById('payment-choice-estimate-only');
+    var bodyEl = document.getElementById('customer-message-body');
+    var explanationEl = document.getElementById('customer-message-explanation');
+    var ctaEl = document.getElementById('send-cta-button');
+    var linkEl = document.getElementById('customer-secure-link');
+    var subjectEl = document.getElementById('customer-email-subject');
+    var radios = document.querySelectorAll('input[data-payment-choice]');
+
+    function setSelectedStyles(through) {
+      if (!seymyLabel || !onlyLabel) return;
+      if (through) {
+        seymyLabel.className =
+          'mt-3 flex cursor-pointer gap-3 rounded-2xl border px-4 py-2.5 transition-colors border-seymy bg-white shadow-[0_0_0_1px_rgba(26,109,255,0.18)]';
+        onlyLabel.className =
+          'mt-2.5 flex cursor-pointer gap-3 rounded-2xl border px-4 py-3.5 transition-colors border-transparent bg-surface/80 hover:border-line';
+      } else {
+        seymyLabel.className =
+          'mt-3 flex cursor-pointer gap-3 rounded-2xl border px-4 py-2.5 transition-colors border-line bg-white hover:border-navy-muted/40';
+        onlyLabel.className =
+          'mt-2.5 flex cursor-pointer gap-3 rounded-2xl border px-4 py-3.5 transition-colors border-navy/25 bg-white';
+      }
+    }
+
+    function applyChoice(through) {
+      var key = through ? 'true' : 'false';
+      var preview = previews[key];
+      if (!preview) return;
+      if (bodyEl) bodyEl.textContent = preview.body;
+      if (explanationEl) explanationEl.textContent = preview.explanation;
+      if (ctaEl) ctaEl.textContent = preview.cta;
+      if (linkEl) {
+        linkEl.href = preview.link;
+        linkEl.textContent = preview.link;
+      }
+      if (subjectEl) subjectEl.textContent = preview.subject;
+      setSelectedStyles(through);
+    }
+
+    radios.forEach(function (radio) {
+      radio.addEventListener('change', function () {
+        if (!radio.checked) return;
+        applyChoice(radio.value === 'true');
+      });
+    });
+  })();
+  </script>
+  {% endif %}
+{% endblock %}

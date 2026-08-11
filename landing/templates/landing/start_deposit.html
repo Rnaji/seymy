@@ -1,0 +1,36 @@
+{% extends "landing/start_base.html" %}
+
+{% block title %}Deposit — Seymy{% endblock %}
+
+{% block content %}
+  <h1 class="text-[1.75rem] font-bold tracking-tight text-navy sm:text-3xl">
+    Set up payment.
+  </h1>
+  <p class="mt-2 text-[0.9375rem] text-navy-muted">
+    Would you like to request a deposit?
+  </p>
+
+  <form method="post" action="{% url 'start_deposit' %}" class="mt-6 space-y-3">
+    {% csrf_token %}
+    <button
+      type="submit"
+      name="deposit_choice"
+      value="yes"
+      class="inline-flex min-h-12 w-full items-center justify-center rounded-xl bg-seymy px-6 text-base font-semibold text-white shadow-[0_8px_20px_rgba(26,109,255,0.28)] transition-colors hover:bg-seymy-dark focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-seymy"
+    >
+      Yes, request a deposit
+    </button>
+    <button
+      type="submit"
+      name="deposit_choice"
+      value="no"
+      class="inline-flex min-h-12 w-full items-center justify-center rounded-xl border border-line bg-white px-6 text-base font-semibold text-navy transition-colors hover:bg-surface focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-seymy"
+    >
+      No deposit
+    </button>
+  </form>
+
+  <p class="mt-5 text-center text-xs text-navy-muted">
+    Seymy anticipates. You approve.
+  </p>
+{% endblock %}

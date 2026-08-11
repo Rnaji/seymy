@@ -1,0 +1,37 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>{% block title %}Seymy{% endblock %}</title>
+  <meta name="description" content="{% block meta_description %}Get started with Seymy — AI estimating for contractors.{% endblock %}">
+  <link rel="stylesheet" href="{% static 'css/seymy.css' %}">
+</head>
+<body class="min-h-dvh overflow-x-hidden bg-surface font-sans text-navy antialiased">
+  <header class="border-b border-line bg-white">
+    <div class="mx-auto flex h-12 max-w-lg items-center justify-between px-4 sm:h-14 sm:px-6">
+      <a href="{% url 'index' %}" class="text-lg font-bold tracking-tight text-navy" aria-label="Seymy home">
+        seymy<span class="text-seymy">.</span>
+      </a>
+      {% if stages %}
+        <nav class="flex max-w-[65%] flex-wrap items-center justify-end gap-x-1 gap-y-0.5 text-[0.5625rem] font-semibold tracking-[0.04em] sm:max-w-none sm:gap-1.5 sm:text-[0.625rem] sm:tracking-[0.06em]" aria-label="Progress">
+          {% for stage in stages %}
+            {% if not forloop.first %}
+              <span class="text-navy-muted/40" aria-hidden="true">·</span>
+            {% endif %}
+            <span class="{% if stage == current_stage %}text-seymy{% else %}text-navy-muted/55{% endif %}">
+              {{ stage }}
+              {% if stage == current_stage %}<span class="sr-only">(current)</span>{% endif %}
+            </span>
+          {% endfor %}
+        </nav>
+      {% endif %}
+    </div>
+  </header>
+
+  <main class="mx-auto w-full {% block main_max %}max-w-lg{% endblock %} px-4 py-5 sm:px-6 sm:py-8">
+    {% block content %}{% endblock %}
+  </main>
+</body>
+</html>

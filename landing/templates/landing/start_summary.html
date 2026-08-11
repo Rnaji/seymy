@@ -1,0 +1,142 @@
+{% extends "landing/start_base.html" %}
+
+{% block title %}Here's what I've got — Seymy{% endblock %}
+
+{% block content %}
+  <p class="text-[0.625rem] font-semibold tracking-[0.08em] text-seymy">SEYMY</p>
+  <h1 class="mt-2 text-[1.75rem] font-bold tracking-tight text-navy sm:text-3xl">
+    Here's what I've got.
+  </h1>
+  {% if seymy_note %}
+    <p class="mt-2 text-[0.9375rem] text-navy-muted">{{ seymy_note }}</p>
+  {% endif %}
+
+  <div class="mt-5 rounded-2xl border border-line bg-white p-4 sm:p-5">
+    <p class="text-[0.625rem] font-semibold tracking-[0.08em] text-seymy">JOB</p>
+    <dl class="mt-3 space-y-2.5 text-sm">
+      <div>
+        <dt class="text-navy-muted">Customer</dt>
+        <dd class="mt-0.5 font-semibold text-navy">{{ customer_name }}</dd>
+      </div>
+      {% if job_site_lines %}
+        <div>
+          <dt class="text-navy-muted">Job site</dt>
+          <dd class="mt-0.5 text-navy">
+            {% for line in job_site_lines %}
+              <div {% if forloop.first %}class="font-semibold"{% endif %}>{{ line }}</div>
+            {% endfor %}
+          </dd>
+        </div>
+      {% endif %}
+    </dl>
+  </div>
+
+  <div class="mt-4 rounded-2xl border border-line bg-white p-4 sm:p-5">
+    <p class="text-[0.625rem] font-semibold tracking-[0.08em] text-seymy">WORK</p>
+    <dl class="mt-3 space-y-2 text-sm">
+      {% for item in line_items %}
+        <div class="flex items-baseline justify-between gap-3">
+          <dt class="min-w-0 text-navy-muted">{{ item.label }}</dt>
+          <dd class="shrink-0 font-medium tabular-nums text-navy">${{ item.amount }}</dd>
+        </div>
+      {% endfor %}
+      <div class="flex items-baseline justify-between gap-3 border-t border-line pt-3">
+        <dt class="text-navy-muted">Subtotal</dt>
+        <dd class="tabular-nums text-navy">${{ subtotal }}</dd>
+      </div>
+      {% if tax_configured and tax_amount %}
+        <div class="flex items-baseline justify-between gap-3">
+          <dt class="text-navy-muted">{{ tax_label }}</dt>
+          <dd class="tabular-nums text-navy">${{ tax_amount }}</dd>
+        </div>
+        <div class="flex items-baseline justify-between gap-3 pt-1 text-base font-bold">
+          <dt class="text-navy">Total</dt>
+          <dd class="tabular-nums text-navy">${{ estimate_total }}</dd>
+        </div>
+      {% endif %}
+    </dl>
+  </div>
+
+  {% if show_schedule %}
+    <div class="mt-4 rounded-2xl border border-line bg-white p-4 sm:p-5">
+      <p class="text-[0.625rem] font-semibold tracking-[0.08em] text-seymy">SCHEDULE</p>
+      <dl class="mt-3 space-y-2.5 text-sm">
+        {% if job_start_date_display %}
+          <div class="flex items-baseline justify-between gap-3">
+            <dt class="text-navy-muted">Estimated start</dt>
+            <dd class="font-semibold text-navy">{{ job_start_date_display }}</dd>
+          </div>
+        {% endif %}
+        {% if expected_completion_date_display %}
+          <div class="flex items-baseline justify-between gap-3">
+            <dt class="text-navy-muted">Expected completion</dt>
+            <dd class="font-semibold text-navy">{{ expected_completion_date_display }}</dd>
+          </div>
+        {% endif %}
+      </dl>
+      <p class="mt-3 text-xs leading-relaxed text-navy-muted">
+        Scheduling dates are estimates, not guarantees.
+      </p>
+    </div>
+  {% endif %}
+
+  <div class="mt-4 rounded-2xl border border-line bg-white p-4 sm:p-5">
+    <p class="text-[0.625rem] font-semibold tracking-[0.08em] text-seymy">PAYMENT TERMS</p>
+    <dl class="mt-3 space-y-2.5 text-sm">
+      <div class="flex items-baseline justify-between gap-3">
+        <dt class="text-navy-muted">{{ deposit_label }}</dt>
+        <dd class="font-semibold tabular-nums text-navy">
+          {% if deposit_enabled %}${{ deposit_amount }}{% else %}—{% endif %}
+        </dd>
+      </div>
+      {% if deposit_enabled %}
+        <div class="flex items-baseline justify-between gap-3">
+          <dt class="text-navy-muted">Remaining balance</dt>
+          <dd class="font-semibold tabular-nums text-navy">${{ balance_amount }}</dd>
+        </div>
+        {% if balance_due_date_display %}
+          <div class="flex items-baseline justify-between gap-3">
+            <dt class="text-navy-muted">Balance due</dt>
+            <dd class="font-semibold text-navy">{{ balance_due_date_display }}</dd>
+          </div>
+        {% endif %}
+      {% endif %}
+      <div class="flex items-baseline justify-between gap-3 border-t border-line pt-3">
+        <dt class="text-navy-muted">Card fees</dt>
+        <dd class="max-w-[55%] text-right text-navy">{{ fee_label }}</dd>
+      </div>
+    </dl>
+    <p class="mt-3 text-xs leading-relaxed text-navy-muted">
+      {% if pass_card_fees_to_customer %}
+        Eligible card processing fees will be passed to the customer where permitted.
+      {% else %}
+        You’ll cover eligible card processing fees.
+      {% endif %}
+      Seymy’s 1% platform fee is separate and is not passed through as a card surcharge.
+    </p>
+  </div>
+
+  <form method="post" action="{% url 'start_summary' %}" class="mt-5">
+    {% csrf_token %}
+    <input type="hidden" name="action" value="continue">
+    <button
+      type="submit"
+      class="inline-flex min-h-11 w-full items-center justify-center rounded-xl bg-seymy px-6 text-base font-semibold text-white shadow-[0_8px_20px_rgba(26,109,255,0.28)] transition-colors hover:bg-seymy-dark focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-seymy"
+    >
+      Continue
+    </button>
+  </form>
+
+  <div class="mt-4 flex flex-col items-center gap-2 text-center">
+    <form method="post" action="{% url 'start_summary' %}">
+      {% csrf_token %}
+      <input type="hidden" name="action" value="change">
+      <button
+        type="submit"
+        class="text-sm font-semibold text-seymy underline-offset-2 hover:underline focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-seymy"
+      >
+        Tell Seymy what to change
+      </button>
+    </form>
+  </div>
+{% endblock %}

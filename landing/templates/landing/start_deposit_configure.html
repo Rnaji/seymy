@@ -1,0 +1,254 @@
+{% extends "landing/start_base.html" %}
+
+{% block title %}Deposit amount — Seymy{% endblock %}
+
+{% block content %}
+  <h1 class="text-[1.75rem] font-bold tracking-tight text-navy sm:text-3xl">
+    How much do you want upfront?
+  </h1>
+  <p class="mt-2 text-sm text-navy-muted">
+    Estimate total:
+    <span class="font-semibold tabular-nums text-navy" id="estimate-total-display">${{ estimate_total }}</span>
+  </p>
+
+  <form
+    method="post"
+    action="{% url 'start_deposit_configure' %}"
+    class="mt-5 space-y-5"
+    novalidate
+    data-estimate-total="{{ estimate_total_raw }}"
+    id="deposit-configure-form"
+  >
+    {% csrf_token %}
+
+    <fieldset>
+      <legend class="text-sm font-semibold text-navy">Deposit type</legend>
+      <div class="mt-3 grid grid-cols-2 gap-2">
+        <label class="flex min-h-11 cursor-pointer items-center justify-center rounded-xl border border-line bg-white px-3 text-sm font-semibold text-navy has-[:checked]:border-seymy has-[:checked]:bg-seymy/5 has-[:checked]:text-seymy">
+          <input type="radio" name="deposit_type" value="percentage" class="sr-only" {% if deposit_type != 'fixed' %}checked{% endif %}>
+          Percentage
+        </label>
+        <label class="flex min-h-11 cursor-pointer items-center justify-center rounded-xl border border-line bg-white px-3 text-sm font-semibold text-navy has-[:checked]:border-seymy has-[:checked]:bg-seymy/5 has-[:checked]:text-seymy">
+          <input type="radio" name="deposit_type" value="fixed" class="sr-only" {% if deposit_type == 'fixed' %}checked{% endif %}>
+          Fixed amount
+        </label>
+      </div>
+    </fieldset>
+
+    <div id="percentage-fields" class="{% if deposit_type == 'fixed' %}hidden{% endif %} space-y-3">
+      <fieldset>
+        <legend class="text-sm font-semibold text-navy">Percentage</legend>
+        <div class="mt-2 flex flex-wrap gap-2">
+          {% for preset in deposit_presets %}
+            <label class="inline-flex min-h-11 cursor-pointer items-center rounded-lg border border-line bg-white px-3.5 text-sm font-semibold text-navy has-[:checked]:border-seymy has-[:checked]:bg-seymy/5 has-[:checked]:text-seymy">
+              <input
+                type="radio"
+                name="deposit_percentage"
+                value="{{ preset }}"
+                class="sr-only js-percent-preset"
+                {% if deposit_type != 'fixed' %}
+                  {% if deposit_value == preset|stringformat:"s" or not deposit_value and preset == 30 %}checked{% endif %}
+                {% endif %}
+              >
+              {{ preset }}%
+            </label>
+          {% endfor %}
+        </div>
+      </fieldset>
+
+      <div>
+        <label for="deposit_percentage_custom" class="block text-xs font-medium text-navy-muted">Custom %</label>
+        <input
+          type="number"
+          id="deposit_percentage_custom"
+          name="deposit_percentage_custom"
+          min="1"
+          max="99"
+          step="1"
+          value="{% if deposit_type == 'percentage' and deposit_value != '25' and deposit_value != '30' and deposit_value != '50' %}{{ deposit_value }}{% endif %}"
+          placeholder="e.g. 40"
+          class="mt-1.5 min-h-11 w-full rounded-xl border border-line bg-white px-4 text-base text-navy focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-seymy"
+          inputmode="numeric"
+        >
+      </div>
+    </div>
+
+    <div id="fixed-fields" class="{% if deposit_type != 'fixed' %}hidden{% endif %}">
+      <label for="deposit_fixed" class="block text-sm font-semibold text-navy">Fixed amount</label>
+      <div class="relative mt-2">
+        <span class="pointer-events-none absolute inset-y-0 left-4 flex items-center text-navy-muted">$</span>
+        <input
+          type="number"
+          id="deposit_fixed"
+          name="deposit_fixed"
+          min="1"
+          step="0.01"
+          value="{% if deposit_type == 'fixed' %}{{ deposit_value }}{% endif %}"
+          placeholder="555"
+          class="min-h-11 w-full rounded-xl border border-line bg-white py-2 pl-8 pr-4 text-base text-navy focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-seymy"
+          inputmode="decimal"
+        >
+      </div>
+    </div>
+
+    <div class="rounded-xl border border-line bg-white px-4 py-3 text-sm">
+      <div id="live-deposit-row" class="flex items-baseline justify-between gap-3 {% if deposit_type == 'fixed' %}hidden{% endif %}">
+        <span class="text-navy-muted">Deposit</span>
+        <span id="live-deposit" class="shrink-0 font-semibold tabular-nums text-navy">${{ preview_deposit }}</span>
+      </div>
+      <div class="flex items-baseline justify-between gap-3 {% if deposit_type != 'fixed' %}mt-2{% endif %}" id="live-balance-row">
+        <span class="text-navy-muted">Remaining balance</span>
+        <span id="live-balance" class="shrink-0 font-semibold tabular-nums text-navy">${{ preview_balance }}</span>
+      </div>
+    </div>
+
+    {% if errors.deposit_value %}
+      <p class="text-sm text-red-600">{{ errors.deposit_value }}</p>
+    {% endif %}
+
+    <div>
+      <label for="balance_due_date" class="block text-sm font-semibold text-navy">
+        When should the balance be due?
+      </label>
+      <input
+        type="date"
+        id="balance_due_date"
+        name="balance_due_date"
+        value="{{ balance_due_date }}"
+        min="{{ min_due_date }}"
+        required
+        class="mt-2 min-h-11 w-full rounded-xl border border-line bg-white px-4 text-base text-navy focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-seymy {% if errors.balance_due_date %}border-red-500{% endif %}"
+      >
+      {% if errors.balance_due_date %}
+        <p class="mt-1.5 text-sm text-red-600">{{ errors.balance_due_date }}</p>
+      {% endif %}
+      <p class="mt-1.5 text-xs text-navy-muted">
+        Seymy will remind you when the balance is due.
+      </p>
+    </div>
+
+    <fieldset>
+      <legend class="text-[0.625rem] font-semibold tracking-[0.08em] text-navy-muted">CARD PROCESSING FEES</legend>
+      <div class="mt-3 space-y-2">
+        <label class="flex min-h-11 cursor-pointer items-start gap-3 rounded-xl border border-line bg-white px-4 py-3 has-[:checked]:border-seymy has-[:checked]:bg-seymy/5">
+          <input type="radio" name="pass_card_fees" value="contractor" class="mt-1 size-4 accent-[#1a6dff]" {% if not pass_card_fees_to_customer %}checked{% endif %}>
+          <span class="text-sm font-medium text-navy">I'll cover eligible card fees</span>
+        </label>
+        <label class="flex min-h-11 cursor-pointer items-start gap-3 rounded-xl border border-line bg-white px-4 py-3 has-[:checked]:border-seymy has-[:checked]:bg-seymy/5">
+          <input type="radio" name="pass_card_fees" value="customer" class="mt-1 size-4 accent-[#1a6dff]" {% if pass_card_fees_to_customer %}checked{% endif %}>
+          <span>
+            <span class="block text-sm font-medium text-navy">Pass eligible card fees to customer</span>
+            <span class="mt-1 block text-xs text-navy-muted">Seymy only applies eligible fees when permitted.</span>
+          </span>
+        </label>
+      </div>
+    </fieldset>
+
+    <p class="text-xs leading-relaxed text-navy-muted">
+      Seymy charges a 1% platform fee on payments processed through Seymy.
+    </p>
+
+    <button
+      type="submit"
+      class="inline-flex min-h-11 w-full items-center justify-center rounded-xl bg-seymy px-6 text-base font-semibold text-white shadow-[0_8px_20px_rgba(26,109,255,0.28)] transition-colors hover:bg-seymy-dark focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-seymy"
+    >
+      Continue
+    </button>
+  </form>
+
+  <script>
+    (function () {
+      var form = document.getElementById('deposit-configure-form');
+      if (!form) return;
+
+      var total = parseFloat(form.getAttribute('data-estimate-total') || '0');
+      var percentageFields = document.getElementById('percentage-fields');
+      var fixedFields = document.getElementById('fixed-fields');
+      var customInput = document.getElementById('deposit_percentage_custom');
+      var fixedInput = document.getElementById('deposit_fixed');
+      var liveDeposit = document.getElementById('live-deposit');
+      var liveBalance = document.getElementById('live-balance');
+      var liveDepositRow = document.getElementById('live-deposit-row');
+      var liveBalanceRow = document.getElementById('live-balance-row');
+      var typeInputs = form.querySelectorAll('input[name="deposit_type"]');
+      var presetInputs = form.querySelectorAll('.js-percent-preset');
+
+      function formatMoney(value) {
+        var amount = Math.round(value * 100) / 100;
+        var parts = amount.toFixed(2).split('.');
+        parts[0] = parts[0].replace(/\B(?=(\d{3})+(?!\d))/g, ',');
+        if (parts[1] === '00') return parts[0];
+        return parts[0] + '.' + parts[1];
+      }
+
+      function selectedType() {
+        var checked = form.querySelector('input[name="deposit_type"]:checked');
+        return checked ? checked.value : 'percentage';
+      }
+
+      function selectedPercent() {
+        var custom = (customInput.value || '').trim();
+        if (custom !== '') return parseFloat(custom);
+        var preset = form.querySelector('input[name="deposit_percentage"]:checked');
+        return preset ? parseFloat(preset.value) : 30;
+      }
+
+      function updateVisibility() {
+        var type = selectedType();
+        var isPercent = type === 'percentage';
+        percentageFields.classList.toggle('hidden', !isPercent);
+        fixedFields.classList.toggle('hidden', isPercent);
+        liveDepositRow.classList.toggle('hidden', !isPercent);
+        liveBalanceRow.classList.toggle('mt-2', isPercent);
+      }
+
+      function updateTotals() {
+        var deposit = 0;
+        if (selectedType() === 'percentage') {
+          var percent = selectedPercent();
+          if (!isNaN(percent) && percent > 0 && percent < 100) {
+            deposit = total * (percent / 100);
+          }
+        } else {
+          var fixed = parseFloat((fixedInput.value || '').replace(/,/g, ''));
+          if (!isNaN(fixed) && fixed > 0 && fixed < total) {
+            deposit = fixed;
+          }
+        }
+        var balance = Math.max(total - deposit, 0);
+        liveDeposit.textContent = '$' + formatMoney(deposit || 0);
+        liveBalance.textContent = '$' + formatMoney(balance || total);
+      }
+
+      typeInputs.forEach(function (input) {
+        input.addEventListener('change', function () {
+          updateVisibility();
+          updateTotals();
+        });
+      });
+
+      presetInputs.forEach(function (input) {
+        input.addEventListener('change', function () {
+          if (input.checked) {
+            customInput.value = '';
+            updateTotals();
+          }
+        });
+      });
+
+      customInput.addEventListener('input', function () {
+        if ((customInput.value || '').trim() !== '') {
+          presetInputs.forEach(function (input) {
+            input.checked = false;
+          });
+        }
+        updateTotals();
+      });
+
+      fixedInput.addEventListener('input', updateTotals);
+
+      updateVisibility();
+      updateTotals();
+    })();
+  </script>
+{% endblock %}

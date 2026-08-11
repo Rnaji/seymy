@@ -1,0 +1,131 @@
+{% extends "landing/start_base.html" %}
+
+{% block title %}{% if is_ask and seymy_reply %}Seymy — Seymy{% elif is_followup %}{{ question.prompt }}{% else %}Tell Seymy — Seymy{% endif %}{% endblock %}
+
+{% block content %}
+  {% if is_ask and seymy_reply %}
+    <p class="text-[0.625rem] font-semibold tracking-[0.08em] text-seymy">SEYMY</p>
+    <h1 class="mt-2 text-[1.75rem] font-bold tracking-tight text-navy sm:text-3xl">
+      Here’s what I found.
+    </h1>
+    <div class="mt-4 whitespace-pre-line rounded-2xl border border-line bg-white px-4 py-4 text-[0.9375rem] leading-relaxed text-navy">
+      {{ seymy_reply }}
+    </div>
+    <p class="mt-4 text-[0.9375rem] text-navy-muted">
+      Ask another question, or tell Seymy about a new job.
+    </p>
+  {% elif is_followup and question %}
+    <p class="text-[0.625rem] font-semibold tracking-[0.08em] text-seymy">SEYMY</p>
+    <h1 class="mt-2 text-[1.75rem] font-bold tracking-tight text-navy sm:text-3xl">
+      {{ question.prompt }}
+    </h1>
+    {% if question.questions %}
+      <ul class="mt-3 space-y-2 text-[0.9375rem] text-navy-muted sm:text-base">
+        {% for q in question.questions %}
+          <li>{{ q }}</li>
+        {% endfor %}
+      </ul>
+    {% else %}
+      <p class="mt-2 text-[0.9375rem] text-navy-muted sm:text-base">
+        {{ question.hint }}
+      </p>
+    {% endif %}
+  {% else %}
+    <h1 class="text-[1.75rem] font-bold tracking-tight text-navy sm:text-3xl">
+      Tell Seymy about the job.
+    </h1>
+    <p class="mt-2 text-[0.9375rem] text-navy-muted sm:text-base">
+      Just talk like you normally would.
+    </p>
+  {% endif %}
+
+  <form method="post" action="{% url 'start_job' %}{% if request.GET.mode %}?mode={{ request.GET.mode }}{% endif %}" class="mt-5" novalidate>
+    {% csrf_token %}
+
+    <div class="rounded-2xl bg-seymy px-5 py-7 text-center text-white shadow-[0_12px_40px_rgba(26,109,255,0.22)] sm:px-6 sm:py-8">
+      <button
+        type="button"
+        class="mx-auto flex min-h-11 w-full max-w-xs flex-col items-center justify-center gap-3 rounded-2xl focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-white"
+        aria-label="Tap to speak"
+      >
+        <span class="inline-flex size-14 items-center justify-center rounded-full bg-white/20" aria-hidden="true">
+          <svg width="26" height="26" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <path d="M12 14a3 3 0 0 0 3-3V6a3 3 0 1 0-6 0v5a3 3 0 0 0 3 3Z" fill="currentColor"/>
+            <path d="M19 11a1 1 0 1 0-2 0 5 5 0 0 1-10 0 1 1 0 1 0-2 0 7 7 0 0 0 6 6.93V21a1 1 0 1 0 2 0v-3.07A7 7 0 0 0 19 11Z" fill="currentColor"/>
+          </svg>
+        </span>
+        <span class="text-base font-semibold tracking-tight">{% if is_ask %}Ask Seymy{% elif is_followup %}Tap to answer{% else %}Tap to speak{% endif %}</span>
+      </button>
+
+      <svg class="mx-auto mt-5 h-8 w-full max-w-sm" viewBox="0 0 220 32" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true" preserveAspectRatio="none">
+        <g stroke="rgba(255,255,255,0.88)" stroke-width="1.6" stroke-linecap="round">
+          <line x1="2" y1="15.2" x2="2" y2="16.8"/>
+          <line x1="10" y1="15" x2="10" y2="17"/>
+          <line x1="18" y1="12" x2="18" y2="20"/>
+          <line x1="26" y1="11.5" x2="26" y2="20.5"/>
+          <line x1="34" y1="11" x2="34" y2="21"/>
+          <line x1="42" y1="14.2" x2="42" y2="17.8"/>
+          <line x1="50" y1="14.5" x2="50" y2="17.5"/>
+          <line x1="58" y1="12.5" x2="58" y2="19.5"/>
+          <line x1="66" y1="6.5" x2="66" y2="25.5"/>
+          <line x1="74" y1="7" x2="74" y2="25"/>
+          <line x1="82" y1="5.5" x2="82" y2="26.5"/>
+          <line x1="90" y1="4" x2="90" y2="28"/>
+          <line x1="98" y1="9.5" x2="98" y2="22.5"/>
+          <line x1="106" y1="14" x2="106" y2="18"/>
+          <line x1="114" y1="14.2" x2="114" y2="17.8"/>
+          <line x1="122" y1="11" x2="122" y2="21"/>
+          <line x1="130" y1="10.5" x2="130" y2="21.5"/>
+          <line x1="138" y1="11.5" x2="138" y2="20.5"/>
+          <line x1="146" y1="12.5" x2="146" y2="19.5"/>
+          <line x1="154" y1="15" x2="154" y2="17"/>
+          <line x1="162" y1="12" x2="162" y2="20"/>
+          <line x1="170" y1="5.5" x2="170" y2="26.5"/>
+          <line x1="178" y1="6.5" x2="178" y2="25.5"/>
+          <line x1="186" y1="7.5" x2="186" y2="24.5"/>
+          <line x1="194" y1="5" x2="194" y2="27"/>
+          <line x1="202" y1="11.5" x2="202" y2="20.5"/>
+          <line x1="210" y1="14.5" x2="210" y2="17.5"/>
+          <line x1="218" y1="15.3" x2="218" y2="16.7"/>
+        </g>
+      </svg>
+    </div>
+
+    {% if not is_followup and not is_ask %}
+      <p class="mt-4 text-center text-xs leading-relaxed text-navy-muted">
+        For example:<br>
+        “{{ example }}”
+      </p>
+    {% endif %}
+
+    <p class="mt-5 text-center text-[0.6875rem] font-medium tracking-[0.06em] text-navy-muted">
+      or type instead
+    </p>
+
+    <div class="mt-3">
+      <label for="message" class="block text-[0.625rem] font-semibold tracking-[0.08em] text-navy-muted">
+        TYPE INSTEAD
+      </label>
+      <textarea
+        id="message"
+        name="message"
+        rows="4"
+        required
+        placeholder="{% if is_ask %}Ask about an estimate or payment...{% else %}Type your estimate here...{% endif %}"
+        aria-invalid="{% if errors.message %}true{% else %}false{% endif %}"
+        {% if errors.message %}aria-describedby="message_error"{% endif %}
+        class="mt-2 min-h-28 w-full resize-y rounded-xl border border-line bg-white px-4 py-3 text-sm leading-relaxed text-navy placeholder:text-navy-muted/50 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-seymy {% if errors.message %}border-red-500{% endif %}"
+      >{{ message }}</textarea>
+      {% if errors.message %}
+        <p id="message_error" class="mt-1.5 text-sm text-red-600">{{ errors.message }}</p>
+      {% endif %}
+    </div>
+
+    <button
+      type="submit"
+      class="mt-5 inline-flex min-h-11 w-full items-center justify-center rounded-xl bg-seymy px-6 text-base font-semibold text-white shadow-[0_8px_20px_rgba(26,109,255,0.28)] transition-colors hover:bg-seymy-dark focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-seymy"
+    >
+      {% if is_ask %}Ask{% elif is_followup %}Continue{% else %}Create Estimate{% endif %}
+    </button>
+  </form>
+{% endblock %}

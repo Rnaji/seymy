@@ -1,0 +1,44 @@
+{% extends "landing/start_base.html" %}
+
+{% block title %}Deposit paid — Seymy{% endblock %}
+
+{% block content %}
+  <p class="text-[0.625rem] font-semibold tracking-[0.08em] text-ready">ESTIMATE ACCEPTED</p>
+  <h1 class="mt-2 text-[1.75rem] font-bold tracking-tight text-navy sm:text-3xl">
+    Deposit paid
+  </h1>
+
+  <div class="mt-6 space-y-2 rounded-2xl border border-line bg-white p-5">
+    <p class="text-sm font-medium text-ready">✓ Estimate accepted</p>
+    <p class="text-sm font-medium text-ready">✓ ${{ deposit_amount }} deposit received</p>
+    {% if accepted_at_display %}
+      <p class="mt-3 text-sm text-navy-muted">Accepted {{ accepted_at_display }}</p>
+      <p class="text-sm text-navy-muted">Deposit received: ${{ deposit_amount }}</p>
+    {% endif %}
+  </div>
+
+  <dl class="mt-5 space-y-3 rounded-2xl border border-line bg-white p-4 text-sm sm:p-5">
+    <div class="flex items-baseline justify-between gap-3">
+      <dt class="text-navy-muted">Remaining balance</dt>
+      <dd class="shrink-0 font-semibold tabular-nums text-navy">${{ balance_amount }}</dd>
+    </div>
+    <div class="flex items-baseline justify-between gap-3">
+      <dt class="text-navy-muted">Balance due</dt>
+      <dd class="shrink-0 font-semibold text-navy">{{ balance_due_date_display }}</dd>
+    </div>
+  </dl>
+
+  <p class="mt-5 text-center text-sm text-navy-muted">
+    Seymy will remind you when the balance is due.
+  </p>
+
+  <form method="post" action="{% url 'start_deposit_paid' %}" class="mt-6">
+    {% csrf_token %}
+    <button
+      type="submit"
+      class="inline-flex min-h-11 w-full items-center justify-center rounded-xl bg-seymy px-6 text-base font-semibold text-white transition-colors hover:bg-seymy-dark focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-seymy"
+    >
+      Done
+    </button>
+  </form>
+{% endblock %}
