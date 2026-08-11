@@ -10,17 +10,48 @@ For the full list of settings and their values, see
 https://docs.djangoproject.com/en/5.0/ref/settings/
 """
 
+import os
 from pathlib import Path
+
+from django.core.exceptions import ImproperlyConfigured
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
+
+
+def _load_dotenv(path: Path) -> None:
+    """Minimal .env loader (no third-party dependency). Does not override existing env."""
+    if not path.is_file():
+        return
+    for raw in path.read_text(encoding='utf-8').splitlines():
+        line = raw.strip()
+        if not line or line.startswith('#') or '=' not in line:
+            continue
+        key, _, value = line.partition('=')
+        key = key.strip()
+        value = value.strip().strip('"').strip("'")
+        if key and key not in os.environ:
+            os.environ[key] = value
+
+
+_load_dotenv(BASE_DIR / '.env')
+
+
+def _env(name: str, default: str | None = None) -> str:
+    value = os.environ.get(name, default)
+    if value is None:
+        raise ImproperlyConfigured(
+            f'Missing required environment variable {name}. '
+            f'Copy .env.example to .env and set {name}.'
+        )
+    return value
 
 
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/5.0/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = 'django-insecure-24crw6g#+zsm@7x04poh%7#p)45jmc+1@^fj%o63e+87&h&(sq'
+SECRET_KEY = _env('DJANGO_SECRET_KEY')
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
@@ -127,10 +158,10 @@ STATICFILES_DIRS = [
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 # Stripe (leave blank for local test checkout → webhook confirmation path)
-STRIPE_SECRET_KEY = ''
-STRIPE_PUBLISHABLE_KEY = ''
-STRIPE_WEBHOOK_SECRET = ''
-STRIPE_CURRENCY = 'usd'
+STRIPE_SECRET_KEY = _env('STRIPE_SECRET_KEY', '')
+STRIPE_PUBLISHABLE_KEY = _env('STRIPE_PUBLISHABLE_KEY', '')
+STRIPE_WEBHOOK_SECRET = _env('STRIPE_WEBHOOK_SECRET', '')
+STRIPE_CURRENCY = _env('STRIPE_CURRENCY', 'usd')
 
 # Seymy commercial model (documented; fee application lives with Stripe Connect later)
 SEYMY_SUBSCRIPTION_MONTHLY_USD = 49
