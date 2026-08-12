@@ -56,9 +56,15 @@ def _env(name: str, default: str | None = None) -> str:
 SECRET_KEY = _env('DJANGO_SECRET_KEY')
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = _env('DEBUG', 'true').lower() == 'true'
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = [
+    host.strip()
+    for host in _env('DJANGO_ALLOWED_HOSTS', '').split(',')
+    if host.strip()
+]
+if render_hostname := os.environ.get('RENDER_EXTERNAL_HOSTNAME'):
+    ALLOWED_HOSTS.append(render_hostname)
 
 
 # Application definition
