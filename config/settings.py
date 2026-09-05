@@ -66,6 +66,27 @@ ALLOWED_HOSTS = [
 if render_hostname := os.environ.get('RENDER_EXTERNAL_HOSTNAME'):
     ALLOWED_HOSTS.append(render_hostname)
 
+# Render terminates TLS at its proxy. Trust its forwarded protocol so Django
+# generates HTTPS links (including Stripe redirects) and applies secure cookies.
+SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')
+
+if not DEBUG:
+    SECURE_SSL_REDIRECT = True
+    SESSION_COOKIE_SECURE = True
+    CSRF_COOKIE_SECURE = True
+    SECURE_HSTS_SECONDS = 31536000
+
+CSRF_TRUSTED_ORIGINS = [
+    origin.strip()
+    for origin in _env(
+        'DJANGO_CSRF_TRUSTED_ORIGINS',
+        'https://seymy.com,https://www.seymy.com',
+    ).split(',')
+    if origin.strip()
+]
+if render_hostname:
+    CSRF_TRUSTED_ORIGINS.append(f'https://{render_hostname}')
+
 
 # Application definition
 
