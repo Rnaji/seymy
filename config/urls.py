@@ -1,10 +1,10 @@
 """
 URL configuration for config project.
+
+SITE-0: the Django admin is not exposed on the public site.
 """
-from django.contrib import admin
 from django.urls import include, path
 
 urlpatterns = [
-    path('admin/', admin.site.urls),
     path('', include('landing.urls')),
 ]

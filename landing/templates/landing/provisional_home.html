@@ -1,0 +1,133 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Seymy — AI coworker for contractors</title>
+  <meta name="description" content="Seymy is an AI coworker for home-service contractors in the US. Now in a private pilot.">
+  {# Provisional page (SITE-0). Not meant to be indexed; the full site replaces it. #}
+  <meta name="robots" content="noindex">
+  <style>
+    :root {
+      --navy: #0b1f3a;
+      --navy-muted: #4a5d73;
+      --blue: #1a6dff;
+      --blue-dark: #0f5ae6;
+      --surface: #f5f7fa;
+      --line: #e6ebf2;
+      --white: #fff;
+      --green: #16a34a;
+    }
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      background: var(--white);
+      color: var(--navy);
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+      line-height: 1.5;
+    }
+    .wrap { max-width: 56rem; margin: 0 auto; padding: 0 1.25rem; }
+    header { border-bottom: 1px solid var(--line); }
+    header .wrap { display: flex; align-items: center; justify-content: space-between; height: 4rem; }
+    .logo { font-weight: 700; font-size: 1.375rem; letter-spacing: -0.02em; color: var(--navy); text-decoration: none; }
+    .logo span { color: var(--blue); }
+    .hero { padding: 4rem 0 3rem; }
+    .badge {
+      display: inline-block; padding: 0.25rem 0.75rem; border-radius: 999px;
+      background: var(--surface); border: 1px solid var(--line);
+      color: var(--navy-muted); font-size: 0.8125rem; font-weight: 600;
+    }
+    h1 { font-size: clamp(2rem, 5vw, 3rem); line-height: 1.1; letter-spacing: -0.02em; margin: 1rem 0; }
+    .lead { font-size: 1.125rem; color: var(--navy-muted); max-width: 40rem; margin: 0 0 2rem; }
+    .btn {
+      display: inline-block; padding: 0.875rem 1.5rem; border-radius: 0.75rem;
+      background: var(--blue); color: var(--white); font-weight: 600; text-decoration: none;
+    }
+    .btn:hover, .btn:focus-visible { background: var(--blue-dark); }
+    .note { margin-top: 0.75rem; font-size: 0.875rem; color: var(--navy-muted); }
+    section.features { background: var(--surface); border-top: 1px solid var(--line); border-bottom: 1px solid var(--line); padding: 3rem 0; }
+    h2 { font-size: 1.5rem; margin: 0 0 1.5rem; }
+    .grid { display: grid; gap: 1rem; grid-template-columns: repeat(auto-fit, minmax(15rem, 1fr)); }
+    .card { background: var(--white); border: 1px solid var(--line); border-radius: 1rem; padding: 1.25rem; }
+    .card h3 { font-size: 1rem; margin: 0.5rem 0 0.25rem; }
+    .card p { margin: 0; color: var(--navy-muted); font-size: 0.9375rem; }
+    .status { font-size: 0.75rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.04em; }
+    .status.pilot { color: var(--green); }
+    .status.later { color: var(--navy-muted); }
+    .info { padding: 3rem 0; }
+    .info p { color: var(--navy-muted); max-width: 40rem; }
+    footer { border-top: 1px solid var(--line); padding: 1.5rem 0; font-size: 0.875rem; color: var(--navy-muted); }
+    footer a { color: var(--navy-muted); }
+  </style>
+</head>
+<body>
+  <header>
+    <div class="wrap">
+      <a class="logo" href="/">seymy<span>.</span></a>
+      <a href="{{ early_access_href }}">Contact</a>
+    </div>
+  </header>
+
+  <main>
+    <section class="hero">
+      <div class="wrap">
+        <span class="badge">Private pilot · United States</span>
+        <h1>Your AI coworker for the calls, the estimates and the jobs.</h1>
+        <p class="lead">
+          Seymy is built for home-service contractors. Miss Seymy answers your business calls,
+          you dictate estimates from the truck, and your jobs and customer payments stay in one place.
+          Nothing goes out to a customer until you approve it.
+        </p>
+        <a class="btn" href="{{ early_access_href }}">Request early access</a>
+        <p class="note">We're onboarding a small group of contractors. Tell us about your business and we'll get back to you.</p>
+      </div>
+    </section>
+
+    <section class="features" aria-labelledby="features-heading">
+      <div class="wrap">
+        <h2 id="features-heading">What Seymy does</h2>
+        <div class="grid">
+          <div class="card">
+            <span class="status pilot">In pilot</span>
+            <h3>Miss Seymy answers your calls</h3>
+            <p>She picks up your business line when you can't and puts the customer's request in front of you.</p>
+          </div>
+          <div class="card">
+            <span class="status pilot">In pilot</span>
+            <h3>Estimates by voice</h3>
+            <p>Describe the job out loud. Seymy drafts a PDF estimate for you to review before it's sent.</p>
+          </div>
+          <div class="card">
+            <span class="status pilot">In pilot</span>
+            <h3>Leads and jobs in one place</h3>
+            <p>Your Workspace keeps every customer, estimate and job together, from the first call on.</p>
+          </div>
+          <div class="card">
+            <span class="status pilot">In pilot</span>
+            <h3>Customer payments</h3>
+            <p>Send payment links by email. Card payments run on Stripe.</p>
+          </div>
+          <div class="card">
+            <span class="status later">Coming later</span>
+            <h3>Payment links by text message</h3>
+            <p>Available once our text messaging registration is complete.</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="info" aria-labelledby="pricing-heading">
+      <div class="wrap">
+        <h2 id="pricing-heading">Pricing</h2>
+        <p>Pricing will be published before Seymy opens to the public. Pilot contractors receive the details when they join.</p>
+      </div>
+    </section>
+  </main>
+
+  <footer>
+    <div class="wrap">
+      © Seymy · <a href="mailto:{{ contact_email }}">{{ contact_email }}</a>
+    </div>
+  </footer>
+</body>
+</html>

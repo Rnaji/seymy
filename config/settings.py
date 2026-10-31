@@ -201,9 +201,8 @@ STRIPE_PUBLISHABLE_KEY = _env('STRIPE_PUBLISHABLE_KEY', '')
 STRIPE_WEBHOOK_SECRET = _env('STRIPE_WEBHOOK_SECRET', '')
 STRIPE_CURRENCY = _env('STRIPE_CURRENCY', 'usd')
 
-# Seymy commercial model (documented; fee application lives with Stripe Connect later)
-SEYMY_SUBSCRIPTION_MONTHLY_USD = 49
-SEYMY_PLATFORM_FEE_PERCENT = 1  # Not a card processing fee
+# SITE-0 provisional site: early-access requests go to this mailbox (no form, no data stored).
+SITE_CONTACT_EMAIL = _env('SITE_CONTACT_EMAIL', 'support@seymy.com')
 
 # Email — console backend for local/MVP; swap for SMTP/ESP in production
 EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
