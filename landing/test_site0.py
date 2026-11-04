@@ -337,6 +337,26 @@ class SmsHonestyTests(SimpleTestCase):
                 self.assertNotIn('sms_contractor_business', visible)
 
 
+class FictionalBrandTests(SimpleTestCase):
+    """The hero shirt shows a fictional "SUNSHINE Services" logo: no page may
+    name it or present it as a Seymy customer (caption, alt text, testimonial)."""
+
+    def test_no_page_mentions_the_shirt_brand(self):
+        for path in ['/', '/privacy', '/terms']:
+            with self.subTest(path=path):
+                html = self.client.get(path, secure=True).content.decode().lower()
+                self.assertNotIn('sunshine', html)
+
+    def test_hero_alt_text_describes_a_contractor_only(self):
+        html = self.client.get('/', secure=True).content.decode()
+        self.assertIn(
+            'alt="Contractor in his work truck talking to Seymy on a dashboard-mounted phone"', html
+        )
+        for text in ['testimonial', 'trusted by', 'our customers', 'our clients', 'case study']:
+            with self.subTest(text=text):
+                self.assertNotRegex(html.lower(), rf'\b{text}\b')
+
+
 class PublicationGateCommandTests(SimpleTestCase):
     """build.sh runs check_public_pages: the build fails while a marker remains."""
 
