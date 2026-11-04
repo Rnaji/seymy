@@ -86,7 +86,7 @@ class V11ContentTests(SimpleTestCase):
         self.lower = self.html.lower()
 
     def test_v11_prices_are_shown(self):
-        for text in ['$99', '$990', '$25/month or $250/year', '500 Miss Seymy call minutes']:
+        for text in ['$99', '$990', '$25/month or $250/year', 'call minutes each month']:
             with self.subTest(text=text):
                 self.assertIn(text, self.html)
 
@@ -117,6 +117,16 @@ class V11ContentTests(SimpleTestCase):
         for text in ['app store', 'google play', 'ios', 'android', 'testflight', 'apk']:
             with self.subTest(text=text):
                 self.assertNotRegex(self.lower, rf'\b{text}\b')
+
+
+class IdentityTests(SimpleTestCase):
+    """L2: REF-1 wordmark and shared token stylesheet."""
+
+    def test_bicolour_wordmark_and_tokens(self):
+        html = self.client.get('/', secure=True).content.decode()
+        self.assertIn('<span class="wordmark">Sey<span class="wordmark__miss">my.</span></span>', html)
+        self.assertIn('css/site-v11.css', html)
+        self.assertNotIn('#1a6dff', html.lower())
 
 
 class RetiredRouteTests(SimpleTestCase):

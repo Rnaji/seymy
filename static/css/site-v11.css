@@ -1,0 +1,77 @@
+/*
+ * Seymy V1.1 site identity (REF-1).
+ * Tokens mirror the mobile app's src/theme.ts (K0, integration/v11-wave-c-mobile).
+ * Loaded after the Tailwind build and the page styles; unlayered, so these
+ * values override the Tailwind theme variables.
+ */
+:root {
+  --color-navy: #0b1b33;          /* textPrimary */
+  --color-navy-muted: #5b6b82;    /* textSecondary */
+  --color-seymy: #2563eb;         /* primary */
+  --color-seymy-dark: #1d4ed8;    /* tones.info.fg */
+  --color-seymy-soft: #dbeafe;    /* primarySoft */
+  --color-surface: #f4f7fc;       /* background */
+  --color-surface-2: #eef2f8;     /* surfaceSecondary */
+  --color-line: #e2e8f0;          /* border */
+  --color-line-strong: #cbd3df;   /* borderStrong */
+  --color-ready: #16a34a;         /* success */
+  --color-miss: #ec4899;          /* Miss Seymy (wordmark, large text, strokes) */
+  --color-miss-text: #be185d;     /* tones.miss.fg: Miss text on white (AA) */
+  --color-miss-soft: #fce7f3;     /* missSoft */
+  --radius-control: 12px;
+  --radius-card: 18px;
+  --radius-hero: 20px;
+  --shadow-card: 0 1px 2px rgba(11, 27, 51, 0.04), 0 8px 24px rgba(11, 27, 51, 0.05);
+  --shadow-raised: 0 1px 2px rgba(11, 27, 51, 0.04), 0 10px 28px rgba(11, 27, 51, 0.06);
+  --shadow-float: 0 1px 2px rgba(11, 27, 51, 0.05), 0 6px 18px rgba(11, 27, 51, 0.06);
+}
+
+/* Wordmark: "Sey" Seymy blue, "my." Miss pink (SeymyWordmark). */
+.wordmark {
+  color: var(--color-seymy);
+  font-weight: 700;
+  letter-spacing: -0.03em;
+  text-decoration: none;
+}
+.wordmark__miss { color: var(--color-miss); }
+
+/* Miss Seymy is named in pink, distinct from Seymy blue. */
+.miss-name { color: var(--color-miss-text); font-weight: 600; }
+
+/* Cards: radius 18-20, two-layer shadows (theme.ts shadows.card / raised). */
+#pricing .pricing-card {
+  border-radius: var(--radius-hero);
+  box-shadow: var(--shadow-raised);
+}
+#talk .talk-attach,
+#talk .learns-instructions,
+#talk .learns-memory,
+#day .workday-notice,
+#connected .connected-journey,
+.hw-block,
+.comparison-grid,
+.faq-list > div {
+  border-radius: var(--radius-card);
+  box-shadow: var(--shadow-card);
+}
+
+/* Primary action: PrimaryButton xl (52 dp, radius 12, primary fill). */
+.hero-cta,
+.final-cta-button,
+#pricing .pricing-card__cta,
+.btn-primary {
+  border-radius: var(--radius-control);
+  background: var(--color-seymy);
+  box-shadow: 0 1px 2px rgba(11, 27, 51, 0.05), 0 8px 20px rgba(37, 99, 235, 0.26);
+}
+.hero-cta:hover,
+.final-cta-button:hover,
+#pricing .pricing-card__cta:hover,
+.btn-primary:hover { background: var(--color-seymy-dark); }
+
+a:focus-visible,
+button:focus-visible,
+summary:focus-visible {
+  outline: 2px solid var(--color-seymy);
+  outline-offset: 2px;
+}
