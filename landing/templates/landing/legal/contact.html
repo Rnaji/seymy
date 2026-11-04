@@ -1,9 +1,13 @@
+{% comment %}
+  Verified details only: no postal box; no phone number is published. The support address planned is support at seymy.com, but that
+  mailbox is not confirmed yet (the domain does receive mail, Google
+  Workspace MX), so it stays a placeholder.
+{% endcomment %}
       <section class="legal-section legal-contact" id="contact" aria-labelledby="{{ prefix }}-contact">
         <h2 id="{{ prefix }}-contact">Contact and support</h2>
         <dl class="legal-contact__list">
-          <div><dt>Company</dt><dd>{% include "landing/partials/todo.html" with what="raison sociale vérifiée" %}</dd></div>
-          <div><dt>Address</dt><dd>{% include "landing/partials/todo.html" with what="adresse postale vérifiée" %}</dd></div>
-          <div><dt>Email</dt><dd>{% include "landing/partials/todo.html" with what="e-mail d’assistance vérifié (réception prouvée)" %}</dd></div>
-          <div><dt>Phone</dt><dd>{% include "landing/partials/todo.html" with what="téléphone d’assistance vérifié, si publié" %}</dd></div>
+          <div><dt>Company</dt><dd>{% include "landing/partials/todo.html" with what="entité légale" %}</dd></div>
+          <div><dt>Address</dt><dd>{% include "landing/partials/todo.html" with what="adresse légale (pas de boîte postale)" %}</dd></div>
+          <div><dt>Email</dt><dd>{% include "landing/partials/todo.html" with what="e-mail d’assistance" %}</dd></div>
         </dl>
       </section>

@@ -1,5 +1,5 @@
 """
-The landing's single download channel (Rachid's decision L.7, 04/11).
+The landing's single download channel.
 
 One setting pair, ``SITE_DOWNLOAD_URL`` and ``SITE_DOWNLOAD_LABEL``, drives
 every call to action on the site. Without a publishable URL there is no link

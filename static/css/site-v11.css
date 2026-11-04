@@ -1,6 +1,6 @@
 /*
- * Seymy V1.1 site identity (REF-1).
- * Tokens mirror the mobile app's src/theme.ts (K0, integration/v11-wave-c-mobile).
+ * Seymy site identity.
+ * Tokens mirror the Seymy mobile app theme (src/theme.ts).
  * Loaded after the Tailwind build and the page styles; unlayered, so these
  * values override the Tailwind theme variables.
  */
@@ -76,7 +76,7 @@ summary:focus-visible {
   outline-offset: 2px;
 }
 
-/* L3: no validated download channel yet = a neutral note, never a link. */
+/* No validated download channel = a neutral note, never a link. */
 .pilot-note {
   display: flex;
   min-height: 3.25rem;
@@ -140,7 +140,7 @@ mark.todo {
   overflow-wrap: anywhere;
 }
 
-/* Legal pages (Privacy, Terms) in the landing's REF-1 identity. */
+/* Legal pages (Privacy, Terms) in the landing's identity. */
 .legal-body {
   margin: 0;
   min-height: 100dvh;
@@ -268,22 +268,28 @@ mark.todo {
   border-radius: var(--radius-card);
   background: #f7faff;
 }
-.legal-contact__list { margin: 0; }
-.legal-contact__list > div {
+.legal-contact__list,
+.legal-sms { margin: 0; }
+.legal-contact__list > div,
+.legal-sms > div {
   display: grid;
   gap: 0.15rem;
   padding: 0.6rem 0;
   border-bottom: 1px solid var(--color-line);
 }
 @media (min-width: 640px) {
+  .legal-sms > div { grid-template-columns: 11rem 1fr; gap: 1rem; }
   .legal-contact__list > div { grid-template-columns: 7rem 1fr; gap: 1rem; }
 }
+.legal-sms dt,
 .legal-contact__list dt {
   color: var(--color-navy-muted);
   font-size: 0.8125rem;
   font-weight: 600;
 }
+.legal-sms dd,
 .legal-contact__list dd { margin: 0; }
+.legal-sms__sharing { margin-top: 1rem !important; font-weight: 600; color: var(--color-navy) !important; }
 .legal-related {
   display: flex;
   flex-wrap: wrap;
@@ -301,7 +307,7 @@ mark.todo {
 }
 .legal-related a:hover { text-decoration: underline; }
 
-/* P2 (audit L.2): the mobile hero voice bubble sat on the photo with low contrast. */
+/* The mobile hero voice bubble sat on the photo with low contrast. */
 @media (max-width: 1023px) {
   .hero-chat--mobile .hc-bubble {
     background: rgba(255, 255, 255, 0.94);

@@ -1,8 +1,7 @@
 {% extends "landing/legal/base.html" %}
 {% comment %}
-  Structure only. The text comes from Rachid's ChatGPT drafts and from the
-  verified details (MASTER PROVIDERS, via MASTER UX/UI). Nothing here is
-  invented: every missing item is a visible À FOURNIR marker.
+  Structure only until the final texts and verified details are supplied.
+  Nothing here is invented: every missing item is a visible À FOURNIR marker.
 {% endcomment %}
 {% block title %}Terms &amp; Conditions{% endblock %}
 {% block description %}The terms that govern the use of Seymy, including its SMS program.{% endblock %}
@@ -10,7 +9,8 @@
 {% block content %}
       <section class="legal-section" aria-labelledby="tc-agreement">
         <h2 id="tc-agreement">Agreement</h2>
-        <p>{% include "landing/partials/todo.html" with what="nom exact de la marque enregistrée (Twilio A2P), raison sociale, État et acceptation des conditions" %}</p>
+        <p>Seymy is the brand of {% include "landing/partials/todo.html" with what="entité légale (raison sociale exacte, forme juridique, État, DBA éventuel)" %}.</p>
+        <p>{% include "landing/partials/todo.html" with what="acceptation des conditions" %}</p>
       </section>
 
       <section class="legal-section" aria-labelledby="tc-service">
@@ -30,15 +30,8 @@
 
       <section class="legal-section legal-section--sms" id="sms" aria-labelledby="tc-sms">
         <h2 id="tc-sms">SMS terms</h2>
-        <p>{% include "landing/partials/todo.html" with what="description exacte du programme SMS enregistré dans Twilio (aujourd’hui : tests internes Seymy uniquement, pas de SMS aux clients des contractors)" %}</p>
-        <ul class="legal-list">
-          <li>{% include "landing/partials/todo.html" with what="fréquence variable des messages" %}</li>
-          <li>{% include "landing/partials/todo.html" with what="frais éventuels de messages et de données" %}</li>
-          <li>{% include "landing/partials/todo.html" with what="désinscription par STOP" %}</li>
-          <li>{% include "landing/partials/todo.html" with what="aide par HELP et coordonnées d’assistance" %}</li>
-          <li>{% include "landing/partials/todo.html" with what="clause : les opérateurs ne sont pas responsables des messages retardés ou non livrés" %}</li>
-          <li>{% include "landing/partials/todo.html" with what="renvoi vers la Privacy Policy pour le non-partage des données d’opt-in" %}</li>
-        </ul>
+{% include "landing/legal/sms_program.html" %}
+        <p>{% include "landing/partials/todo.html" with what="renvoi vers la Privacy Policy pour le non-partage des données d’opt-in" %}</p>
       </section>
 
       <section class="legal-section" aria-labelledby="tc-use">

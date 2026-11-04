@@ -80,7 +80,7 @@ class HomeTests(SimpleTestCase):
 
 
 class V11ContentTests(SimpleTestCase):
-    """L1: the landing states V1.1 pricing and makes no retired promise."""
+    """The landing states V1.1 pricing and makes no retired promise."""
 
     def setUp(self):
         self.html = self.client.get('/', secure=True).content.decode()
@@ -121,7 +121,7 @@ class V11ContentTests(SimpleTestCase):
 
 
 class IdentityTests(SimpleTestCase):
-    """L2: REF-1 wordmark and shared token stylesheet."""
+    """Brand wordmark and shared token stylesheet."""
 
     def test_bicolour_wordmark_and_tokens(self):
         html = self.client.get('/', secure=True).content.decode()
@@ -131,7 +131,7 @@ class IdentityTests(SimpleTestCase):
 
 
 class DownloadCtaTests(SimpleTestCase):
-    """L3: one configurable download channel; no URL means no link at all."""
+    """One configurable download channel; no URL means no link at all."""
 
     def _home(self, **overrides):
         with self.settings(**overrides):
@@ -161,13 +161,22 @@ class DownloadCtaTests(SimpleTestCase):
         self.assertIn('aria-label="QR code to download Seymy"', html)
         self.assertNotIn('<?xml', html)
 
+    def test_label_and_url_are_escaped(self):
+        html = self._home(
+            SITE_DOWNLOAD_URL='https://downloads.example.com/a"onmouseover="x',
+            SITE_DOWNLOAD_LABEL='<script>alert(1)</script>',
+        )
+        self.assertNotIn('<script>alert(1)</script>', html)
+        self.assertIn('&lt;script&gt;', html)
+        self.assertNotIn('"onmouseover="', html)
+
     def test_blank_label_falls_back_to_a_neutral_label(self):
         html = self._home(SITE_DOWNLOAD_URL='https://downloads.example.com/x', SITE_DOWNLOAD_LABEL='')
         self.assertEqual(html.count('>Get the Seymy app</a>'), 4)
 
 
 class LegalPagesTests(SimpleTestCase):
-    """L4: /privacy and /terms, linked from the footer and from each other."""
+    """/privacy and /terms, linked from the footer and from each other."""
 
     PAGES = {'/privacy': 'Privacy Policy', '/terms': 'Terms &amp; Conditions'}
 
@@ -200,11 +209,30 @@ class LegalPagesTests(SimpleTestCase):
                 html = self.client.get(path, secure=True).content.decode()
                 self.assertIn('id="sms"', html)
                 self.assertIn('id="contact"', html)
-                for item in ['STOP', 'HELP', 'fréquence variable', 'frais éventuels', 'non livrés',
-                             'nom exact de la marque enregistrée']:
+                self.assertIn('Seymy is the brand of', html)
+                for item in ['Program', 'Who receives messages', 'How you opt in', 'Message frequency',
+                             'Costs', 'Opt out (STOP)', 'Help (HELP)', 'Delivery',
+                             'Msg &amp; data rates may apply',
+                             'carriers are not liable for delayed or undelivered messages']:
                     self.assertIn(item, html)
+                self.assertNotIn('&amp;amp;', html)
         privacy = self.client.get('/privacy', secure=True).content.decode()
-        self.assertIn('non-partage des données d’opt-in SMS', privacy)
+        self.assertIn(
+            'Mobile information will not be shared with third parties or affiliates for marketing '
+            'or promotional purposes. Text messaging originator opt-in data and consent will not be '
+            'shared with any third parties.',
+            privacy,
+        )
+
+    def test_unsupplied_items_are_visible_markers(self):
+        """Every missing legal item is a visible marker, never silent text."""
+        for path in self.PAGES:
+            with self.subTest(path=path):
+                html = self.client.get(path, secure=True).content.decode()
+                self.assertEqual(html.count('data-todo'), html.count('{{À FOURNIR : '))
+                self.assertGreaterEqual(html.count('data-todo'), 15)
+                for item in ['entité légale', 'adresse légale', 'e-mail d’assistance', 'programme SMS']:
+                    self.assertIn(item, html)
 
     def test_no_invented_contact_details(self):
         """Contacts stay placeholders until verified details are supplied."""
