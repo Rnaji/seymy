@@ -300,3 +300,19 @@ mark.todo {
   text-decoration: none;
 }
 .legal-related a:hover { text-decoration: underline; }
+
+/* P2 (audit L.2): the mobile hero voice bubble sat on the photo with low contrast. */
+@media (max-width: 1023px) {
+  .hero-chat--mobile .hc-bubble {
+    background: rgba(255, 255, 255, 0.94);
+    box-shadow: var(--shadow-float);
+    -webkit-backdrop-filter: blur(6px);
+    backdrop-filter: blur(6px);
+  }
+  .hero-chat--mobile .hc-body { color: var(--color-navy); }
+}
+
+/* Small text contrast (WCAG AA 4.5:1). */
+#final-cta .final-cta-micro { color: rgba(255, 255, 255, 0.72); }
+#final-cta .final-cta-eyebrow { color: rgba(255, 255, 255, 0.72); }
+#pricing .pricing-card__users-value--included { color: #15803d; } /* tones.good.accent */
