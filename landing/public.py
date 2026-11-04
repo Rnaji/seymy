@@ -4,6 +4,7 @@ Public surface of www.seymy.com.
 The only views reachable on the public site. None of them touches the database,
 the session store, Stripe or the retired MVP funnel in ``views.py``.
 """
+from django.conf import settings
 from django.http import HttpResponseGone
 from django.shortcuts import redirect, render
 from django.template.loader import render_to_string
@@ -29,12 +30,20 @@ def home(request):
     )
 
 
+def _legal_context(page):
+    return {
+        'page': page,
+        # One setting for both pages: the effective date shown on Privacy and Terms.
+        'legal_effective_date': (getattr(settings, 'SITE_LEGAL_EFFECTIVE_DATE', '') or '').strip(),
+    }
+
+
 def privacy(request):
-    return render(request, 'landing/legal/privacy.html', {'page': 'privacy'})
+    return render(request, 'landing/legal/privacy.html', _legal_context('privacy'))
 
 
 def terms(request):
-    return render(request, 'landing/legal/terms.html', {'page': 'terms'})
+    return render(request, 'landing/legal/terms.html', _legal_context('terms'))
 
 
 def retired_funnel(request):

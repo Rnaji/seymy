@@ -1,56 +1,89 @@
 {% extends "landing/legal/base.html" %}
 {% comment %}
-  Structure only until the final texts and verified details are supplied.
-  Nothing here is invented: every missing item is a visible À FOURNIR marker.
+  Describes only processing that is active today. Anything not verified is a
+  visible À FOURNIR marker; never replace one with an assumption.
 {% endcomment %}
 {% block title %}Privacy Policy{% endblock %}
-{% block description %}How Seymy collects, uses and protects information, including its SMS program.{% endblock %}
+{% block description %}How Seymy collects, uses and protects information, including its internal SMS testing program.{% endblock %}
 {% block heading %}Privacy Policy{% endblock %}
 {% block content %}
       <section class="legal-section" aria-labelledby="pp-who">
         <h2 id="pp-who">Who we are</h2>
-        <p>Seymy is the brand of {% include "landing/partials/todo.html" with what="entité légale (raison sociale exacte, forme juridique, État, DBA éventuel)" %}.</p>
+        <p>Seymy (“Seymy”, “we”, “us”) is the brand of {% include "landing/partials/todo.html" with what="entité légale (raison sociale exacte, forme juridique, État, DBA éventuel)" %}. Seymy provides software for home-service businesses (“Businesses”): an app that helps them prepare estimates and invoices, get paid, and answer their business phone line with an AI assistant, Miss Seymy.</p>
+        <p>This policy explains what information we process when you visit www.seymy.com, when a Business uses Seymy, when you call a Business that uses Miss Seymy, and in our internal SMS testing program.</p>
       </section>
 
       <section class="legal-section" aria-labelledby="pp-collect">
         <h2 id="pp-collect">Information we collect</h2>
-        <p>{% include "landing/partials/todo.html" with what="données réellement collectées (compte, appels Miss Seymy, devis et factures, paiements, données techniques, numéro de téléphone et consentement SMS)" %}</p>
+        <ul class="legal-list">
+          <li><strong>This website.</strong> www.seymy.com has no account, no sign-in and no forms. Like any website, our hosting provider receives the technical data needed to deliver pages, such as your IP address, browser type and the page requested.</li>
+          <li><strong>Business account information</strong>, provided by a Business when it uses the Seymy app: names, email addresses and phone numbers of the owner and team members, and business details such as the business name and address.</li>
+          <li><strong>Information about a Business’s customers</strong>, provided by the Business or by the customer: name, phone number, email address, service address, job details, photos, estimates, invoices and payment status.</li>
+          <li><strong>Calls answered by Miss Seymy</strong>: the caller’s phone number, call details (such as time and duration), a written transcript of the conversation and an AI-generated summary. Calls are transcribed; they are not recorded as audio.</li>
+          <li><strong>Payments</strong>, processed by Stripe: we receive the payment status and limited details about the payment. We do not store full card or bank account numbers.</li>
+          <li><strong>App and device information</strong>: app version, device type, push notification tokens and technical logs.</li>
+          <li><strong>Internal SMS testing program</strong>: the mobile numbers of the Seymy team members who take part, the test messages and their consent.</li>
+        </ul>
       </section>
 
       <section class="legal-section" aria-labelledby="pp-use">
         <h2 id="pp-use">How we use information</h2>
-        <p>{% include "landing/partials/todo.html" with what="usage réel de chaque catégorie de données" %}</p>
+        <ul class="legal-list">
+          <li>To provide Seymy to Businesses: answering their calls, taking their customers’ requests, preparing estimates, invoices and messages for the Business to review, processing payments and sending app notifications.</li>
+          <li>To support Businesses, and to keep Seymy secure and working.</li>
+          <li>To test Seymy’s text messaging with consenting team members (see “Text messages (SMS)”).</li>
+          <li>To meet our legal obligations.</li>
+        </ul>
+        <p>A Business reviews and approves what Seymy prepares before anything is sent to its customers. We do not sell personal information.</p>
+      </section>
+
+      <section class="legal-section" aria-labelledby="pp-ai">
+        <h2 id="pp-ai">AI processing and call confidentiality</h2>
+        <p>Calls, dictation and messages are processed by AI models of our service provider OpenAI to transcribe, summarize and draft content. Miss Seymy keeps a written transcript of each call, not an audio recording. Transcripts and summaries are available to the Business the caller contacted.</p>
+        <p>{% include "landing/partials/todo.html" with what="conditions d’utilisation des données par les fournisseurs d’IA (entraînement, rétention) et annonce faite aux appelants" %}</p>
       </section>
 
       <section class="legal-section legal-section--sms" id="sms" aria-labelledby="pp-sms">
         <h2 id="pp-sms">Text messages (SMS)</h2>
-{% include "landing/legal/sms_program.html" %}
+{% include "landing/legal/sms_internal_testing.html" %}
         <p class="legal-sms__sharing">Mobile information will not be shared with third parties or affiliates for marketing or promotional purposes. Text messaging originator opt-in data and consent will not be shared with any third parties.</p>
       </section>
 
       <section class="legal-section" aria-labelledby="pp-share">
-        <h2 id="pp-share">Who we share information with</h2>
-        <p>{% include "landing/partials/todo.html" with what="prestataires réellement utilisés et finalité de chacun" %}</p>
+        <h2 id="pp-share">Service providers</h2>
+        <p>We use service providers to run Seymy. They process information on our behalf, for the purposes below:</p>
+        <ul class="legal-list">
+          <li><strong>Stripe</strong>: subscription and customer payments.</li>
+          <li><strong>Twilio</strong>: phone numbers, calls answered by Miss Seymy, and text messages.</li>
+          <li><strong>OpenAI</strong>: transcription, summaries and drafts.</li>
+          <li><strong>Resend</strong>: email delivery.</li>
+          <li><strong>Expo</strong>: app push notifications.</li>
+          <li>{% include "landing/partials/todo.html" with what="sous-traitants à confirmer (liste MASTER PROVIDERS) : hébergement du backend (Heroku ?), hébergement du site (Render), stockage des photos (Amazon Web Services, si activé), suivi d’erreurs (Sentry, désactivé par défaut), voix et reconnaissance vocale via Twilio (Google, ElevenLabs, Deepgram)" %}</li>
+        </ul>
+        <p>We also share information with the Business you deal with, and when required by law.</p>
       </section>
 
       <section class="legal-section" aria-labelledby="pp-retention">
-        <h2 id="pp-retention">Retention and security</h2>
-        <p>{% include "landing/partials/todo.html" with what="durées de conservation validées et mesures de sécurité" %}</p>
+        <h2 id="pp-retention">Retention and protection</h2>
+        <p>{% include "landing/partials/todo.html" with what="durées de conservation validées (compte, transcriptions d’appels, documents de facturation, journaux, sauvegardes)" %}</p>
+        <p>{% include "landing/partials/todo.html" with what="mesures de protection effectivement en place" %}</p>
+        <p>No method of transmission or storage is completely secure.</p>
       </section>
 
       <section class="legal-section" aria-labelledby="pp-rights">
         <h2 id="pp-rights">Your choices and rights</h2>
-        <p>{% include "landing/partials/todo.html" with what="droits (accès, rectification, suppression) et comment les exercer" %}</p>
+        <p>You can ask us to access, correct or delete your information using the contact details below. If your information was provided by a Business you dealt with, we may refer your request to that Business.</p>
+        <p>{% include "landing/partials/todo.html" with what="droits selon l’État de résidence et délais de réponse" %}</p>
       </section>
 
       <section class="legal-section" aria-labelledby="pp-children">
         <h2 id="pp-children">Children</h2>
-        <p>{% include "landing/partials/todo.html" with what="clause sur les mineurs" %}</p>
+        <p>Seymy is intended for businesses and is not directed to children under 13.</p>
       </section>
 
       <section class="legal-section" aria-labelledby="pp-changes">
         <h2 id="pp-changes">Changes to this policy</h2>
-        <p>{% include "landing/partials/todo.html" with what="modalités de mise à jour de la politique" %}</p>
+        <p>We will post any change on this page and update the effective date above.</p>
       </section>
 
 {% include "landing/legal/contact.html" with prefix="pp" %}

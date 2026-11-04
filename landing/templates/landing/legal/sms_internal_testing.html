@@ -1,0 +1,24 @@
+{% comment %}
+  SMS block 1 of 2: "Seymy Internal SMS Testing", the only active SMS program.
+  Texts go only to Seymy team members who gave explicit consent, from Seymy's
+  development number, to test inbound and outbound messaging.
+  Do not describe texts between Businesses and their customers here.
+{% endcomment %}
+        <h3 class="legal-sms__title">Seymy Internal SMS Testing</h3>
+        <p>Seymy runs one text messaging program today, “Seymy Internal SMS Testing”. It is used only to test how Seymy sends and receives text messages. Messages are sent only to the mobile phones of Seymy team members who have given their explicit consent to receive them. The program does not send text messages to Businesses’ customers or to the public, and it is not a marketing program.</p>
+        <dl class="legal-sms">
+          <div><dt>Program</dt><dd>Seymy Internal SMS Testing: test messages used to validate inbound and outbound text messaging.</dd></div>
+          <div><dt>Who receives messages</dt><dd>Only Seymy team members who have given explicit consent.</dd></div>
+          <div><dt>How consent is given</dt><dd>{% include "landing/partials/todo.html" with what="manière dont l’accord explicite des membres de l’équipe est recueilli et conservé" %}</dd></div>
+          <div><dt>Message frequency</dt><dd>Message frequency varies.</dd></div>
+          <div><dt>Costs</dt><dd>Msg &amp; data rates may apply.</dd></div>
+          <div><dt>Opt out</dt><dd>Reply STOP to any message to stop receiving messages.</dd></div>
+          <div><dt>Help</dt><dd>Reply HELP for help, or contact us using the details in the Contact section below. {% include "landing/partials/todo.html" with what="texte exact de la réponse HELP" %}</dd></div>
+          <div><dt>Delivery</dt><dd>Carriers are not liable for delayed or undelivered messages.</dd></div>
+        </dl>
+{% comment %}
+  SMS block 2 of 2 (not displayed): Contractor business SMS program: to be
+  added and reviewed before commercial activation; requires per-business A2P
+  registration. Put it in landing/legal/sms_contractor_business.html and
+  include it here only once the program is live.
+{% endcomment %}

@@ -207,6 +207,10 @@ STRIPE_CURRENCY = _env('STRIPE_CURRENCY', 'usd')
 SITE_DOWNLOAD_URL = _env('SITE_DOWNLOAD_URL', '')
 SITE_DOWNLOAD_LABEL = _env('SITE_DOWNLOAD_LABEL', 'Get the Seymy app')
 
+# Effective date shown on /privacy and /terms (e.g. "November 10, 2026").
+# Empty = a visible placeholder, which blocks publication (readiness test).
+SITE_LEGAL_EFFECTIVE_DATE = _env('SITE_LEGAL_EFFECTIVE_DATE', '')
+
 # Email — console backend for local/MVP; swap for SMTP/ESP in production
 EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
 DEFAULT_FROM_EMAIL = 'Seymy <noreply@seymy.local>'

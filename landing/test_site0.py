@@ -209,13 +209,12 @@ class LegalPagesTests(SimpleTestCase):
                 html = self.client.get(path, secure=True).content.decode()
                 self.assertIn('id="sms"', html)
                 self.assertIn('id="contact"', html)
-                self.assertIn('Seymy is the brand of', html)
-                for item in ['Program', 'Who receives messages', 'How you opt in', 'Message frequency',
-                             'Costs', 'Opt out (STOP)', 'Help (HELP)', 'Delivery',
-                             'Msg &amp; data rates may apply',
-                             'carriers are not liable for delayed or undelivered messages']:
+                self.assertIn('is the brand of', html)
+                for item in ['Seymy Internal SMS Testing', 'Seymy team members who have given explicit consent',
+                             'Message frequency varies.', 'Msg &amp; data rates may apply.',
+                             'Reply STOP', 'Reply HELP',
+                             'Carriers are not liable for delayed or undelivered messages.']:
                     self.assertIn(item, html)
-                self.assertNotIn('&amp;amp;', html)
         privacy = self.client.get('/privacy', secure=True).content.decode()
         self.assertIn(
             'Mobile information will not be shared with third parties or affiliates for marketing '
@@ -224,14 +223,36 @@ class LegalPagesTests(SimpleTestCase):
             privacy,
         )
 
+    def test_v11_billing_terms(self):
+        html = self.client.get('/terms', secure=True).content.decode()
+        for text in ['$99 per month', '$990 per year', 'There is no free trial.', '$25 per month',
+                     '$250 per year', '500 Miss Seymy call minutes', '1% platform fee',
+                     'carry no Seymy fee', 'does not book appointments']:
+            with self.subTest(text=text):
+                self.assertIn(text, html)
+
+    def test_calls_are_transcribed_not_recorded(self):
+        html = self.client.get('/privacy', secure=True).content.decode()
+        self.assertIn('they are not recorded as audio', html)
+
+    def test_effective_date_is_one_setting(self):
+        for path in self.PAGES:
+            with self.subTest(path=path):
+                html = self.client.get(path, secure=True).content.decode()
+                self.assertIn('date d’entrée en vigueur', html)
+                with self.settings(SITE_LEGAL_EFFECTIVE_DATE='November 10, 2026'):
+                    html = self.client.get(path, secure=True).content.decode()
+                self.assertIn('Effective date: November 10, 2026', html)
+                self.assertNotIn('date d’entrée en vigueur', html)
+
     def test_unsupplied_items_are_visible_markers(self):
         """Every missing legal item is a visible marker, never silent text."""
         for path in self.PAGES:
             with self.subTest(path=path):
                 html = self.client.get(path, secure=True).content.decode()
                 self.assertEqual(html.count('data-todo'), html.count('{{À FOURNIR : '))
-                self.assertGreaterEqual(html.count('data-todo'), 15)
-                for item in ['entité légale', 'adresse légale', 'e-mail d’assistance', 'programme SMS']:
+                for item in ['entité légale', 'adresse légale', 'e-mail d’assistance',
+                             'accord explicite des membres de l’équipe']:
                     self.assertIn(item, html)
 
     def test_no_invented_contact_details(self):
@@ -242,6 +263,55 @@ class LegalPagesTests(SimpleTestCase):
                 self.assertNotRegex(html, r'[\w.+-]+@[\w-]+\.[\w.]+')
                 self.assertNotIn('mailto:', html)
                 self.assertNotIn('tel:', html)
+
+
+class SmsHonestyTests(SimpleTestCase):
+    """Only the internal testing program exists: no page may present texts
+    between contractors and their customers as available."""
+
+    FORBIDDEN = [
+        'text your customers',
+        'text your customer',
+        'texting your customers',
+        'customers receive texts',
+        'customers receive text messages',
+        'customer receives a text',
+        'text messages to your customers',
+        'texts to your customers',
+        'send texts',
+        'by text',
+        'by sms',
+        'via sms',
+        'sms to customers',
+        'two-way texting',
+    ]
+
+    def test_no_page_offers_customer_texting(self):
+        for path in ['/', '/privacy', '/terms']:
+            html = self.client.get(path, secure=True).content.decode().lower()
+            for phrase in self.FORBIDDEN:
+                with self.subTest(path=path, phrase=phrase):
+                    self.assertNotIn(phrase, html)
+
+    def test_contractor_sms_program_is_not_displayed(self):
+        for path in ['/privacy', '/terms']:
+            with self.subTest(path=path):
+                html = self.client.get(path, secure=True).content.decode()
+                self.assertNotIn('Contractor business SMS program', html)
+                self.assertNotIn('sms_contractor_business', html)
+
+
+class PublicationReadinessTests(SimpleTestCase):
+    """BLOCKS PUBLICATION. Fails while any {{À FOURNIR}} marker or the
+    effective-date placeholder remains. Do not skip or relax it: supply the
+    missing information instead (and set SITE_LEGAL_EFFECTIVE_DATE)."""
+
+    def test_no_placeholder_left_on_public_pages(self):
+        for path in ['/', '/privacy', '/terms']:
+            with self.subTest(path=path):
+                html = self.client.get(path, secure=True).content.decode()
+                self.assertNotIn('data-todo', html)
+                self.assertNotIn('À FOURNIR', html)
 
 
 class RetiredRouteTests(SimpleTestCase):

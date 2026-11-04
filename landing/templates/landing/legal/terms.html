@@ -1,57 +1,78 @@
 {% extends "landing/legal/base.html" %}
 {% comment %}
-  Structure only until the final texts and verified details are supplied.
-  Nothing here is invented: every missing item is a visible À FOURNIR marker.
+  Describes only what Seymy offers today. Anything not verified is a visible
+  À FOURNIR marker; never replace one with an assumption.
 {% endcomment %}
 {% block title %}Terms &amp; Conditions{% endblock %}
-{% block description %}The terms that govern the use of Seymy, including its SMS program.{% endblock %}
+{% block description %}The terms that govern the use of Seymy, including plans, billing and its internal SMS testing program.{% endblock %}
 {% block heading %}Terms &amp; Conditions{% endblock %}
 {% block content %}
       <section class="legal-section" aria-labelledby="tc-agreement">
         <h2 id="tc-agreement">Agreement</h2>
-        <p>Seymy is the brand of {% include "landing/partials/todo.html" with what="entité légale (raison sociale exacte, forme juridique, État, DBA éventuel)" %}.</p>
-        <p>{% include "landing/partials/todo.html" with what="acceptation des conditions" %}</p>
+        <p>Seymy (“Seymy”, “we”, “us”) is the brand of {% include "landing/partials/todo.html" with what="entité légale (raison sociale exacte, forme juridique, État, DBA éventuel)" %}. These Terms govern the use of Seymy by a home-service business (“you”).</p>
+        <p>{% include "landing/partials/todo.html" with what="mode d’acceptation des conditions et âge / pouvoir d’engager l’entreprise" %}</p>
       </section>
 
       <section class="legal-section" aria-labelledby="tc-service">
         <h2 id="tc-service">The service</h2>
-        <p>{% include "landing/partials/todo.html" with what="description du service (Seymy et Miss Seymy)" %}</p>
-      </section>
-
-      <section class="legal-section" aria-labelledby="tc-account">
-        <h2 id="tc-account">Your account</h2>
-        <p>{% include "landing/partials/todo.html" with what="conditions d’accès au compte" %}</p>
+        <p>Seymy is an app for home-service businesses. It includes:</p>
+        <ul class="legal-list">
+          <li><strong>Miss Seymy</strong>, an AI assistant that answers your business phone line, takes your customers’ requests and puts them in front of you. She does not book appointments or make commitments on your behalf.</li>
+          <li>Help preparing estimates and invoices, by voice or by typing, for you to review.</li>
+          <li>Optional online payments from your customers through Stripe.</li>
+        </ul>
+        <p>Seymy prepares drafts with AI. Drafts can be wrong. Nothing is sent to your customer until you review and approve it, and you are responsible for the content you approve.</p>
       </section>
 
       <section class="legal-section" aria-labelledby="tc-billing">
-        <h2 id="tc-billing">Plans, billing and fees</h2>
-        <p>{% include "landing/partials/todo.html" with what="clauses de facturation (V1.1 : 99 $/mois ou 990 $/an, sans essai ; sièges 25 $/mois ou 250 $/an ; 1 % seulement sur les paiements encaissés par Seymy)" %}</p>
+        <h2 id="tc-billing">Plans and billing</h2>
+        <ul class="legal-list">
+          <li>Seymy is billed in advance: <strong>$99 per month</strong> or <strong>$990 per year</strong>. There is no free trial.</li>
+          <li>The plan includes one user, the account owner, and 500 Miss Seymy call minutes each month, on monthly and annual plans.</li>
+          <li>Each additional user is a paid seat: <strong>$25 per month</strong>, or <strong>$250 per year</strong> on the annual plan. Seymy shows you the price and any prorated amount, and you confirm, before a seat is added.</li>
+          <li>A dedicated Seymy business number and a managed business email are included. There is no setup or activation fee.</li>
+        </ul>
+        <p>{% include "landing/partials/todo.html" with what="renouvellement automatique et rappel, taxes, échec de paiement" %}</p>
+      </section>
+
+      <section class="legal-section" aria-labelledby="tc-payments">
+        <h2 id="tc-payments">Getting paid through Seymy</h2>
+        <ul class="legal-list">
+          <li>Customer payments through Seymy are optional and processed by Stripe. To accept them you need your own Stripe connected account and must accept the <a href="https://stripe.com/connect-account/legal" rel="noopener">Stripe Connected Account Agreement</a>.</li>
+          <li>Seymy charges a <strong>1% platform fee</strong> on each customer payment collected through Seymy. The fee is not added to what your customer pays.</li>
+          <li>Payments your customers make to you directly, outside Seymy (cash, check, bank transfer), carry no Seymy fee. Creating or sending an estimate is never charged.</li>
+        </ul>
+        <p>{% include "landing/partials/todo.html" with what="frais Stripe à la charge du contractor, rôle de marchand, litiges et rétrofacturations" %}</p>
       </section>
 
       <section class="legal-section legal-section--sms" id="sms" aria-labelledby="tc-sms">
-        <h2 id="tc-sms">SMS terms</h2>
-{% include "landing/legal/sms_program.html" %}
-        <p>{% include "landing/partials/todo.html" with what="renvoi vers la Privacy Policy pour le non-partage des données d’opt-in" %}</p>
+        <h2 id="tc-sms">Text messages (SMS)</h2>
+{% include "landing/legal/sms_internal_testing.html" %}
+        <p>Seymy does not currently offer text messaging between Businesses and their customers. How we handle the data of this program is described in our <a href="{% url 'privacy' %}#sms">Privacy Policy</a>.</p>
       </section>
 
       <section class="legal-section" aria-labelledby="tc-use">
-        <h2 id="tc-use">Acceptable use</h2>
-        <p>{% include "landing/partials/todo.html" with what="règles d’utilisation acceptable" %}</p>
+        <h2 id="tc-use">Your responsibilities</h2>
+        <ul class="legal-list">
+          <li>Keep your login secure. You are responsible for activity under your account and your team members’ accounts.</li>
+          <li>Do not use Seymy for unlawful, deceptive or harassing purposes, try to access other accounts, or disrupt the service.</li>
+          <li>Make sure the information you give us and approve for your customers is accurate.</li>
+        </ul>
       </section>
 
       <section class="legal-section" aria-labelledby="tc-liability">
         <h2 id="tc-liability">Disclaimers and limitation of liability</h2>
-        <p>{% include "landing/partials/todo.html" with what="clauses d’exclusion et de limitation de responsabilité" %}</p>
+        <p>{% include "landing/partials/todo.html" with what="clauses d’exclusion de garantie et de limitation de responsabilité (relecture juridique)" %}</p>
+      </section>
+
+      <section class="legal-section" aria-labelledby="tc-termination">
+        <h2 id="tc-termination">Cancellation and termination</h2>
+        <p>{% include "landing/partials/todo.html" with what="résiliation par le client (effet, remboursement), suspension ou résiliation par Seymy, export des données" %}</p>
       </section>
 
       <section class="legal-section" aria-labelledby="tc-law">
-        <h2 id="tc-law">Governing law and disputes</h2>
-        <p>{% include "landing/partials/todo.html" with what="droit applicable et règlement des litiges" %}</p>
-      </section>
-
-      <section class="legal-section" aria-labelledby="tc-changes">
-        <h2 id="tc-changes">Changes and termination</h2>
-        <p>{% include "landing/partials/todo.html" with what="modification des conditions, résiliation" %}</p>
+        <h2 id="tc-law">Governing law and changes</h2>
+        <p>{% include "landing/partials/todo.html" with what="droit applicable, règlement des litiges et préavis de modification des conditions" %}</p>
       </section>
 
 {% include "landing/legal/contact.html" with prefix="tc" %}

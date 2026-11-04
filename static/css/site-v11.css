@@ -322,3 +322,11 @@ mark.todo {
 #final-cta .final-cta-micro { color: rgba(255, 255, 255, 0.72); }
 #final-cta .final-cta-eyebrow { color: rgba(255, 255, 255, 0.72); }
 #pricing .pricing-card__users-value--included { color: #15803d; } /* tones.good.accent */
+.legal-sms__title {
+  margin: 0.25rem 0 0.5rem;
+  font-size: 1rem;
+  font-weight: 700;
+  color: var(--color-navy);
+}
+.legal-section a { color: var(--color-seymy-dark); }
+.legal-section strong { color: var(--color-navy); }
