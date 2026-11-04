@@ -78,6 +78,47 @@ class HomeTests(SimpleTestCase):
         self.assertIn('Miller Plumbing', self.html)
 
 
+class V11ContentTests(SimpleTestCase):
+    """L1: the landing states V1.1 pricing and makes no retired promise."""
+
+    def setUp(self):
+        self.html = self.client.get('/', secure=True).content.decode()
+        self.lower = self.html.lower()
+
+    def test_v11_prices_are_shown(self):
+        for text in ['$99', '$990', '$25/month or $250/year', '500 Miss Seymy call minutes']:
+            with self.subTest(text=text):
+                self.assertIn(text, self.html)
+
+    def test_platform_fee_is_limited_to_payments_collected_through_seymy(self):
+        self.assertIn('1% only on payments collected through Seymy', self.html)
+        self.assertIn('carry no Seymy fee', self.html)
+        self.assertNotIn('Card, cash, check, or bank transfer', self.html)
+
+    def test_retired_offers_and_promises_are_gone(self):
+        for text in [
+            'trial',
+            'free',
+            '$49',
+            '499',
+            'no subscription',
+            'by text',
+            'text message',
+            'customer notified',
+            'books the appointment',
+            'credit card',
+            'card fees',
+            'apple pay',
+        ]:
+            with self.subTest(text=text):
+                self.assertNotIn(text, self.lower)
+
+    def test_no_store_or_platform_mentions(self):
+        for text in ['app store', 'google play', 'ios', 'android', 'testflight', 'apk']:
+            with self.subTest(text=text):
+                self.assertNotRegex(self.lower, rf'\b{text}\b')
+
+
 class RetiredRouteTests(SimpleTestCase):
     def test_old_funnel_redirects_home(self):
         for path in RETIRED_FUNNEL_PATHS:
