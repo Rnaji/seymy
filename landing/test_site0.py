@@ -166,6 +166,56 @@ class DownloadCtaTests(SimpleTestCase):
         self.assertEqual(html.count('>Get the Seymy app</a>'), 4)
 
 
+class LegalPagesTests(SimpleTestCase):
+    """L4: /privacy and /terms, linked from the footer and from each other."""
+
+    PAGES = {'/privacy': 'Privacy Policy', '/terms': 'Terms &amp; Conditions'}
+
+    def test_pages_render_without_database(self):
+        for path, title in self.PAGES.items():
+            for variant in (path, path + '/'):
+                with self.subTest(path=variant):
+                    response = self.client.get(variant, secure=True)
+                    self.assertEqual(response.status_code, 200)
+                    html = response.content.decode()
+                    self.assertIn(f'<h1 class="legal-title">{title}</h1>', html)
+                    self.assertIn('<html lang="en">', html)
+
+    def test_footer_links_reach_both_pages_from_every_page(self):
+        for path in ['/', '/privacy', '/terms']:
+            with self.subTest(path=path):
+                html = self.client.get(path, secure=True).content.decode()
+                self.assertIn('href="/privacy"', html)
+                self.assertIn('href="/terms"', html)
+                self.assertNotIn('href="#"', html)
+
+    def test_current_page_is_marked(self):
+        html = self.client.get('/terms', secure=True).content.decode()
+        self.assertIn('href="/terms" aria-current="page"', html)
+        self.assertNotIn('href="/privacy" aria-current="page"', html)
+
+    def test_a2p_sections_are_present(self):
+        for path in self.PAGES:
+            with self.subTest(path=path):
+                html = self.client.get(path, secure=True).content.decode()
+                self.assertIn('id="sms"', html)
+                self.assertIn('id="contact"', html)
+                for item in ['STOP', 'HELP', 'fréquence variable', 'frais éventuels', 'non livrés',
+                             'nom exact de la marque enregistrée']:
+                    self.assertIn(item, html)
+        privacy = self.client.get('/privacy', secure=True).content.decode()
+        self.assertIn('non-partage des données d’opt-in SMS', privacy)
+
+    def test_no_invented_contact_details(self):
+        """Contacts stay placeholders until verified details are supplied."""
+        for path in ['/', '/privacy', '/terms']:
+            with self.subTest(path=path):
+                html = self.client.get(path, secure=True).content.decode()
+                self.assertNotRegex(html, r'[\w.+-]+@[\w-]+\.[\w.]+')
+                self.assertNotIn('mailto:', html)
+                self.assertNotIn('tel:', html)
+
+
 class RetiredRouteTests(SimpleTestCase):
     def test_old_funnel_redirects_home(self):
         for path in RETIRED_FUNNEL_PATHS:
@@ -204,7 +254,7 @@ class RetiredRouteTests(SimpleTestCase):
 class RoutingSurfaceTests(SimpleTestCase):
     def test_every_route_is_served_by_the_public_module(self):
         patterns = list(_all_patterns())
-        self.assertEqual(len(patterns), 3)
+        self.assertEqual(len(patterns), 5)
         for pattern in patterns:
             with self.subTest(route=str(pattern.pattern)):
                 self.assertEqual(pattern.callback.__module__, 'landing.public')

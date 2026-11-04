@@ -1,0 +1,66 @@
+{% extends "landing/legal/base.html" %}
+{% comment %}
+  Structure only. The text comes from Rachid's ChatGPT drafts and from the
+  verified details (MASTER PROVIDERS, via MASTER UX/UI). Nothing here is
+  invented: every missing item is a visible À FOURNIR marker.
+{% endcomment %}
+{% block title %}Terms &amp; Conditions{% endblock %}
+{% block description %}The terms that govern the use of Seymy, including its SMS program.{% endblock %}
+{% block heading %}Terms &amp; Conditions{% endblock %}
+{% block content %}
+      <section class="legal-section" aria-labelledby="tc-agreement">
+        <h2 id="tc-agreement">Agreement</h2>
+        <p>{% include "landing/partials/todo.html" with what="nom exact de la marque enregistrée (Twilio A2P), raison sociale, État et acceptation des conditions" %}</p>
+      </section>
+
+      <section class="legal-section" aria-labelledby="tc-service">
+        <h2 id="tc-service">The service</h2>
+        <p>{% include "landing/partials/todo.html" with what="description du service (Seymy et Miss Seymy)" %}</p>
+      </section>
+
+      <section class="legal-section" aria-labelledby="tc-account">
+        <h2 id="tc-account">Your account</h2>
+        <p>{% include "landing/partials/todo.html" with what="conditions d’accès au compte" %}</p>
+      </section>
+
+      <section class="legal-section" aria-labelledby="tc-billing">
+        <h2 id="tc-billing">Plans, billing and fees</h2>
+        <p>{% include "landing/partials/todo.html" with what="clauses de facturation (V1.1 : 99 $/mois ou 990 $/an, sans essai ; sièges 25 $/mois ou 250 $/an ; 1 % seulement sur les paiements encaissés par Seymy)" %}</p>
+      </section>
+
+      <section class="legal-section legal-section--sms" id="sms" aria-labelledby="tc-sms">
+        <h2 id="tc-sms">SMS terms</h2>
+        <p>{% include "landing/partials/todo.html" with what="description exacte du programme SMS enregistré dans Twilio (aujourd’hui : tests internes Seymy uniquement, pas de SMS aux clients des contractors)" %}</p>
+        <ul class="legal-list">
+          <li>{% include "landing/partials/todo.html" with what="fréquence variable des messages" %}</li>
+          <li>{% include "landing/partials/todo.html" with what="frais éventuels de messages et de données" %}</li>
+          <li>{% include "landing/partials/todo.html" with what="désinscription par STOP" %}</li>
+          <li>{% include "landing/partials/todo.html" with what="aide par HELP et coordonnées d’assistance" %}</li>
+          <li>{% include "landing/partials/todo.html" with what="clause : les opérateurs ne sont pas responsables des messages retardés ou non livrés" %}</li>
+          <li>{% include "landing/partials/todo.html" with what="renvoi vers la Privacy Policy pour le non-partage des données d’opt-in" %}</li>
+        </ul>
+      </section>
+
+      <section class="legal-section" aria-labelledby="tc-use">
+        <h2 id="tc-use">Acceptable use</h2>
+        <p>{% include "landing/partials/todo.html" with what="règles d’utilisation acceptable" %}</p>
+      </section>
+
+      <section class="legal-section" aria-labelledby="tc-liability">
+        <h2 id="tc-liability">Disclaimers and limitation of liability</h2>
+        <p>{% include "landing/partials/todo.html" with what="clauses d’exclusion et de limitation de responsabilité" %}</p>
+      </section>
+
+      <section class="legal-section" aria-labelledby="tc-law">
+        <h2 id="tc-law">Governing law and disputes</h2>
+        <p>{% include "landing/partials/todo.html" with what="droit applicable et règlement des litiges" %}</p>
+      </section>
+
+      <section class="legal-section" aria-labelledby="tc-changes">
+        <h2 id="tc-changes">Changes and termination</h2>
+        <p>{% include "landing/partials/todo.html" with what="modification des conditions, résiliation" %}</p>
+      </section>
+
+{% include "landing/legal/contact.html" with prefix="tc" %}
+{% endblock %}
+{% block related %}<a href="{% url 'privacy' %}">Privacy Policy →</a>{% endblock %}

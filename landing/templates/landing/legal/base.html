@@ -1,0 +1,40 @@
+{% load static %}<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>{% block title %}{% endblock %} — Seymy</title>
+  <meta name="description" content="{% block description %}{% endblock %}">
+  <link rel="stylesheet" href="{% static 'css/seymy.css' %}">
+  <link rel="stylesheet" href="{% static 'css/site-v11.css' %}">
+</head>
+<body class="legal-body">
+  <a class="skip-link" href="#legal-content">Skip to content</a>
+  <header class="legal-header">
+    <div class="legal-header__inner">
+      <a href="{% url 'home' %}" class="wordmark legal-header__logo" aria-label="Seymy home">Sey<span class="wordmark__miss">my.</span></a>
+      <nav class="legal-switch" aria-label="Legal pages">
+        <a href="{% url 'privacy' %}"{% if page == 'privacy' %} aria-current="page"{% endif %}>Privacy</a>
+        <a href="{% url 'terms' %}"{% if page == 'terms' %} aria-current="page"{% endif %}>Terms</a>
+      </nav>
+    </div>
+  </header>
+
+  <main id="legal-content" class="legal-main">
+    <article class="legal-card">
+      <header class="legal-intro">
+        <p class="legal-eyebrow">Legal</p>
+        <h1 class="legal-title">{% block heading %}{% endblock %}</h1>
+        <p class="legal-updated">Last updated: {% include "landing/partials/todo.html" with what="date de publication" %}</p>
+      </header>
+      {% block content %}{% endblock %}
+      <nav class="legal-related" aria-label="Related">
+        <a href="{% url 'home' %}">← Back to Seymy</a>
+        {% block related %}{% endblock %}
+      </nav>
+    </article>
+  </main>
+
+{% include "landing/partials/site_footer.html" %}
+</body>
+</html>

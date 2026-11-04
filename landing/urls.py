@@ -7,6 +7,8 @@ from . import public
 # retired. Their code in views.py is no longer routed.
 urlpatterns = [
     path('', public.home, name='home'),
+    re_path(r'^privacy/?$', public.privacy, name='privacy'),
+    re_path(r'^terms/?$', public.terms, name='terms'),
     re_path(r'^start(?:/.*)?$', public.retired_funnel, name='retired_funnel'),
     re_path(r'^e/', public.retired_customer_link, name='retired_customer_link'),
 ]

@@ -29,6 +29,14 @@ def home(request):
     )
 
 
+def privacy(request):
+    return render(request, 'landing/legal/privacy.html', {'page': 'privacy'})
+
+
+def terms(request):
+    return render(request, 'landing/legal/terms.html', {'page': 'terms'})
+
+
 def retired_funnel(request):
     """Old ``/start/…`` CTA targets: send visitors back to the home page."""
     return redirect('home')

@@ -1,0 +1,70 @@
+{% extends "landing/legal/base.html" %}
+{% comment %}
+  Structure only. The text comes from Rachid's ChatGPT drafts and from the
+  verified details (MASTER PROVIDERS, via MASTER UX/UI). Nothing here is
+  invented: every missing item is a visible À FOURNIR marker.
+{% endcomment %}
+{% block title %}Privacy Policy{% endblock %}
+{% block description %}How Seymy collects, uses and protects information, including its SMS program.{% endblock %}
+{% block heading %}Privacy Policy{% endblock %}
+{% block content %}
+      <section class="legal-section" aria-labelledby="pp-who">
+        <h2 id="pp-who">Who we are</h2>
+        <p>{% include "landing/partials/todo.html" with what="nom exact de la marque enregistrée (Twilio A2P), raison sociale et État d’immatriculation" %}</p>
+      </section>
+
+      <section class="legal-section" aria-labelledby="pp-collect">
+        <h2 id="pp-collect">Information we collect</h2>
+        <p>{% include "landing/partials/todo.html" with what="données réellement collectées (compte, appels Miss Seymy, devis et factures, paiements, données techniques, numéro de téléphone et consentement SMS)" %}</p>
+      </section>
+
+      <section class="legal-section" aria-labelledby="pp-use">
+        <h2 id="pp-use">How we use information</h2>
+        <p>{% include "landing/partials/todo.html" with what="usage réel de chaque catégorie de données" %}</p>
+      </section>
+
+      <section class="legal-section legal-section--sms" id="sms" aria-labelledby="pp-sms">
+        <h2 id="pp-sms">Text messages (SMS)</h2>
+        <p>{% include "landing/partials/todo.html" with what="description exacte du programme SMS enregistré dans Twilio (aujourd’hui : tests internes Seymy uniquement, pas de SMS aux clients des contractors)" %}</p>
+        <ul class="legal-list">
+          <li>{% include "landing/partials/todo.html" with what="fréquence variable des messages" %}</li>
+          <li>{% include "landing/partials/todo.html" with what="frais éventuels de messages et de données" %}</li>
+          <li>{% include "landing/partials/todo.html" with what="désinscription par STOP" %}</li>
+          <li>{% include "landing/partials/todo.html" with what="aide par HELP et coordonnées d’assistance" %}</li>
+          <li>{% include "landing/partials/todo.html" with what="clause : les opérateurs ne sont pas responsables des messages retardés ou non livrés" %}</li>
+        </ul>
+      </section>
+
+      <section class="legal-section" aria-labelledby="pp-optin">
+        <h2 id="pp-optin">SMS opt-in data is never shared for marketing</h2>
+        <p>{% include "landing/partials/todo.html" with what="clause de non-partage des données d’opt-in SMS et du consentement avec des tiers à des fins marketing ou promotionnelles" %}</p>
+      </section>
+
+      <section class="legal-section" aria-labelledby="pp-share">
+        <h2 id="pp-share">Who we share information with</h2>
+        <p>{% include "landing/partials/todo.html" with what="prestataires réellement utilisés et finalité de chacun" %}</p>
+      </section>
+
+      <section class="legal-section" aria-labelledby="pp-retention">
+        <h2 id="pp-retention">Retention and security</h2>
+        <p>{% include "landing/partials/todo.html" with what="durées de conservation validées et mesures de sécurité" %}</p>
+      </section>
+
+      <section class="legal-section" aria-labelledby="pp-rights">
+        <h2 id="pp-rights">Your choices and rights</h2>
+        <p>{% include "landing/partials/todo.html" with what="droits (accès, rectification, suppression) et comment les exercer" %}</p>
+      </section>
+
+      <section class="legal-section" aria-labelledby="pp-children">
+        <h2 id="pp-children">Children</h2>
+        <p>{% include "landing/partials/todo.html" with what="clause sur les mineurs" %}</p>
+      </section>
+
+      <section class="legal-section" aria-labelledby="pp-changes">
+        <h2 id="pp-changes">Changes to this policy</h2>
+        <p>{% include "landing/partials/todo.html" with what="modalités de mise à jour de la politique" %}</p>
+      </section>
+
+{% include "landing/legal/contact.html" with prefix="pp" %}
+{% endblock %}
+{% block related %}<a href="{% url 'terms' %}">Terms &amp; Conditions →</a>{% endblock %}
