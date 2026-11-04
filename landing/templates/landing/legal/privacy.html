@@ -22,8 +22,9 @@
           <li><strong>Calls answered by Miss Seymy</strong>: the caller’s phone number, call details (such as time and duration), a written transcript of the conversation and an AI-generated summary. Calls are transcribed; they are not recorded as audio.</li>
           <li><strong>Payments</strong>, processed by Stripe: we receive the payment status and limited details about the payment.</li>
           <li><strong>App and device information</strong>: app version, device type, push notification tokens and technical logs.</li>
-          <li><strong>Internal SMS testing program</strong>: the mobile numbers of the Seymy team members who take part, the test messages and their consent.</li>
+          <li><strong>Internal SMS testing program</strong>: a participating tester’s mobile number, consent and opt-out status, message content, delivery status, timestamps and support requests.</li>
         </ul>
+        <p>Please do not send sensitive personal information through an SMS test.</p>
       </section>
 
       <section class="legal-section" aria-labelledby="pp-use">
@@ -31,11 +32,11 @@
         <ul class="legal-list">
           <li>To provide Seymy to Businesses: answering their calls, taking their customers’ requests, preparing estimates, invoices and messages for the Business to review, processing payments and sending app notifications.</li>
           <li>To support Businesses, and to keep Seymy secure and working.</li>
-          <li>To test Seymy’s text messaging with consenting team members (see “Text messages (SMS)”).</li>
+          <li>To administer internal product testing: sending test messages to testers who opted in, troubleshooting delivery, and keeping consent and opt-out records (see “Text messages (SMS)”).</li>
           <li>To meet our legal obligations.</li>
         </ul>
         <p>A Business reviews and approves what Seymy prepares before anything is sent to its customers.</p>
-        <p>{% include "landing/partials/todo.html" with what="engagement de non-vente des données personnelles (CCPA / lois des États), à confirmer" %}</p>
+        <p>We do not sell or share your SMS opt-in data or personal information with third parties for marketing purposes.</p>
       </section>
 
       <section class="legal-section" aria-labelledby="pp-ai">
@@ -52,27 +53,31 @@
 
       <section class="legal-section" aria-labelledby="pp-share">
         <h2 id="pp-share">Service providers</h2>
-        <p>We use service providers to run Seymy. They process information on our behalf, for the purposes below:</p>
+        <p>We use service providers to run Seymy. They process information on our behalf to perform services for Seymy, not to conduct their own marketing:</p>
         <ul class="legal-list">
+          <li><strong>Heroku</strong> (Salesforce): hosting of the Seymy application, its API and databases.</li>
+          <li><strong>Render</strong>, behind <strong>Cloudflare</strong>: hosting of this website.</li>
           <li><strong>Stripe</strong>: subscription and customer payments.</li>
-          <li><strong>Twilio</strong>: phone numbers, calls answered by Miss Seymy, and text messages.</li>
-          <li><strong>OpenAI</strong>: transcription, summaries and drafts.</li>
-          <li><strong>Resend</strong>: email delivery.</li>
-          <li><strong>Expo</strong>: app push notifications.</li>
-          <li>{% include "landing/partials/todo.html" with what="autres sous-traitants à confirmer : hébergement de l’application et du site, stockage des photos, suivi d’erreurs, services de voix et de reconnaissance vocale utilisés via Twilio" %}</li>
+          <li><strong>Twilio</strong>: phone numbers, calls answered by Miss Seymy and text messages, including call transcription and voice through the speech services it uses (Deepgram and ElevenLabs).</li>
+          <li><strong>OpenAI</strong>: understanding requests, summaries and drafts.</li>
+          <li><strong>Resend</strong> (on Amazon SES infrastructure): email delivery.</li>
+          <li><strong>Google Firebase Cloud Messaging</strong> and <strong>Expo</strong>: app push notifications.</li>
+          <li><strong>Google Workspace</strong>: Seymy’s email.</li>
         </ul>
-        <p>Outside the SMS program described above, whose mobile information and opt-in data are never shared, we also share information with the Business you deal with, and when required by law.</p>
+        <p>Outside the SMS program described above, whose mobile information and opt-in data are never shared for marketing, we also share information with the Business you deal with, and where required by law or to protect the security and integrity of our services.</p>
       </section>
 
       <section class="legal-section" aria-labelledby="pp-retention">
         <h2 id="pp-retention">Retention and protection</h2>
-        <p>{% include "landing/partials/todo.html" with what="durées de conservation validées (compte, transcriptions d’appels, documents de facturation, journaux, sauvegardes)" %}</p>
-        <p>{% include "landing/partials/todo.html" with what="mesures de protection effectivement en place" %}</p>
+        <p>We keep information for as long as reasonably necessary for the purposes described above, including keeping SMS opt-in and opt-out records and meeting legal requirements. Some technical records are deleted automatically: call diagnostics after 7 days; photo requests and team invitations after 7 days; satisfaction requests after 14 days; evidence packages after 30 days; onboarding discovery sessions after 7 days.</p>
+        <p>{% include "landing/partials/todo.html" with what="durées de conservation générales (compte, transcriptions d’appels, documents de facturation, journaux, sauvegardes)" %}</p>
+        <p>We use reasonable technical and organizational safeguards. No method of electronic transmission or storage is completely secure.</p>
       </section>
 
       <section class="legal-section" aria-labelledby="pp-rights">
         <h2 id="pp-rights">Your choices and rights</h2>
-        <p>{% include "landing/partials/todo.html" with what="droits (accès, rectification, suppression), comment les exercer, traitement des demandes concernant les clients d’un Business, droits selon l’État et délais" %}</p>
+        <p>You may request access to, correction of, or deletion of your information, subject to applicable law and legitimate retention obligations. You may withdraw SMS consent at any time by replying STOP. To make a privacy request, contact us using the details below.</p>
+        <p>{% include "landing/partials/todo.html" with what="demandes concernant les clients d’un Business, droits selon l’État et délais de réponse" %}</p>
       </section>
 
       <section class="legal-section" aria-labelledby="pp-children">
@@ -80,9 +85,14 @@
         <p>{% include "landing/partials/todo.html" with what="clause sur les mineurs" %}</p>
       </section>
 
+      <section class="legal-section" aria-labelledby="pp-cookies">
+        <h2 id="pp-cookies">Cookies and external links</h2>
+        <p>This website does not set cookies. If optional analytics or advertising technologies are ever added, this policy and your choices will be updated before they are activated. Third-party websites linked from Seymy have their own privacy practices.</p>
+      </section>
+
       <section class="legal-section" aria-labelledby="pp-changes">
         <h2 id="pp-changes">Changes to this policy</h2>
-        <p>We will post any change on this page and update the effective date above.</p>
+        <p>We may update this policy as Seymy develops. Material updates will be posted here with a revised effective date.</p>
       </section>
 
 {% include "landing/legal/contact.html" with prefix="pp" %}

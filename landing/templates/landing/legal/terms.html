@@ -32,6 +32,7 @@
           <li>Each additional user is a paid seat: <strong>$25 per month</strong>, or <strong>$250 per year</strong> on the annual plan. Seymy shows you the price and any prorated amount, and you confirm, before a seat is added.</li>
           <li>A dedicated Seymy business number and a managed business email are included. There is no setup or activation fee.</li>
         </ul>
+        <p>These Terms do not by themselves establish a paid subscription or guarantee access to the application. Any paid service is governed by the applicable subscription terms presented at purchase.</p>
         <p>{% include "landing/partials/todo.html" with what="renouvellement automatique et rappel, taxes, échec de paiement" %}</p>
       </section>
 
@@ -48,17 +49,20 @@
       <section class="legal-section legal-section--sms" id="sms" aria-labelledby="tc-sms">
         <h2 id="tc-sms">Text messages (SMS)</h2>
 {% include "landing/legal/sms_internal_testing.html" %}
-        <p>Seymy does not currently offer text messaging between Businesses and their customers. How we handle the data of this program is described in our <a href="{% url 'privacy' %}#sms">Privacy Policy</a>.</p>
+        <p>Seymy does not currently offer text messaging between Businesses and their customers. We do not sell or share SMS opt-in information or personal information with third parties for marketing purposes. How we handle the data of this program is described in our <a href="{% url 'privacy' %}#sms">Privacy Policy</a>.</p>
       </section>
 
       <section class="legal-section" aria-labelledby="tc-use">
-        <h2 id="tc-use">Your responsibilities</h2>
-        <p>{% include "landing/partials/todo.html" with what="responsabilités du compte et règles d’utilisation acceptable (relecture juridique)" %}</p>
+        <h2 id="tc-use">Website use and your responsibilities</h2>
+        <p>You may use this website to learn about Seymy and to contact us for legitimate business purposes. Do not attempt unauthorized access, disrupt the website, introduce malicious code, or misuse any forms or messaging endpoints.</p>
+        <p>Seymy’s website content, logos and materials are owned by Seymy or its licensors. Information is provided for general purposes and may be updated. Links to other websites are provided for convenience and are subject to their operators’ policies.</p>
+        <p>{% include "landing/partials/todo.html" with what="responsabilités du compte dans l’application et règles d’utilisation acceptable (relecture juridique)" %}</p>
       </section>
 
       <section class="legal-section" aria-labelledby="tc-liability">
         <h2 id="tc-liability">Disclaimers and limitation of liability</h2>
-        <p>{% include "landing/partials/todo.html" with what="clauses d’exclusion de garantie et de limitation de responsabilité (relecture juridique)" %}</p>
+        <p>To the extent permitted by applicable law, the website and prelaunch materials are made available without guarantees of uninterrupted operation or fitness for a particular purpose. We do not guarantee the availability of prelaunch features. Nothing in these Terms excludes rights or remedies that cannot lawfully be excluded.</p>
+        <p>{% include "landing/partials/todo.html" with what="limitation de responsabilité pour le service payant (relecture juridique)" %}</p>
       </section>
 
       <section class="legal-section" aria-labelledby="tc-termination">
@@ -68,7 +72,8 @@
 
       <section class="legal-section" aria-labelledby="tc-law">
         <h2 id="tc-law">Governing law and changes</h2>
-        <p>{% include "landing/partials/todo.html" with what="droit applicable, règlement des litiges et préavis de modification des conditions" %}</p>
+        <p>We may update these Terms by publishing a revised version with an updated effective date.</p>
+        <p>{% include "landing/partials/todo.html" with what="droit applicable, règlement des litiges et préavis de modification pour les abonnés" %}</p>
       </section>
 
 {% include "landing/legal/contact.html" with prefix="tc" %}

@@ -210,10 +210,13 @@ class LegalPagesTests(SimpleTestCase):
                 self.assertIn('id="sms"', html)
                 self.assertIn('id="contact"', html)
                 self.assertIn('is the brand of', html)
-                for item in ['Seymy Internal SMS Testing', 'Seymy team members who have given explicit consent',
-                             'Message frequency varies.', 'Msg &amp; data rates may apply.',
-                             'Reply STOP', 'Reply HELP',
-                             'Carriers are not liable for delayed or undelivered messages.']:
+                for item in ['Seymy Internal SMS Testing', 'only to internal testers who expressly consent in advance',
+                             'A Seymy representative obtains consent from each tester before their phone number is enrolled.',
+                             'Message frequency varies', 'Message and data rates may apply.',
+                             'Msg &amp; data rates may apply.', 'Reply STOP', 'Reply HELP',
+                             '“Seymy test program: for help contact',
+                             'does not send promotional messages',
+                             'Carriers are not liable for any delayed or undelivered messages.']:
                     self.assertIn(item, html)
         privacy = self.client.get('/privacy', secure=True).content.decode()
         self.assertIn(
@@ -234,6 +237,18 @@ class LegalPagesTests(SimpleTestCase):
     def test_calls_are_transcribed_not_recorded(self):
         html = self.client.get('/privacy', secure=True).content.decode()
         self.assertIn('they are not recorded as audio', html)
+        self.assertIn('transcribed through our telephony provider, Twilio', html)
+        self.assertNotIn('OpenAI</strong>: transcription', html)
+
+    def test_only_verified_active_providers_are_named(self):
+        html = self.client.get('/privacy', secure=True).content.decode()
+        for name in ['Heroku', 'Render', 'Cloudflare', 'Stripe', 'Twilio', 'Deepgram', 'ElevenLabs',
+                     'OpenAI', 'Resend', 'Amazon SES', 'Firebase', 'Expo', 'Google Workspace']:
+            with self.subTest(provider=name):
+                self.assertIn(name, html)
+        for name in ['Sentry', 'S3', 'Apple']:
+            with self.subTest(inactive=name):
+                self.assertNotIn(name, html)
 
     def test_effective_date_is_one_setting(self):
         for path in self.PAGES:
@@ -254,8 +269,7 @@ class LegalPagesTests(SimpleTestCase):
                 html = self.client.get(path, secure=True).content.decode()
                 self.assertEqual(html.count('data-todo'), html.count('{{À FOURNIR : '))
                 self.assertNotIn('&amp;amp;', html)
-                for item in ['entité légale', 'adresse légale', 'e-mail d’assistance',
-                             'accord explicite des membres de l’équipe']:
+                for item in ['entité légale', 'adresse légale', 'e-mail d’assistance']:
                     self.assertIn(item, html)
 
     def test_no_invented_contact_details(self):
