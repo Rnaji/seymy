@@ -4,7 +4,7 @@
   visible À FOURNIR marker; never replace one with an assumption.
 {% endcomment %}
 {% block title %}Privacy Policy{% endblock %}
-{% block description %}How Seymy collects, uses and protects information, including its internal SMS testing program.{% endblock %}
+{% block description %}How Seymy collects and uses information, including its internal SMS testing program.{% endblock %}
 {% block heading %}Privacy Policy{% endblock %}
 {% block content %}
       <section class="legal-section" aria-labelledby="pp-who">
@@ -20,7 +20,7 @@
           <li><strong>Business account information</strong>, provided by a Business when it uses the Seymy app: names, email addresses and phone numbers of the owner and team members, and business details such as the business name and address.</li>
           <li><strong>Information about a Business’s customers</strong>, provided by the Business or by the customer: name, phone number, email address, service address, job details, photos, estimates, invoices and payment status.</li>
           <li><strong>Calls answered by Miss Seymy</strong>: the caller’s phone number, call details (such as time and duration), a written transcript of the conversation and an AI-generated summary. Calls are transcribed; they are not recorded as audio.</li>
-          <li><strong>Payments</strong>, processed by Stripe: we receive the payment status and limited details about the payment. We do not store full card or bank account numbers.</li>
+          <li><strong>Payments</strong>, processed by Stripe: we receive the payment status and limited details about the payment.</li>
           <li><strong>App and device information</strong>: app version, device type, push notification tokens and technical logs.</li>
           <li><strong>Internal SMS testing program</strong>: the mobile numbers of the Seymy team members who take part, the test messages and their consent.</li>
         </ul>
@@ -34,12 +34,13 @@
           <li>To test Seymy’s text messaging with consenting team members (see “Text messages (SMS)”).</li>
           <li>To meet our legal obligations.</li>
         </ul>
-        <p>A Business reviews and approves what Seymy prepares before anything is sent to its customers. We do not sell personal information.</p>
+        <p>A Business reviews and approves what Seymy prepares before anything is sent to its customers.</p>
+        <p>{% include "landing/partials/todo.html" with what="engagement de non-vente des données personnelles (CCPA / lois des États), à confirmer" %}</p>
       </section>
 
       <section class="legal-section" aria-labelledby="pp-ai">
         <h2 id="pp-ai">AI processing and call confidentiality</h2>
-        <p>Calls, dictation and messages are processed by AI models of our service provider OpenAI to transcribe, summarize and draft content. Miss Seymy keeps a written transcript of each call, not an audio recording. Transcripts and summaries are available to the Business the caller contacted.</p>
+        <p>Calls answered by Miss Seymy are transcribed through our telephony provider, Twilio, and the speech recognition services it uses. Transcripts, dictation and messages are processed by AI models of our service provider OpenAI to understand requests, summarize and draft content. Miss Seymy keeps a written transcript of each call, not an audio recording. Transcripts and summaries are available to the Business the caller contacted.</p>
         <p>{% include "landing/partials/todo.html" with what="conditions d’utilisation des données par les fournisseurs d’IA (entraînement, rétention) et annonce faite aux appelants" %}</p>
       </section>
 
@@ -58,27 +59,25 @@
           <li><strong>OpenAI</strong>: transcription, summaries and drafts.</li>
           <li><strong>Resend</strong>: email delivery.</li>
           <li><strong>Expo</strong>: app push notifications.</li>
-          <li>{% include "landing/partials/todo.html" with what="sous-traitants à confirmer (liste MASTER PROVIDERS) : hébergement du backend (Heroku ?), hébergement du site (Render), stockage des photos (Amazon Web Services, si activé), suivi d’erreurs (Sentry, désactivé par défaut), voix et reconnaissance vocale via Twilio (Google, ElevenLabs, Deepgram)" %}</li>
+          <li>{% include "landing/partials/todo.html" with what="autres sous-traitants à confirmer : hébergement de l’application et du site, stockage des photos, suivi d’erreurs, services de voix et de reconnaissance vocale utilisés via Twilio" %}</li>
         </ul>
-        <p>We also share information with the Business you deal with, and when required by law.</p>
+        <p>Outside the SMS program described above, whose mobile information and opt-in data are never shared, we also share information with the Business you deal with, and when required by law.</p>
       </section>
 
       <section class="legal-section" aria-labelledby="pp-retention">
         <h2 id="pp-retention">Retention and protection</h2>
         <p>{% include "landing/partials/todo.html" with what="durées de conservation validées (compte, transcriptions d’appels, documents de facturation, journaux, sauvegardes)" %}</p>
         <p>{% include "landing/partials/todo.html" with what="mesures de protection effectivement en place" %}</p>
-        <p>No method of transmission or storage is completely secure.</p>
       </section>
 
       <section class="legal-section" aria-labelledby="pp-rights">
         <h2 id="pp-rights">Your choices and rights</h2>
-        <p>You can ask us to access, correct or delete your information using the contact details below. If your information was provided by a Business you dealt with, we may refer your request to that Business.</p>
-        <p>{% include "landing/partials/todo.html" with what="droits selon l’État de résidence et délais de réponse" %}</p>
+        <p>{% include "landing/partials/todo.html" with what="droits (accès, rectification, suppression), comment les exercer, traitement des demandes concernant les clients d’un Business, droits selon l’État et délais" %}</p>
       </section>
 
       <section class="legal-section" aria-labelledby="pp-children">
         <h2 id="pp-children">Children</h2>
-        <p>Seymy is intended for businesses and is not directed to children under 13.</p>
+        <p>{% include "landing/partials/todo.html" with what="clause sur les mineurs" %}</p>
       </section>
 
       <section class="legal-section" aria-labelledby="pp-changes">

@@ -239,6 +239,8 @@ class LegalPagesTests(SimpleTestCase):
         for path in self.PAGES:
             with self.subTest(path=path):
                 html = self.client.get(path, secure=True).content.decode()
+                with self.settings(SITE_LEGAL_EFFECTIVE_DATE=''):
+                    html = self.client.get(path, secure=True).content.decode()
                 self.assertIn('date d’entrée en vigueur', html)
                 with self.settings(SITE_LEGAL_EFFECTIVE_DATE='November 10, 2026'):
                     html = self.client.get(path, secure=True).content.decode()
@@ -251,6 +253,7 @@ class LegalPagesTests(SimpleTestCase):
             with self.subTest(path=path):
                 html = self.client.get(path, secure=True).content.decode()
                 self.assertEqual(html.count('data-todo'), html.count('{{À FOURNIR : '))
+                self.assertNotIn('&amp;amp;', html)
                 for item in ['entité légale', 'adresse légale', 'e-mail d’assistance',
                              'accord explicite des membres de l’équipe']:
                     self.assertIn(item, html)
@@ -284,6 +287,14 @@ class SmsHonestyTests(SimpleTestCase):
         'via sms',
         'sms to customers',
         'two-way texting',
+        'two-way sms',
+        'text message to customers',
+        'text messages to customers',
+        'texting',
+        'text them',
+        'text reminder',
+        'sms reminder',
+        'reminder by text',
     ]
 
     def test_no_page_offers_customer_texting(self):
@@ -298,7 +309,44 @@ class SmsHonestyTests(SimpleTestCase):
             with self.subTest(path=path):
                 html = self.client.get(path, secure=True).content.decode()
                 self.assertNotIn('Contractor business SMS program', html)
-                self.assertNotIn('sms_contractor_business', html)
+                self.assertNotIn('per-business A2P', html)
+                self.assertIn('does not', html)
+
+    def test_contractor_sms_block_is_not_included(self):
+        from pathlib import Path
+        import re
+        legal = Path(__file__).parent / 'templates' / 'landing' / 'legal'
+        for name in ['privacy.html', 'terms.html', 'sms_internal_testing.html']:
+            source = (legal / name).read_text()
+            visible = re.sub(r'{% comment %}.*?{% endcomment %}', '', source, flags=re.S)
+            with self.subTest(template=name):
+                self.assertNotIn('sms_contractor_business', visible)
+
+
+class PublicationGateCommandTests(SimpleTestCase):
+    """build.sh runs check_public_pages: the build fails while a marker remains."""
+
+    def _run(self, pages):
+        from unittest import mock
+        from django.core.management import call_command
+        from django.http import HttpResponse
+        from landing.management.commands import check_public_pages as cmd
+        views = {path: (lambda html: (lambda request: HttpResponse(html)))(html) for path, html in pages.items()}
+        with mock.patch.object(cmd, 'PAGES', views):
+            call_command('check_public_pages', stdout=__import__('io').StringIO())
+
+    def test_gate_fails_on_a_placeholder(self):
+        from django.core.management.base import CommandError
+        with self.assertRaises(CommandError):
+            self._run({'/': '<p>ok</p>', '/privacy': '<mark data-todo>{{À FOURNIR : x}}</mark>'})
+
+    def test_gate_passes_on_finished_pages(self):
+        self._run({'/': '<p>ok</p>', '/privacy': '<p>done</p>', '/terms': '<p>done</p>'})
+
+    def test_build_script_runs_the_gate(self):
+        from pathlib import Path
+        build = (Path(__file__).resolve().parent.parent / 'build.sh').read_text()
+        self.assertIn('python manage.py check_public_pages', build)
 
 
 class PublicationReadinessTests(SimpleTestCase):
