@@ -9,6 +9,7 @@ from django.shortcuts import redirect, render
 from django.template.loader import render_to_string
 
 from .demo_estimate import TALK_ESTIMATE_CONTEXT
+from .download import PILOT_NOTE, download_cta
 
 
 def home(request):
@@ -17,6 +18,8 @@ def home(request):
         request,
         'landing/index.html',
         {
+            'download': download_cta(),
+            'pilot_note': PILOT_NOTE,
             'talk_estimate_document_html': render_to_string(
                 'landing/partials/estimate_document.html',
                 TALK_ESTIMATE_CONTEXT,

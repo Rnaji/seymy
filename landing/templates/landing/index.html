@@ -2622,13 +2622,7 @@
             while you do the work.
           </p>
           <div class="hero-cta-block">
-            <a
-              id="create-estimate"
-              href="#final-cta"
-              class="hero-cta"
-            >
-              Start with Seymy
-            </a>
+            {% include "landing/partials/download_cta.html" with cta_class="hero-cta" %}
             <p class="hero-reassure">
               $99/month or $990/year · Everything included.
             </p>
@@ -2644,12 +2638,7 @@
           Seymy handles everything around the job — while you do the work.
         </p>
         <div class="hero-cta-block">
-          <a
-            href="#final-cta"
-            class="hero-cta"
-          >
-            Start with Seymy
-          </a>
+          {% include "landing/partials/download_cta.html" with cta_class="hero-cta" %}
           <p class="hero-reassure">
             $99/month or $990/year · Everything included.
           </p>
@@ -3206,12 +3195,7 @@
             <p class="pricing-card__copy pricing-card__copy--muted">No feature tiers.<br>No paid upgrades to unlock the rest.</p>
           </div>
 
-          <a
-            href="#final-cta"
-            class="pricing-card__cta"
-          >
-            Start with Seymy
-          </a>
+          {% include "landing/partials/download_cta.html" with cta_class="pricing-card__cta" %}
         </article>
       </div>
     </section>
@@ -3345,15 +3329,16 @@
         <p class="final-cta-support">
           Seymy has the rest.
         </p>
-        <a
-          href="#final-cta"
-          class="final-cta-button"
-        >
-          Start with Seymy
-        </a>
+        {% include "landing/partials/download_cta.html" with cta_class="final-cta-button" %}
         <p class="final-cta-micro">
           $99/month or $990/year · Everything included.
         </p>
+        {% if download %}
+        <div class="download-qr" aria-label="Download Seymy on your phone">
+          {{ download.qr_svg }}
+          <p class="download-qr__help">On your computer? Scan with your phone’s camera to get Seymy.</p>
+        </div>
+        {% endif %}
       </div>
     </section>
   </main>

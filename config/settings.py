@@ -201,8 +201,11 @@ STRIPE_PUBLISHABLE_KEY = _env('STRIPE_PUBLISHABLE_KEY', '')
 STRIPE_WEBHOOK_SECRET = _env('STRIPE_WEBHOOK_SECRET', '')
 STRIPE_CURRENCY = _env('STRIPE_CURRENCY', 'usd')
 
-# SITE-0 provisional site: early-access requests go to this mailbox (no form, no data stored).
-SITE_CONTACT_EMAIL = _env('SITE_CONTACT_EMAIL', 'support@seymy.com')
+# Landing call to action (L3): the single download channel validated by Rachid.
+# Empty URL (the default) = no download link anywhere; the CTAs show a neutral
+# "private pilot" note instead. Only a plain https URL is ever linked.
+SITE_DOWNLOAD_URL = _env('SITE_DOWNLOAD_URL', '')
+SITE_DOWNLOAD_LABEL = _env('SITE_DOWNLOAD_LABEL', 'Get the Seymy app')
 
 # Email — console backend for local/MVP; swap for SMTP/ESP in production
 EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'

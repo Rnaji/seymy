@@ -70,6 +70,7 @@ class HomeTests(SimpleTestCase):
         self.assertIn('When the job ends,', self.html)
 
     def test_home_never_links_to_the_retired_funnel(self):
+        self.assertNotIn('Start with Seymy', self.html)
         self.assertNotIn('/start', self.html)
         self.assertNotIn('/e/', self.html)
 
@@ -127,6 +128,42 @@ class IdentityTests(SimpleTestCase):
         self.assertIn('<span class="wordmark">Sey<span class="wordmark__miss">my.</span></span>', html)
         self.assertIn('css/site-v11.css', html)
         self.assertNotIn('#1a6dff', html.lower())
+
+
+class DownloadCtaTests(SimpleTestCase):
+    """L3: one configurable download channel; no URL means no link at all."""
+
+    def _home(self, **overrides):
+        with self.settings(**overrides):
+            return self.client.get('/', secure=True).content.decode()
+
+    def test_without_url_there_is_no_download_link_and_no_qr(self):
+        for url in ['', '   ', 'http://example.com/app', 'javascript:alert(1)', '#', '/download']:
+            with self.subTest(url=url):
+                html = self._home(SITE_DOWNLOAD_URL=url)
+                self.assertNotIn('data-download-cta', html)
+                self.assertNotIn('download-qr', html)
+                self.assertEqual(html.count('Seymy is in private pilot.'), 4)
+                self.assertNotIn('Start with Seymy', html)
+
+    def test_default_settings_have_no_download_link(self):
+        html = self._home()
+        self.assertNotIn('data-download-cta', html)
+        self.assertIn('Seymy is in private pilot.', html)
+
+    def test_configured_url_drives_every_cta_and_the_qr(self):
+        url = 'https://downloads.example.com/seymy'
+        html = self._home(SITE_DOWNLOAD_URL=url, SITE_DOWNLOAD_LABEL='Get Seymy')
+        self.assertEqual(html.count(f'href="{url}"'), 4)
+        self.assertEqual(html.count('>Get Seymy</a>'), 4)
+        self.assertNotIn('private pilot', html)
+        self.assertIn('class="download-qr"', html)
+        self.assertIn('aria-label="QR code to download Seymy"', html)
+        self.assertNotIn('<?xml', html)
+
+    def test_blank_label_falls_back_to_a_neutral_label(self):
+        html = self._home(SITE_DOWNLOAD_URL='https://downloads.example.com/x', SITE_DOWNLOAD_LABEL='')
+        self.assertEqual(html.count('>Get the Seymy app</a>'), 4)
 
 
 class RetiredRouteTests(SimpleTestCase):
