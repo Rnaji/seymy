@@ -59,52 +59,23 @@ def _all_patterns(resolver=None):
             yield entry
 
 
-class ProvisionalHomeTests(SimpleTestCase):
+class HomeTests(SimpleTestCase):
     def setUp(self):
         self.response = self.client.get('/', secure=True)
         self.html = self.response.content.decode()
 
-    def test_home_renders_without_database(self):
+    def test_home_renders_the_landing_without_database(self):
         self.assertEqual(self.response.status_code, 200)
-        self.assertTemplateUsed(self.response, 'landing/provisional_home.html')
+        self.assertTemplateUsed(self.response, 'landing/index.html')
+        self.assertIn('When the job ends,', self.html)
 
-    def test_cta_is_an_early_access_email(self):
-        self.assertIn('Request early access', self.html)
-        self.assertIn('href="mailto:support@seymy.com?subject=Seymy%20early%20access', self.html)
+    def test_home_never_links_to_the_retired_funnel(self):
         self.assertNotIn('/start', self.html)
+        self.assertNotIn('/e/', self.html)
 
-    def test_retired_offers_and_promises_are_gone(self):
-        for text in [
-            '$49',
-            '$',
-            'free trial',
-            '14 days',
-            '14-day',
-            'credit card',
-            'card fees',
-            'Pass eligible',
-            'Apple Pay',
-        ]:
-            with self.subTest(text=text):
-                self.assertNotIn(text.lower(), self.html.lower())
-
-    def test_text_message_payment_links_are_only_announced_as_coming_later(self):
-        self.assertEqual(self.html.count('by text'), 1)
-        later = self.html.index('Coming later')
-        self.assertLess(later, self.html.index('Payment links by text message'))
-
-    def test_no_form_and_no_sms_consent(self):
-        self.assertNotIn('<form', self.html)
-        self.assertNotIn('STOP', self.html)
-        self.assertNotIn('Msg & data rates', self.html)
-
-    def test_no_dead_legal_links(self):
-        self.assertNotIn('href="#"', self.html)
-
-    def test_contact_email_comes_from_settings(self):
-        with self.settings(SITE_CONTACT_EMAIL='pilot@example.com'):
-            html = self.client.get('/', secure=True).content.decode()
-        self.assertIn('mailto:pilot@example.com', html)
+    def test_sample_estimate_preview_is_rendered(self):
+        self.assertIn('Estimate #1042', self.html)
+        self.assertIn('Miller Plumbing', self.html)
 
 
 class RetiredRouteTests(SimpleTestCase):
