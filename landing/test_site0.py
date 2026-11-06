@@ -96,6 +96,10 @@ class V11ContentTests(SimpleTestCase):
         self.assertIn('carry no Seymy fee', self.html)
         self.assertNotIn('Card, cash, check, or bank transfer', self.html)
 
+    def test_price_microcopy_says_only_the_owner_is_included(self):
+        self.assertEqual(self.html.count('Owner included · Extra users billed separately.'), 3)
+        self.assertNotIn('· Everything included', self.html)
+
     def test_retired_offers_and_promises_are_gone(self):
         for text in [
             'trial',
@@ -230,7 +234,8 @@ class LegalPagesTests(SimpleTestCase):
         html = self.client.get('/terms', secure=True).content.decode()
         for text in ['$99 per month', '$990 per year', 'There is no free trial.', '$25 per month',
                      '$250 per year', '500 Miss Seymy call minutes', '1% platform fee',
-                     'carry no Seymy fee', 'does not book appointments']:
+                     'carry no Seymy fee', 'does not book appointments',
+                     'No Seymy platform fee applies to payments made outside Seymy.']:
             with self.subTest(text=text):
                 self.assertIn(text, html)
 
