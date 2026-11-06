@@ -275,17 +275,23 @@ class LegalPagesTests(SimpleTestCase):
                 html = self.client.get(path, secure=True).content.decode()
                 self.assertEqual(html.count('data-todo'), html.count('{{À FOURNIR : '))
                 self.assertNotIn('&amp;amp;', html)
-                for item in ['entité légale', 'adresse légale', 'e-mail d’assistance']:
+                for item in ['Seymy, Inc., a Delaware corporation',
+                             '131 Continental Drive, Suite 305, Newark, DE',
+                             'support@seymy.com']:
                     self.assertIn(item, html)
 
     def test_no_invented_contact_details(self):
-        """Contacts stay placeholders until verified details are supplied."""
+        """Only the contact Rachid supplied (2026-11-06) appears: one support
+        address, no other email, no phone number."""
+        import re
         for path in ['/', '/privacy', '/terms']:
             with self.subTest(path=path):
                 html = self.client.get(path, secure=True).content.decode()
-                self.assertNotRegex(html, r'[\w.+-]+@[\w-]+\.[\w.]+')
-                self.assertNotIn('mailto:', html)
+                emails = {e.rstrip('.') for e in re.findall(r'[\w.+-]+@[\w-]+\.[\w.]+', html)}
+                self.assertLessEqual(emails, {'support@seymy.com'})
                 self.assertNotIn('tel:', html)
+                for mailto in re.findall(r'mailto:([^"]*)', html):
+                    self.assertEqual(mailto, 'support@seymy.com')
 
 
 class SmsHonestyTests(SimpleTestCase):

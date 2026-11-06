@@ -1,12 +1,13 @@
 {% comment %}
-  Verified details only: no postal box, no phone number. The support
-  email stays a placeholder until its mailbox is confirmed.
+  Details supplied by Rachid on 2026-11-06: no postal box, no phone number.
+  The ZIP code stays a marker until confirmed (19702 supplied; public
+  records give 19713 for 131 Continental Drive).
 {% endcomment %}
       <section class="legal-section legal-contact" id="contact" aria-labelledby="{{ prefix }}-contact">
         <h2 id="{{ prefix }}-contact">Contact and support</h2>
         <dl class="legal-contact__list">
-          <div><dt>Company</dt><dd>{% include "landing/partials/todo.html" with what="entité légale" %}</dd></div>
-          <div><dt>Address</dt><dd>{% include "landing/partials/todo.html" with what="adresse légale (pas de boîte postale)" %}</dd></div>
-          <div><dt>Email</dt><dd>{% include "landing/partials/todo.html" with what="e-mail d’assistance" %}</dd></div>
+          <div><dt>Company</dt><dd>Seymy, Inc., a Delaware corporation</dd></div>
+          <div><dt>Address</dt><dd>131 Continental Drive, Suite 305, Newark, DE {% include "landing/partials/todo.html" with what="code postal à confirmer : 19702 fourni, 19713 selon les registres publics" %}, USA</dd></div>
+          <div><dt>Email</dt><dd><a href="mailto:support@seymy.com">support@seymy.com</a></dd></div>
         </dl>
       </section>
