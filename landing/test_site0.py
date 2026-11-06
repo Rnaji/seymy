@@ -218,8 +218,8 @@ class LegalPagesTests(SimpleTestCase):
                 for item in ['Seymy Internal SMS Testing', 'only to internal testers who expressly consent in advance',
                              'A Seymy representative obtains consent from each tester before their phone number is enrolled.',
                              'Message frequency varies', 'Message and data rates may apply.',
-                             'Msg &amp; data rates may apply.', 'Reply STOP', 'Reply HELP',
-                             '“Seymy test program: for help contact',
+                             'Msg &amp; data rates may apply.', 'Reply STOP', 'HELP for help.',
+                             'For help with the testing program, contact us using the details in the Contact section below.',
                              'does not send promotional messages',
                              'Carriers are not liable for any delayed or undelivered messages.']:
                     self.assertIn(item, html)
@@ -276,22 +276,34 @@ class LegalPagesTests(SimpleTestCase):
                 self.assertEqual(html.count('data-todo'), html.count('{{À FOURNIR : '))
                 self.assertNotIn('&amp;amp;', html)
                 for item in ['Seymy, Inc., a Delaware corporation',
-                             '131 Continental Drive, Suite 305, Newark, DE',
-                             'support@seymy.com']:
+                             '131 Continental Dr, Suite 305, Newark, DE 19713, USA',
+                             'rachid@seymy.com']:
                     self.assertIn(item, html)
+                # No unverified automatic reply is quoted (Twilio HELP not verified).
+                self.assertNotIn('Seymy test program: for help contact', html)
+
+    def test_no_deletion_capability_is_promised(self):
+        """No account deletion or purge exists: the policy must say so and
+        never promise deletion it cannot perform."""
+        html = self.client.get('/privacy', secure=True).content.decode()
+        self.assertIn('It is not deleted automatically', html)
+        self.assertIn('We will respond as required by applicable law.', html)
+        for promise in ['we will delete', 'You may request access to, correction of, or deletion',
+                        'deleted on request', 'export your data']:
+            self.assertNotIn(promise.lower(), html.lower())
 
     def test_no_invented_contact_details(self):
-        """Only the contact Rachid supplied (2026-11-06) appears: one support
+        """Only the contact Rachid confirmed (2026-11-06) appears: one email
         address, no other email, no phone number."""
         import re
         for path in ['/', '/privacy', '/terms']:
             with self.subTest(path=path):
                 html = self.client.get(path, secure=True).content.decode()
                 emails = {e.rstrip('.') for e in re.findall(r'[\w.+-]+@[\w-]+\.[\w.]+', html)}
-                self.assertLessEqual(emails, {'support@seymy.com'})
+                self.assertLessEqual(emails, {'rachid@seymy.com'})
                 self.assertNotIn('tel:', html)
                 for mailto in re.findall(r'mailto:([^"]*)', html):
-                    self.assertEqual(mailto, 'support@seymy.com')
+                    self.assertEqual(mailto, 'rachid@seymy.com')
 
 
 class SmsHonestyTests(SimpleTestCase):
