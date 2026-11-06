@@ -1,0 +1,20 @@
+{% comment %}Shared footer: landing and legal pages. `page` marks the current legal page.{% endcomment %}
+  <footer class="site-footer border-t border-line bg-white">
+    <div class="mx-auto flex max-w-7xl flex-col gap-8 px-5 py-12 sm:flex-row sm:items-end sm:justify-between sm:px-6 sm:py-16">
+      <div>
+        <p class="text-lg font-bold tracking-tight text-navy">
+          <a href="{% url 'home' %}" class="wordmark" aria-label="Seymy home">Sey<span class="wordmark__miss">my.</span></a>
+        </p>
+        <p class="mt-1 text-sm leading-relaxed text-navy-muted">
+          Your coworker, not your software.
+        </p>
+      </div>
+      <div class="flex flex-col gap-6 sm:items-end">
+        <nav class="site-footer__legal flex gap-6 text-sm" aria-label="Legal">
+          <a href="{% url 'privacy' %}"{% if page == 'privacy' %} aria-current="page"{% endif %}>Privacy Policy</a>
+          <a href="{% url 'terms' %}"{% if page == 'terms' %} aria-current="page"{% endif %}>Terms &amp; Conditions</a>
+        </nav>
+        <p class="text-xs text-navy-muted">© 2026 Seymy</p>
+      </div>
+    </div>
+  </footer>

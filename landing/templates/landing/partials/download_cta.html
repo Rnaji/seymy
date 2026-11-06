@@ -1,0 +1,5 @@
+{% comment %}
+  The only call to action of the site (L3). `download` comes from
+  landing.download.download_cta(): without a configured URL there is no link.
+  `cta_class` is the button style of the calling section.
+{% endcomment %}{% if download %}<a href="{{ download.url }}" class="{{ cta_class }}" rel="noopener" data-download-cta>{{ download.label }}</a>{% else %}<p class="pilot-note" data-pilot-note>{{ pilot_note }}</p>{% endif %}

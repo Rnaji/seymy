@@ -4,707 +4,4009 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>Seymy — Quote the job before you leave the driveway</title>
-  <meta name="description" content="Dictate the job from your truck. Seymy creates the PDF, you approve it, and Seymy handles the rest.">
+  <title>Seymy — When the job ends, your workday ends</title>
+  <meta name="description" content="Seymy is your coworker, not your software. When the job ends, your workday ends.">
   <link rel="stylesheet" href="{% static 'css/seymy.css' %}">
+  <style>
+    .max-w-7xl { max-width: 80rem; }
+    .scroll-mt-24 { scroll-margin-top: 6rem; }
+    /*
+      Nav anchors (#day / #pricing / #faq): IDs sit on padded <section>s.
+      scroll-mt-24 (6rem) + section padding left a large blank gap above titles.
+      Offset = desired title inset (~72px) minus each section's top padding.
+      Mobile keeps sticky-header clearance; desktop header is absolute (not sticky).
+    */
+    #day {
+      scroll-margin-top: calc(5rem - 3rem); /* sticky header − py-12 */
+    }
+    #pricing,
+    #faq {
+      scroll-margin-top: calc(5rem - 4rem); /* sticky header − py-16 */
+    }
+    @media (min-width: 640px) {
+      #day {
+        scroll-margin-top: calc(5rem - 4rem); /* sticky header − sm:py-16 */
+      }
+    }
+    @media (min-width: 1024px) {
+      #day {
+        scroll-margin-top: calc(72px - 5rem); /* lg:py-20; no sticky header */
+      }
+      #pricing,
+      #faq {
+        scroll-margin-top: calc(72px - 6rem); /* lg:py-24; no sticky header */
+      }
+    }
+    .sticky { position: sticky; top: 0; z-index: 30; }
+    .backdrop-blur { backdrop-filter: blur(10px); }
+    .bg-white\/95 { background-color: rgb(255 255 255 / 0.95); }
+    .text-4xl { font-size: 2.25rem; line-height: 1.12; }
+    .text-5xl { font-size: 3rem; line-height: 1.08; }
+    .px-8 { padding-left: 2rem; padding-right: 2rem; }
+    .py-3\.5 { padding-top: 0.875rem; padding-bottom: 0.875rem; }
+    .gap-1\.5 { gap: 0.375rem; }
+    .gap-10 { gap: 2.5rem; }
+    .leading-\[1\.08\] { line-height: 1.08; }
+    .leading-\[1\.2\] { line-height: 1.2; }
+    .hidden { display: none; }
+    .italic { font-style: italic; }
+    .border-dashed { border-style: dashed; }
+    .pr-10 { padding-right: 2.5rem; }
+    .mb-2 { margin-bottom: 0.5rem; }
+    .mt-auto { margin-top: auto; }
+    .shrink-0 { flex-shrink: 0; }
+    .transition-all {
+      transition-property: all;
+      transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
+      transition-duration: 200ms;
+    }
+    .chat-bubble {
+      border-radius: 1.1rem;
+      border: 1px solid var(--color-line);
+      background: #fff;
+      padding: 0.9rem 1rem;
+      box-shadow: 0 8px 24px rgba(11, 27, 51, 0.05);
+    }
+    .chat-bubble--user {
+      border-color: color-mix(in srgb, #2563eb 18%, #e2e8f0);
+      background: color-mix(in srgb, #2563eb 5%, #fff);
+    }
+    .chat-bubble--seymy {
+      background: #fff;
+    }
+    .status-pill {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.4rem;
+      border-radius: 9999px;
+      border: 1px solid var(--color-line);
+      background: #fff;
+      padding: 0.3rem 0.7rem;
+      font-size: 0.6875rem;
+      font-weight: 600;
+      letter-spacing: 0.04em;
+      color: var(--color-navy-muted);
+    }
+    .status-dot {
+      width: 0.4rem;
+      height: 0.4rem;
+      border-radius: 9999px;
+      background: var(--color-seymy);
+    }
+    .status-dot--ready { background: var(--color-ready); }
+    .status-dot--muted { background: #94a3b8; }
+    .status-dot--seymy { background: var(--color-seymy); }
+    .capability-list {
+      display: grid;
+      gap: 0.65rem 1.25rem;
+    }
+    @media (min-width: 640px) {
+      .sm\:text-5xl { font-size: 3rem; line-height: 1.08; }
+      .sm\:text-6xl { font-size: 3.75rem; line-height: 1.05; }
+      .sm\:w-auto { width: auto; }
+      .sm\:grid-cols-2 { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+      .sm\:inline { display: inline; }
+      .capability-list { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+    }
+    @media (min-width: 1024px) {
+      .lg\:flex { display: flex; }
+      .lg\:grid-cols-2 { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+      .lg\:grid-cols-3 { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+      .lg\:text-left { text-align: left; }
+      .lg\:items-start { align-items: flex-start; }
+      .lg\:text-\[3\.35rem\] { font-size: 3.35rem; line-height: 1.05; }
+      .capability-list { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+    }
+
+    /* FAQ */
+    .faq-item > summary { list-style: none; }
+    .faq-item > summary::-webkit-details-marker { display: none; }
+    .faq-item .faq-panel { transition: opacity 200ms ease, transform 200ms ease; }
+    .faq-item[open] .faq-panel { animation: faq-open 200ms ease; }
+    @keyframes faq-open {
+      from { opacity: 0; transform: translateY(-0.25rem); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+    .faq-item .faq-chevron {
+      transition: transform 200ms ease, background-color 200ms ease, color 200ms ease;
+    }
+    .faq-item[open] .faq-chevron {
+      transform: rotate(180deg);
+      background-color: color-mix(in srgb, #2563eb 10%, transparent);
+      color: #2563eb;
+    }
+
+    /* Conversation UI — used in later sections */
+    .hero-msg {
+      max-width: 92%;
+    }
+    .hero-msg--seymy { align-self: flex-start; }
+    .hero-msg--john { align-self: flex-end; }
+    .hero-msg-meta {
+      margin-bottom: 0.35rem;
+      font-size: 0.625rem;
+      font-weight: 700;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+    }
+    .hero-msg-meta--seymy { color: var(--color-navy-muted); }
+    .hero-msg-meta--john { color: var(--color-seymy); text-align: left; }
+    .hero-msg-body {
+      border-radius: 1.15rem;
+      padding: 0.85rem 1rem;
+      font-size: 0.875rem;
+      line-height: 1.45;
+      color: var(--color-navy);
+    }
+    .hero-msg--seymy .hero-msg-body {
+      border: 1px solid var(--color-line);
+      background: #fff;
+      border-bottom-left-radius: 0.35rem;
+      box-shadow: 0 6px 18px rgba(11, 27, 51, 0.04);
+    }
+    .hero-msg--john .hero-msg-body {
+      background: color-mix(in srgb, #2563eb 8%, #fff);
+      border: 1px solid color-mix(in srgb, #2563eb 16%, #e2e8f0);
+      border-bottom-right-radius: 0.35rem;
+    }
+
+    /* Hero — full-bleed photo, white fade from left, copy over fade */
+    .hero-campaign {
+      position: relative;
+      background: #fff;
+    }
+    .site-header {
+      position: sticky;
+      top: 0;
+      z-index: 30;
+      min-height: 4.75rem;
+      border-bottom: 1px solid var(--color-line);
+      background: rgb(255 255 255 / 0.95);
+      backdrop-filter: blur(10px);
+    }
+    .site-header > div {
+      min-height: 4.75rem;
+      padding-top: 0.85rem;
+      padding-bottom: 0.85rem;
+    }
+    .hero {
+      position: relative;
+      display: flex;
+      flex-direction: column;
+      overflow: hidden;
+      background: #fff;
+    }
+    .hero-stage {
+      position: relative;
+      order: 2;
+      margin-inline: -1.25rem;
+      width: calc(100% + 2.5rem);
+      height: 22.5rem;
+      overflow: hidden;
+    }
+    .hero-photo {
+      display: block;
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      object-position: 72% 40%;
+    }
+    .hero-veil {
+      display: none;
+    }
+
+    /* Conversation overlay — relative to the photograph */
+    .hero-chat {
+      position: absolute;
+      z-index: 2;
+      left: calc(1.25rem + 1.125rem);
+      width: 74vw;
+      max-width: min(22.5rem, calc(100vw - 3.5rem));
+      display: grid;
+      align-content: end;
+      pointer-events: none;
+    }
+    .hero-chat--mobile {
+      left: 0;
+      right: 0;
+      top: 38%;
+      bottom: 0.7rem;
+      width: 100%;
+      max-width: none;
+      box-sizing: border-box;
+      padding-inline: 0;
+      display: grid;
+      align-content: end;
+      justify-items: stretch;
+    }
+    .hero-chat--mobile .hc-step {
+      grid-area: 1 / 1;
+      box-sizing: border-box;
+    }
+    .hero-chat--mobile .hc-seymy {
+      justify-self: start;
+      width: 74%;
+      max-width: calc(100% - 2.25rem);
+      margin-left: 1.125rem; /* ~18px from image edge */
+    }
+    .hero-chat--mobile .hc-john {
+      justify-self: end;
+      width: 60%;
+      max-width: calc(100% - 2.25rem);
+      margin-right: 1.125rem; /* ~18px from image edge */
+    }
+    .hero-chat--mobile .hc-bubble {
+      box-sizing: border-box;
+      width: 100%;
+      padding: 0.32rem 0.48rem;
+      border-radius: 1rem;
+    }
+    .hero-chat--mobile .hc-seymy .hc-bubble,
+    .hero-chat--mobile .hc-john .hc-bubble {
+      width: 100%;
+      padding: 0.32rem 0.48rem;
+    }
+    .hero-chat--mobile .hc-seymy .hc-meta,
+    .hero-chat--mobile .hc-john .hc-meta {
+      margin-bottom: 0.22rem;
+    }
+    .hero-chat--mobile .hc-seymy .hc-live,
+    .hero-chat--mobile .hc-john .hc-live {
+      margin-bottom: 0.28rem;
+    }
+    .hero-chat--mobile .hc-seymy .hc-body,
+    .hero-chat--mobile .hc-john .hc-body {
+      line-height: 1.3;
+    }
+    .hero-chat--mobile .hc-nowrap {
+      white-space: nowrap;
+    }
+    .hero-chat--desktop {
+      display: none;
+    }
+    .hc-meta {
+      margin: 0 0 0.28rem;
+      font-size: 0.5rem;
+      font-weight: 700;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      color: #1557e6;
+    }
+    .hc-live {
+      display: flex;
+      align-items: flex-end;
+      gap: 0.11rem;
+      height: 0.62rem;
+      margin: 0 0 0.35rem;
+    }
+    .hc-live span {
+      display: block;
+      width: 0.15rem;
+      border-radius: 9999px;
+      background: var(--color-seymy);
+      transform-origin: center bottom;
+    }
+    .hc-live span:nth-child(1) { height: 38%; }
+    .hc-live span:nth-child(2) { height: 68%; }
+    .hc-live span:nth-child(3) { height: 92%; }
+    .hc-live span:nth-child(4) { height: 52%; }
+    .hc-live span:nth-child(5) { height: 78%; }
+    .hc-live span:nth-child(6) { height: 44%; }
+    .hc-live span:nth-child(7) { height: 86%; }
+    .hc-live span:nth-child(8) { height: 60%; }
+
+    /* Sequential voice conversation — one bubble in the same zone */
+    .hc-step {
+      opacity: 0;
+      transform: translateY(6px);
+      pointer-events: none;
+    }
+    @media (prefers-reduced-motion: no-preference) {
+      .hc-step.is-active .hc-live span {
+        animation: hc-speak 1.05s ease-in-out infinite;
+      }
+      .hc-step.is-active .hc-live span:nth-child(1) { animation-delay: 0s; }
+      .hc-step.is-active .hc-live span:nth-child(2) { animation-delay: 0.12s; }
+      .hc-step.is-active .hc-live span:nth-child(3) { animation-delay: 0.04s; }
+      .hc-step.is-active .hc-live span:nth-child(4) { animation-delay: 0.18s; }
+      .hc-step.is-active .hc-live span:nth-child(5) { animation-delay: 0.08s; }
+      .hc-step.is-active .hc-live span:nth-child(6) { animation-delay: 0.22s; }
+      .hc-step.is-active .hc-live span:nth-child(7) { animation-delay: 0.06s; }
+      .hc-step.is-active .hc-live span:nth-child(8) { animation-delay: 0.15s; }
+    }
+    @media (prefers-reduced-motion: reduce) {
+      .hc-step {
+        transform: none;
+      }
+      .hc-step.is-active {
+        opacity: 1;
+        transform: none;
+      }
+    }
+    @keyframes hc-speak {
+      0%, 100% { transform: scaleY(0.55); }
+      50% { transform: scaleY(1); }
+    }
+    .hc-bubble {
+      margin: 0;
+      width: 100%;
+      box-sizing: border-box;
+      padding: 0.4rem 0.55rem;
+      font-size: 0.625rem;
+      line-height: 1.32;
+      color: var(--color-navy);
+      border: 1px solid var(--color-line);
+      border-radius: 1rem;
+      box-shadow: 0 4px 12px rgba(11, 27, 51, 0.08);
+      background: rgb(255 255 255 / 0.94);
+    }
+    .hc-john .hc-bubble {
+      background: color-mix(in srgb, #2563eb 10%, rgb(255 255 255 / 0.94));
+    }
+    .hc-body {
+      margin: 0;
+      font-weight: 500;
+      color: #0b1b33;
+    }
+    .hc-seymy .hc-bubble {
+      padding-top: 0.34rem;
+      padding-bottom: 0.34rem;
+    }
+    .hc-seymy .hc-meta {
+      margin-bottom: 0.24rem;
+    }
+    .hc-seymy .hc-live {
+      margin-bottom: 0.3rem;
+    }
+    .hc-seymy .hc-body {
+      line-height: 1.28;
+    }
+    .hc-done .hc-bubble {
+      padding-top: 0.34rem;
+      padding-bottom: 0.34rem;
+      border-color: color-mix(in srgb, var(--color-ready) 30%, var(--color-line));
+      background: color-mix(in srgb, var(--color-ready) 7%, rgb(255 255 255 / 0.96));
+    }
+    .hc-done-title {
+      display: flex;
+      align-items: center;
+      gap: 0.28rem;
+      margin: 0;
+      font-size: 0.5rem;
+      font-weight: 700;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      color: var(--color-ready);
+    }
+    .hc-done-title span {
+      font-size: 0.5625rem;
+      line-height: 1;
+    }
+    .hc-done-detail {
+      margin: 0.18rem 0 0;
+      font-size: inherit;
+      font-weight: 500;
+      line-height: 1.28;
+      color: var(--color-navy);
+    }
+    .hero-copy {
+      display: flex;
+      flex-direction: column;
+      align-items: flex-start;
+      text-align: left;
+      order: 1;
+      padding: 0.85rem 1.25rem 0.6rem;
+    }
+    .hero-copy-mobile {
+      display: flex;
+      flex-direction: column;
+      align-items: flex-start;
+      order: 3;
+      padding: 0.85rem 1.25rem 1.25rem;
+    }
+    .hero-eyebrow {
+      margin: 0 0 0.45rem;
+      font-size: 0.6875rem;
+      font-weight: 800;
+      letter-spacing: 0.12em;
+      color: #1d4ed8;
+    }
+    .hero-title {
+      margin: 0;
+      font-size: 2rem;
+      font-weight: 800;
+      line-height: 1.08;
+      letter-spacing: -0.03em;
+      color: var(--color-navy);
+    }
+    .hero-title-line {
+      display: block;
+    }
+    .hero-position {
+      margin: 0;
+      max-width: 28rem;
+      font-size: 1.0625rem;
+      font-weight: 700;
+      line-height: 1.35;
+      color: var(--color-navy);
+    }
+    .hero-support {
+      margin: 0.65rem 0 0;
+      max-width: 28rem;
+      font-size: 0.9375rem;
+      line-height: 1.55;
+      color: #24364d;
+    }
+    .hero .hero-support {
+      color: #24364d;
+    }
+    .hero-cta-block {
+      margin-top: 0.85rem;
+      width: 88%;
+    }
+    .hero-cta {
+      display: inline-flex;
+      min-height: 2.85rem;
+      width: 100%;
+      align-items: center;
+      justify-content: center;
+      border-radius: 0.75rem;
+      background: var(--color-seymy);
+      padding: 0.85rem 1.75rem;
+      font-size: 1.0625rem;
+      font-weight: 700;
+      color: #fff;
+      text-decoration: none;
+      box-shadow: 0 10px 24px rgba(37, 99, 235, 0.28);
+      transition: background-color 160ms ease;
+    }
+    .hero-cta:hover { background: var(--color-seymy-dark); }
+    .hero-reassure {
+      margin: 0.55rem 0 0;
+      font-size: 0.8125rem;
+      font-weight: 400;
+      color: #3d4f64;
+    }
+    .hero-copy .hero-position,
+    .hero-copy .hero-support,
+    .hero-copy .hero-cta-block {
+      display: none;
+    }
+
+    @media (min-width: 768px) {
+      .hero-title { font-size: 2.35rem; }
+      .hero-copy { padding: 1rem 1.5rem 0.7rem; }
+      .hero-copy-mobile { padding: 1rem 1.5rem 1.4rem; }
+      .hero-stage {
+        margin-inline: 0;
+        width: 100%;
+        height: 24.5rem;
+      }
+      .hero-photo { object-position: 70% 42%; }
+      .hero-chat--mobile {
+        top: 42%;
+        bottom: 1rem;
+      }
+      .hero-chat--mobile .hc-seymy {
+        margin-left: 1.25rem; /* ~20px */
+      }
+      .hero-chat--mobile .hc-john {
+        margin-right: 1.25rem; /* ~20px */
+      }
+    }
+
+    @media (min-width: 1024px) {
+      .site-header {
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        min-height: 0;
+        border-bottom: none;
+        background: transparent;
+        backdrop-filter: none;
+      }
+      .site-header nav {
+        padding: 0.4rem 0.95rem;
+        border-radius: 9999px;
+        background: rgba(255, 255, 255, 0.9);
+        box-shadow: 0 1px 10px rgba(11, 27, 51, 0.06);
+      }
+      .site-header nav a {
+        color: var(--color-navy);
+        font-weight: 600;
+      }
+      .site-header nav a:hover { color: var(--color-seymy); }
+      .site-header > div {
+        min-height: 0;
+        padding-top: 1rem;
+        padding-bottom: 1rem;
+      }
+      .hero {
+        display: block;
+        min-height: 100vh;
+        min-height: 100dvh;
+      }
+      .hero-stage {
+        position: absolute;
+        top: 0;
+        right: 0;
+        bottom: 0;
+        left: 80px;
+        order: unset;
+        margin: 0;
+        width: auto;
+        height: auto;
+        max-height: none;
+        aspect-ratio: auto;
+      }
+      .hero-photo {
+        object-position: 58% 48%;
+      }
+      .hero-veil {
+        display: block;
+        position: absolute;
+        inset: 0;
+        z-index: 1;
+        pointer-events: none;
+        /*
+          Organic dissolve: solid white behind copy (~0–28%),
+          soft curved fade (~28–40%), photo clear from ~40%+.
+        */
+        background-image:
+          /* Primary curved white field — ~0–28% solid, fade done by ~40% */
+          radial-gradient(
+            ellipse 40% 90% at 0% 38%,
+            #fff 0%,
+            #fff 55%,
+            rgba(255, 255, 255, 0.55) 72%,
+            rgba(255, 255, 255, 0.15) 88%,
+            transparent 100%
+          ),
+          /* Headline soft bulge — mid-upper, stays left */
+          radial-gradient(
+            ellipse 30% 32% at 2% 14%,
+            rgba(255, 255, 255, 0.5) 0%,
+            rgba(255, 255, 255, 0.12) 55%,
+            transparent 80%
+          ),
+          /* CTA / pricing — bottom-left only */
+          radial-gradient(
+            ellipse 32% 38% at -2% 78%,
+            #fff 0%,
+            rgba(255, 255, 255, 0.4) 50%,
+            transparent 78%
+          ),
+          /* Local bottom-left corner — kill visible image edge */
+          radial-gradient(
+            ellipse 30% 30% at 0% 100%,
+            #fff 0%,
+            #fff 58%,
+            rgba(255, 255, 255, 0.65) 78%,
+            transparent 100%
+          );
+        background-repeat: no-repeat;
+        background-size: 100% 100%;
+        background-position: 0 0;
+      }
+      .hero-copy {
+        position: relative;
+        z-index: 2;
+        order: unset;
+        display: flex;
+        width: 100%;
+        max-width: 80rem;
+        min-height: 100vh;
+        min-height: 100dvh;
+        margin-inline: auto;
+        padding: 7.25rem 1.5rem 4.5rem;
+      }
+      .hero-copy .hero-position,
+      .hero-copy .hero-support,
+      .hero-copy .hero-cta-block {
+        display: block;
+      }
+      .hero-copy-inner {
+        position: relative;
+        max-width: 36rem;
+      }
+      .hero-copy-inner::before {
+        content: none;
+      }
+      .hero-position { margin-top: 1.15rem; }
+      .hero-cta-block {
+        margin-top: 2rem;
+        width: auto;
+      }
+      .hero-copy-mobile { display: none; }
+      .hero-title {
+        font-size: 3.5rem;
+      }
+      .hero-cta {
+        width: auto;
+        min-height: 3.1rem;
+      }
+      .hero-reassure {
+        margin-top: 0.75rem;
+        font-size: 0.875rem;
+      }
+      .hero-eyebrow {
+        margin-bottom: 0.85rem;
+      }
+      .hero-title-line {
+        white-space: nowrap;
+      }
+      .hero-chat {
+        top: 22%;
+        bottom: auto;
+        left: 48%;
+        right: auto;
+        width: 13.5rem;
+        display: grid;
+        align-content: start;
+      }
+      .hc-meta {
+        margin-bottom: 0.4rem;
+        font-size: 0.5625rem;
+      }
+      .hc-seymy .hc-bubble {
+        padding-top: 0.55rem;
+        padding-bottom: 0.55rem;
+      }
+      .hc-seymy .hc-meta { margin-bottom: 0.4rem; }
+      .hc-seymy .hc-live { margin-bottom: 0.5rem; }
+      .hc-seymy .hc-body { line-height: 1.4; }
+      .hc-live {
+        gap: 0.13rem;
+        height: 0.85rem;
+        margin-bottom: 0.5rem;
+      }
+      .hc-bubble {
+        padding: 0.55rem 0.7rem;
+        font-size: 0.75rem;
+        line-height: 1.4;
+        border-radius: 0.85rem;
+        box-shadow: 0 6px 16px rgba(11, 27, 51, 0.08);
+        background: #fff;
+      }
+      .hc-john .hc-bubble {
+        background: color-mix(in srgb, #2563eb 8%, #fff);
+      }
+      .hc-done .hc-bubble {
+        padding-top: 0.5rem;
+        padding-bottom: 0.5rem;
+      }
+      .hc-done-title {
+        font-size: 0.5625rem;
+      }
+      .hc-done-detail {
+        margin-top: 0.2rem;
+      }
+      .hero-chat--mobile {
+        display: none;
+      }
+      .hero-chat--desktop {
+        display: grid;
+      }
+      .hero-chat--desktop .hc-step {
+        grid-area: 1 / 1;
+      }
+      .hero-chat--desktop .hc-seymy {
+        justify-self: start;
+        width: 100%;
+        max-width: 100%;
+      }
+      .hero-chat--desktop .hc-john {
+        justify-self: end;
+        width: 82%;
+        max-width: 100%;
+      }
+    }
+    @media (min-width: 1280px) {
+      .hero-chat {
+        top: 20%;
+        left: 47.5%;
+        width: 14.25rem;
+      }
+    }
+    @media (min-width: 1440px) {
+      .hero-chat {
+        top: 19%;
+        left: 46.5%;
+        width: 14.75rem;
+      }
+    }
+
+    @media (min-width: 1024px) {
+      .lg\:items-center { align-items: center; }
+      .lg\:gap-16 { gap: 4rem; }
+      .lg\:py-20 { padding-top: 5rem; padding-bottom: 5rem; }
+      .lg\:justify-start { justify-content: flex-start; }
+      .lg\:mx-0 { margin-left: 0; margin-right: 0; }
+    }
+
+    /* THE SECOND SHIFT — timeline comparison */
+    .hw-label {
+      margin: 0;
+      font-size: 0.6875rem;
+      font-weight: 700;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+    }
+    .hw-label--muted { color: var(--color-navy-muted); }
+    .hw-label--seymy { color: var(--color-seymy); }
+    .hw-story {
+      margin-top: 0.65rem;
+      padding-left: 0.95rem;
+      border-left: 1px solid color-mix(in srgb, #0b1b33 14%, transparent);
+    }
+    .hw-block--with .hw-story {
+      border-left-color: color-mix(in srgb, #2563eb 22%, transparent);
+    }
+    .hw-phase {
+      position: relative;
+      padding-bottom: 0.55rem;
+    }
+    .hw-phase:last-child {
+      padding-bottom: 0;
+    }
+    .hw-phase::before {
+      content: "";
+      position: absolute;
+      left: calc(-0.95rem - 0.5px);
+      top: 0.28rem;
+      width: 0.4375rem;
+      height: 0.4375rem;
+      border-radius: 50%;
+      background: var(--color-navy);
+      transform: translateX(-50%);
+    }
+    .hw-block--with .hw-phase::before {
+      background: var(--color-seymy);
+    }
+    .hw-time {
+      margin: 0;
+      font-size: 0.75rem;
+      font-weight: 700;
+      letter-spacing: 0.04em;
+      font-variant-numeric: tabular-nums;
+      color: color-mix(in srgb, #0b1b33 58%, #64748b);
+    }
+    .hw-beat {
+      margin: 0.2rem 0 0;
+      font-size: 0.875rem;
+      font-weight: 600;
+      line-height: 1.35;
+      color: var(--color-navy);
+    }
+    .hw-tasks {
+      list-style: none;
+      margin: 0.55rem 0 0;
+      padding: 0;
+      display: flex;
+      flex-direction: column;
+      gap: 0.42rem;
+    }
+    .hw-tasks--between {
+      margin: 0.35rem 0 0.4rem;
+      padding: 0.15rem 0 0.15rem 0;
+      border-left: 0;
+    }
+    .hw-task {
+      display: flex;
+      align-items: flex-start;
+      gap: 0.55rem;
+      margin: 0;
+      font-size: 0.875rem;
+      line-height: 1.35;
+    }
+    .hw-task::before {
+      flex-shrink: 0;
+      margin-top: 0.18rem;
+      width: 0.65rem;
+      height: 0.65rem;
+      box-sizing: border-box;
+    }
+    .hw-task--open {
+      color: color-mix(in srgb, #0b1b33 74%, #64748b);
+    }
+    .hw-task--open::before {
+      content: "";
+      border: 1.5px solid color-mix(in srgb, #0b1b33 28%, #94a3b8);
+      border-radius: 9999px;
+      background: transparent;
+    }
+    .hw-task--done {
+      color: var(--color-navy);
+    }
+    .hw-task--done::before {
+      content: "✓";
+      width: auto;
+      height: auto;
+      margin-top: 0.02rem;
+      font-size: 0.75rem;
+      font-weight: 700;
+      line-height: 1;
+      color: var(--color-ready);
+    }
+    .hw-pull {
+      margin: 0.85rem 0 0;
+      font-size: 1.125rem;
+      font-weight: 700;
+      letter-spacing: -0.025em;
+      line-height: 1.25;
+      color: var(--color-navy);
+    }
+
+    /* MOBILE + TABLET: compact stacked timelines */
+    .hw-mobile {
+      display: flex;
+      flex-direction: column;
+      gap: 0.85rem;
+      margin-top: 1.75rem;
+      width: 100%;
+    }
+    .hw-block {
+      box-sizing: border-box;
+      width: 100%;
+      max-width: 26rem;
+      margin-inline: auto;
+      padding: 1rem 1.1rem 1.05rem;
+      border-radius: 0.75rem;
+      text-align: left;
+    }
+    .hw-block--without {
+      background: color-mix(in srgb, #0b1b33 3.5%, #f4f7fc);
+      border: 1px solid color-mix(in srgb, #0b1b33 6%, transparent);
+    }
+    .hw-block--with {
+      background: color-mix(in srgb, #2563eb 5%, #ffffff);
+      border: 1px solid color-mix(in srgb, #2563eb 10%, transparent);
+    }
+    .hw-mobile-rule {
+      display: none;
+    }
+    @media (min-width: 1024px) {
+      .hw-mobile { display: none; }
+    }
+
+    /* DESKTOP: symmetric two-column comparison */
+    .comparison-grid {
+      display: none;
+    }
+    @media (min-width: 1024px) {
+      .comparison-grid {
+        box-sizing: border-box;
+        width: calc(100% - 64px);
+        max-width: 900px;
+        margin-top: 2.75rem;
+        margin-inline: auto;
+        display: grid;
+        grid-template-columns: minmax(0, 1fr) 1px minmax(0, 1fr);
+        align-items: stretch;
+      }
+      .comparison-divider {
+        background: var(--color-line);
+      }
+      .comparison-col {
+        box-sizing: border-box;
+        padding: 2rem 2.5rem;
+        text-align: left;
+      }
+      .comparison-col--without {
+        background: color-mix(in srgb, #0b1b33 3.5%, #f4f7fc);
+      }
+      .comparison-col--with {
+        background: color-mix(in srgb, #2563eb 5%, #ffffff);
+      }
+      .comparison-col .hw-story {
+        margin-top: 0.75rem;
+      }
+      .comparison-col .hw-tasks {
+        margin-top: 0.65rem;
+        gap: 0.48rem;
+      }
+      .comparison-col .hw-tasks--between {
+        margin-top: 0.55rem;
+        margin-bottom: 0.55rem;
+      }
+      .comparison-col .hw-pull {
+        margin-top: 1.1rem;
+        font-size: 1.25rem;
+      }
+      .comparison-col .hw-task {
+        font-size: 0.9375rem;
+        min-height: 1.35rem;
+      }
+      .comparison-col .hw-beat {
+        font-size: 0.9375rem;
+      }
+    }
+
+    .hw-statement {
+      margin-top: 1.15rem;
+      text-align: center;
+      max-width: 28rem;
+      margin-left: auto;
+      margin-right: auto;
+      padding-top: 0.85rem;
+      border-top: 1px solid var(--color-line);
+    }
+    .hw-statement p {
+      font-size: 1.2rem;
+      font-weight: 700;
+      letter-spacing: -0.03em;
+      line-height: 1.3;
+      color: var(--color-navy);
+    }
+    @media (min-width: 640px) {
+      .hw-statement {
+        margin-top: 1.35rem;
+        padding-top: 1rem;
+      }
+      .hw-statement p { font-size: 1.35rem; }
+    }
+    @media (min-width: 1024px) {
+      .hw-statement {
+        margin-top: 1.5rem;
+      }
+    }
+
+    /* JUST TALK → SEYMY NOTICED → SEYMY LEARNS — one continuous chapter (#talk) */
+    #talk .talk-chapter {
+      width: 100%;
+    }
+    #talk .talk-chapter-header {
+      margin-inline: auto;
+      max-width: 42rem;
+      text-align: center;
+    }
+    #talk .talk-chapter-header .talk-eyebrow {
+      margin: 0;
+      font-size: 0.6875rem;
+      font-weight: 600;
+      letter-spacing: 0.12em;
+      color: var(--color-seymy);
+    }
+    #talk .talk-chapter-header .talk-headline {
+      margin: 0.75rem 0 0;
+      font-size: 1.75rem;
+      font-weight: 700;
+      line-height: 1.15;
+      letter-spacing: -0.025em;
+      color: var(--color-navy);
+    }
+    #talk .talk-chapter-header .talk-headline .text-seymy {
+      color: var(--color-seymy);
+    }
+    #talk .talk-chapter-header .talk-subtitle {
+      margin: 0.75rem auto 0;
+      max-width: 28rem;
+      font-size: 0.9375rem;
+      line-height: 1.5;
+      color: var(--color-navy-muted);
+    }
+    #talk .talk-chapter--learns .talk-trust {
+      margin: 0.85rem auto 0;
+      max-width: 30rem;
+      font-size: 0.875rem;
+      line-height: 1.5;
+      color: var(--color-navy-muted);
+    }
+    #talk .talk-thread {
+      margin: 1.5rem auto 0;
+      width: 100%;
+      max-width: 32rem;
+      display: flex;
+      flex-direction: column;
+      gap: 1rem;
+    }
+    #talk .talk-thread--noticed {
+      gap: 0.35rem;
+    }
+    #talk .talk-bridge {
+      box-sizing: border-box;
+      width: 8.75rem;
+      height: 0;
+      margin: 3rem auto;
+      border: 0;
+      border-top: 1px solid var(--color-line);
+    }
+    #talk .talk-scenario {
+      display: flex;
+      flex-direction: column;
+      gap: 0.35rem;
+    }
+    #talk .talk-msg,
+    #day .talk-msg {
+      --talk-bg: #fff;
+      position: relative;
+      box-sizing: border-box;
+      max-width: 82%;
+      padding: 0.42rem 0.62rem 0.46rem;
+      border: 1px solid color-mix(in srgb, #0b1b33 8%, transparent);
+      border-radius: 1.125rem;
+      box-shadow: 0 1px 4px rgb(11 27 51 / 0.04);
+      background: var(--talk-bg);
+    }
+    #talk .talk-msg--you,
+    #day .talk-msg--you {
+      --talk-bg: color-mix(in srgb, #2563eb 7%, #ffffff);
+      align-self: flex-end;
+      border-color: color-mix(in srgb, #2563eb 14%, transparent);
+      border-bottom-right-radius: 0.3rem;
+    }
+    #talk .talk-msg--seymy,
+    #day .talk-msg--seymy {
+      --talk-bg: color-mix(in srgb, #0b1b33 2.5%, #ffffff);
+      align-self: flex-start;
+      border-color: color-mix(in srgb, #0b1b33 6%, transparent);
+      border-bottom-left-radius: 0.3rem;
+    }
+    #talk .talk-msg--you::before,
+    #talk .talk-msg--seymy::before,
+    #day .talk-msg--you::before,
+    #day .talk-msg--seymy::before {
+      content: "";
+      position: absolute;
+      bottom: 0;
+      width: 7px;
+      height: 7px;
+      background: var(--talk-bg);
+    }
+    #talk .talk-msg--you::after,
+    #talk .talk-msg--seymy::after,
+    #day .talk-msg--you::after,
+    #day .talk-msg--seymy::after {
+      content: "";
+      position: absolute;
+      bottom: 0;
+      width: 5px;
+      height: 7px;
+      background: transparent;
+    }
+    #talk .talk-msg--you::before,
+    #day .talk-msg--you::before {
+      right: 3px;
+      border-radius: 0 0 6px 0;
+    }
+    #talk .talk-msg--you::after,
+    #day .talk-msg--you::after {
+      right: 1px;
+      border-bottom-left-radius: 5px;
+      box-shadow: -2px 0 0 0 var(--talk-bg);
+    }
+    #talk .talk-msg--seymy::before,
+    #day .talk-msg--seymy::before {
+      left: -3px;
+      border-radius: 0 0 0 6px;
+    }
+    #talk .talk-msg--seymy::after,
+    #day .talk-msg--seymy::after {
+      left: -5px;
+      border-bottom-right-radius: 5px;
+      box-shadow: 3px 0 0 0 var(--talk-bg);
+    }
+    #talk .talk-label,
+    #day .talk-label {
+      margin: 0 0 0.18rem;
+      font-size: 0.5625rem;
+      font-weight: 700;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+    }
+    #talk .talk-msg--you .talk-label,
+    #day .talk-msg--you .talk-label {
+      color: var(--color-seymy);
+      text-align: left;
+    }
+    #talk .talk-msg--seymy .talk-label,
+    #day .talk-msg--seymy .talk-label {
+      color: color-mix(in srgb, #0b1b33 42%, #64748b);
+    }
+    #talk .talk-text,
+    #day .talk-text {
+      margin: 0;
+      font-size: 0.8125rem;
+      font-weight: 500;
+      line-height: 1.35;
+      color: var(--color-navy);
+    }
+    #talk .talk-msg--you .talk-text,
+    #day .talk-msg--you .talk-text {
+      text-align: left;
+    }
+    #talk .talk-msg--short,
+    #day .talk-msg--short {
+      width: fit-content;
+      max-width: 82%;
+    }
+    #talk .talk-attach {
+      align-self: flex-start;
+      box-sizing: border-box;
+      max-width: 14.5rem;
+      width: fit-content;
+      display: grid;
+      grid-template-columns: auto 1fr;
+      column-gap: 0.55rem;
+      row-gap: 0.35rem;
+      padding: 0.5rem 0.65rem 0.55rem;
+      border: 1px solid color-mix(in srgb, #0b1b33 8%, transparent);
+      border-radius: 0.75rem;
+      background: #fff;
+      box-shadow: 0 1px 4px rgb(11 27 51 / 0.04);
+    }
+    #talk .talk-attach__icon {
+      grid-row: 1 / span 2;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      width: 1.85rem;
+      height: 1.85rem;
+      border-radius: 0.4rem;
+      background: color-mix(in srgb, #0b1b33 4%, #ffffff);
+      color: color-mix(in srgb, #0b1b33 55%, #64748b);
+    }
+    #talk .talk-attach__icon svg {
+      display: block;
+      width: 0.95rem;
+      height: 0.95rem;
+    }
+    #talk .talk-attach__meta {
+      min-width: 0;
+      display: flex;
+      flex-direction: column;
+      gap: 0.08rem;
+    }
+    #talk .talk-attach__title {
+      margin: 0;
+      font-size: 0.75rem;
+      font-weight: 700;
+      line-height: 1.25;
+      color: var(--color-navy);
+    }
+    #talk .talk-attach__type {
+      margin: 0;
+      font-size: 0.625rem;
+      font-weight: 600;
+      letter-spacing: 0.04em;
+      text-transform: uppercase;
+      color: color-mix(in srgb, #0b1b33 42%, #64748b);
+    }
+    #talk .talk-attach__action {
+      grid-column: 1 / -1;
+      margin: 0;
+      padding-top: 0.28rem;
+      border-top: 1px solid color-mix(in srgb, #0b1b33 6%, transparent);
+      font-size: 0.6875rem;
+      font-weight: 700;
+      line-height: 1.3;
+      color: var(--color-seymy);
+      text-align: left;
+    }
+    #talk button.talk-attach {
+      appearance: none;
+      -webkit-appearance: none;
+      font: inherit;
+      color: inherit;
+      cursor: pointer;
+      text-align: left;
+    }
+    #talk button.talk-attach:focus-visible {
+      outline: 2px solid var(--color-seymy);
+      outline-offset: 2px;
+    }
+
+    /* JUST TALK — estimate preview modal (MVP document) */
+    .talk-estimate-modal {
+      position: fixed;
+      inset: 0;
+      z-index: 80;
+      display: none;
+      align-items: center;
+      justify-content: center;
+      padding: 0.75rem;
+      box-sizing: border-box;
+    }
+    .talk-estimate-modal.is-open {
+      display: flex;
+    }
+    .talk-estimate-modal__backdrop {
+      position: absolute;
+      inset: 0;
+      background: rgb(11 27 51 / 0.48);
+    }
+    .talk-estimate-modal__panel {
+      position: relative;
+      z-index: 1;
+      display: flex;
+      flex-direction: column;
+      width: min(100%, 52rem);
+      max-height: min(92vh, 52rem);
+      border-radius: 0.85rem;
+      background: #eef1f4;
+      box-shadow: 0 24px 64px rgb(11 27 51 / 0.28);
+      overflow: hidden;
+    }
+    .talk-estimate-modal__toolbar {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 0.75rem;
+      flex-shrink: 0;
+      padding: 0.7rem 0.85rem;
+      border-bottom: 1px solid #d7dee7;
+      background: #fff;
+    }
+    .talk-estimate-modal__title {
+      margin: 0;
+      font-size: 0.8125rem;
+      font-weight: 700;
+      letter-spacing: 0.02em;
+      color: var(--color-navy);
+    }
+    .talk-estimate-modal__close {
+      appearance: none;
+      -webkit-appearance: none;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      width: 2rem;
+      height: 2rem;
+      margin: 0;
+      padding: 0;
+      border: 0;
+      border-radius: 0.45rem;
+      background: #f3f6f9;
+      color: var(--color-navy);
+      cursor: pointer;
+      font-size: 1.15rem;
+      line-height: 1;
+    }
+    .talk-estimate-modal__close:hover {
+      background: #e8edf3;
+    }
+    .talk-estimate-modal__close:focus-visible {
+      outline: 2px solid var(--color-seymy);
+      outline-offset: 2px;
+    }
+    .talk-estimate-modal__body {
+      flex: 1 1 auto;
+      min-height: 0;
+      overflow: auto;
+      -webkit-overflow-scrolling: touch;
+      padding: 0.75rem;
+    }
+    .talk-estimate-modal__sheet {
+      box-sizing: border-box;
+      width: 100%;
+      max-width: 8.5in;
+      margin: 0 auto;
+      padding: 0.65rem 0.7rem 0.85rem;
+      background: #fff;
+      border: 1px solid #d7dee7;
+    }
+    .talk-estimate-modal__footer {
+      flex-shrink: 0;
+      display: flex;
+      justify-content: center;
+      padding: 0.65rem 0.85rem 0.8rem;
+      border-top: 1px solid #d7dee7;
+      background: #fff;
+    }
+    .talk-estimate-modal__footer-btn {
+      appearance: none;
+      -webkit-appearance: none;
+      margin: 0;
+      padding: 0.55rem 1.15rem;
+      border: 1px solid #d7dee7;
+      border-radius: 0.55rem;
+      background: #fff;
+      color: var(--color-navy);
+      font-size: 0.875rem;
+      font-weight: 600;
+      cursor: pointer;
+    }
+    .talk-estimate-modal__footer-btn:hover {
+      background: #f7f9fc;
+    }
+    .talk-estimate-modal__footer-btn:focus-visible {
+      outline: 2px solid var(--color-seymy);
+      outline-offset: 2px;
+    }
+    body.talk-estimate-modal-open {
+      overflow: hidden;
+    }
+    @media (min-width: 640px) {
+      .talk-estimate-modal {
+        padding: 1.25rem;
+      }
+      .talk-estimate-modal__body {
+        padding: 1rem 1.15rem;
+      }
+      .talk-estimate-modal__sheet {
+        padding: 0.75rem 0.85rem 1rem;
+      }
+    }
+    @media (max-width: 639px) {
+      .talk-estimate-modal {
+        padding: 0;
+        align-items: stretch;
+      }
+      .talk-estimate-modal__panel {
+        width: 100%;
+        max-height: none;
+        height: 100%;
+        border-radius: 0;
+      }
+    }
+    #day .talk-msg {
+      max-width: 88%;
+      padding: 0.38rem 0.55rem 0.42rem;
+    }
+    #day .talk-text {
+      font-size: 0.8125rem;
+      line-height: 1.32;
+    }
+
+    /* SEYMY LEARNS — same chapter, same visual language */
+    #talk .learns-visual {
+      margin: 1.5rem auto 0;
+      width: 100%;
+      max-width: 32rem;
+    }
+    #talk .learns-instructions {
+      padding: 0.65rem 0.75rem 0.7rem;
+      border-radius: 1.125rem;
+      border: 1px solid color-mix(in srgb, #2563eb 14%, transparent);
+      background: color-mix(in srgb, #2563eb 7%, #ffffff);
+      box-shadow: 0 1px 4px rgb(11 27 51 / 0.04);
+    }
+    #talk .learns-instructions__label {
+      margin: 0;
+      font-size: 0.5625rem;
+      font-weight: 700;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: var(--color-seymy);
+    }
+    #talk .learns-instructions__list {
+      list-style: none;
+      margin: 0.35rem 0 0;
+      padding: 0;
+      display: flex;
+      flex-direction: column;
+      gap: 0.28rem;
+    }
+    #talk .learns-instruction {
+      margin: 0;
+      font-size: 0.8125rem;
+      font-weight: 500;
+      line-height: 1.38;
+      color: var(--color-navy);
+    }
+    #talk .learns-connector {
+      margin: 1rem 0 0;
+      text-align: center;
+      font-size: 0.75rem;
+      line-height: 1;
+      color: color-mix(in srgb, var(--color-seymy) 58%, #94a3b8);
+    }
+    #talk .learns-memory {
+      margin-top: 0.35rem;
+      padding: 0.5rem 0 0.5rem 0.65rem;
+      border-left: 2px solid color-mix(in srgb, var(--color-ready) 45%, transparent);
+    }
+    #talk .learns-memory__badge {
+      display: flex;
+      align-items: center;
+      gap: 0.3rem;
+      margin: 0;
+      font-size: 0.5625rem;
+      font-weight: 700;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: var(--color-ready);
+    }
+    #talk .learns-memory__badge span:first-child {
+      font-size: 0.625rem;
+      line-height: 1;
+    }
+    #talk .learns-memory__text {
+      margin: 0.22rem 0 0;
+      font-size: 0.8125rem;
+      font-weight: 600;
+      line-height: 1.35;
+      color: var(--color-navy);
+    }
+    /* Progressive conversation reveals (Just Talk / Noticed / Learns) */
+    @media (prefers-reduced-motion: no-preference) {
+      #talk [data-talk-sequence].is-armed .talk-step:not(.is-visible) {
+        opacity: 0;
+        transform: translateY(10px);
+      }
+      #talk [data-talk-sequence].is-armed .talk-step {
+        transition: opacity 400ms ease, transform 400ms ease;
+      }
+      #talk [data-talk-sequence].is-armed .talk-step.is-visible {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+    @media (min-width: 640px) {
+      #talk .talk-chapter-header .talk-headline {
+        font-size: 2.25rem;
+      }
+      #talk .talk-chapter-header .talk-subtitle {
+        font-size: 1rem;
+      }
+      #talk .talk-thread,
+      #talk .learns-visual {
+        margin-top: 1.75rem;
+      }
+      #talk .talk-thread {
+        gap: 1.15rem;
+      }
+      #talk .talk-bridge {
+        margin: 3.5rem auto;
+      }
+      #talk .talk-scenario {
+        gap: 0.4rem;
+      }
+      #talk .talk-text,
+      #talk .learns-instruction {
+        font-size: 0.875rem;
+        line-height: 1.4;
+      }
+    }
+    @media (min-width: 1024px) {
+      #talk .talk-thread,
+      #talk .learns-visual {
+        max-width: 36rem;
+      }
+      #talk .talk-bridge {
+        margin: 4rem auto;
+      }
+      #talk .talk-msg,
+      #day .talk-msg {
+        max-width: 78%;
+        padding: 0.5rem 0.75rem 0.55rem;
+        border-radius: 1.25rem;
+      }
+      #talk .learns-instructions {
+        border-radius: 1.25rem;
+        padding: 0.7rem 0.85rem 0.75rem;
+      }
+      #talk .talk-scenario {
+        gap: 0.45rem;
+      }
+    }
+
+    /* A DAY WITH SEYMY — adaptive workday flow (scoped to #day only) */
+    #day .day-header {
+      margin-inline: auto;
+      max-width: 42rem;
+      text-align: center;
+    }
+    #day .day-eyebrow {
+      margin: 0;
+      font-size: 0.6875rem;
+      font-weight: 600;
+      letter-spacing: 0.12em;
+      color: var(--color-seymy);
+    }
+    #day .day-headline {
+      margin: 0.75rem 0 0;
+      font-size: 1.75rem;
+      font-weight: 700;
+      line-height: 1.15;
+      letter-spacing: -0.025em;
+      color: var(--color-navy);
+    }
+    #day .day-subhead {
+      margin: 0.75rem auto 0;
+      max-width: 28rem;
+      font-size: 0.9375rem;
+      line-height: 1.5;
+      color: var(--color-navy-muted);
+    }
+    #day .workday-flow {
+      position: relative;
+      margin: 1.35rem auto 0;
+      width: 100%;
+      max-width: 36rem;
+      box-sizing: border-box;
+      --workday-rail-x: 1.875rem;
+      padding-left: 3.25rem;
+    }
+    #day .workday-rail {
+      position: absolute;
+      left: var(--workday-rail-x);
+      top: 0;
+      bottom: 0;
+      width: 2px;
+      transform: translateX(-50%);
+      pointer-events: none;
+      z-index: 0;
+    }
+    #day .workday-rail__track,
+    #day .workday-rail__progress,
+    #day .timeline-base,
+    #day .timeline-progress {
+      position: absolute;
+      left: 0;
+      width: 100%;
+      border-radius: 1px;
+    }
+    #day .workday-rail__track,
+    #day .timeline-base {
+      background: color-mix(in srgb, #94a3b8 38%, #e2e8f0);
+    }
+    #day .workday-rail__progress,
+    #day .timeline-progress {
+      top: 0;
+      height: 0;
+      background: var(--color-seymy);
+      z-index: 1;
+      transform: scaleY(0);
+      transform-origin: top;
+      will-change: transform;
+    }
+    #day .workday-moment {
+      position: relative;
+      display: grid;
+      grid-template-columns: minmax(0, 1fr);
+      gap: 0.45rem;
+      padding-bottom: 1.1rem;
+      z-index: 1;
+    }
+    #day .workday-moment__marker {
+      position: absolute;
+      left: calc(var(--workday-rail-x) - 3.25rem);
+      top: 0.38rem;
+      width: 0.4375rem;
+      height: 0.4375rem;
+      border-radius: 9999px;
+      background: #cbd5e1;
+      transform: translate(-50%, 0) scale(0.9);
+      transition: transform 250ms ease, background-color 250ms ease, box-shadow 250ms ease;
+      z-index: 2;
+    }
+    #day .workday-moment.is-passed .workday-moment__marker--green {
+      background: var(--color-ready);
+      transform: translate(-50%, 0) scale(1.12);
+      box-shadow: 0 0 0 3px color-mix(in srgb, var(--color-ready) 20%, transparent);
+    }
+    #day .workday-moment.is-passed .workday-moment__marker--slate {
+      background: #94a3b8;
+      transform: translate(-50%, 0) scale(1.12);
+      box-shadow: 0 0 0 3px color-mix(in srgb, #94a3b8 22%, transparent);
+    }
+    #day .workday-moment.is-passed .workday-moment__marker--blue {
+      background: var(--color-seymy);
+      transform: translate(-50%, 0) scale(1.12);
+      box-shadow: 0 0 0 3px color-mix(in srgb, var(--color-seymy) 20%, transparent);
+    }
+    #day .workday-moment--finale .workday-moment__marker {
+      width: 0.5rem;
+      height: 0.5rem;
+      top: calc(1.1rem + 0.38rem);
+    }
+    #day .workday-flow--complete .workday-moment--finale.is-passed .workday-moment__marker,
+    #day .workday-moment--finale.is-passed .workday-moment__marker--green {
+      width: 0.5625rem;
+      height: 0.5625rem;
+      background: var(--color-ready);
+      transform: translate(-50%, 0) scale(1.18);
+      box-shadow: 0 0 0 4px color-mix(in srgb, var(--color-ready) 24%, transparent);
+    }
+    @media (prefers-reduced-motion: no-preference) {
+      #day .workday-moment__body-col {
+        opacity: 0.6;
+        transform: translateY(8px);
+        transition: opacity 380ms ease, transform 380ms ease;
+      }
+      #day .workday-moment.is-passed .workday-moment__body-col {
+        opacity: 1;
+        transform: translateY(0);
+      }
+      #day .workday-moment__time,
+      #day .workday-moment__state {
+        transition: color 280ms ease, opacity 280ms ease;
+      }
+      #day .workday-moment:not(.is-passed) .workday-moment__time {
+        color: color-mix(in srgb, var(--color-navy) 62%, #94a3b8);
+      }
+      #day .workday-moment:not(.is-passed) .workday-moment__state {
+        color: color-mix(in srgb, var(--color-navy-muted) 72%, #94a3b8);
+      }
+      #day .workday-moment.is-active .workday-moment__time {
+        color: var(--color-navy);
+      }
+      #day .workday-moment.is-active .workday-moment__state {
+        color: color-mix(in srgb, var(--color-navy) 88%, #64748b);
+      }
+      #day .workday-moment:not(.is-passed) .workday-moment__state-dot {
+        opacity: 0.45;
+        transform: scale(0.88);
+        transition: opacity 250ms ease, transform 250ms ease;
+      }
+      #day .workday-moment.is-passed .workday-moment__state-dot {
+        opacity: 1;
+        transform: scale(1);
+      }
+    }
+    @media (prefers-reduced-motion: reduce) {
+      #day .workday-moment__body-col {
+        opacity: 1;
+        transform: none;
+      }
+      #day .workday-moment.is-passed .workday-moment__marker--green {
+        background: var(--color-ready);
+        transform: translate(-50%, 0) scale(1.12);
+        box-shadow: 0 0 0 3px color-mix(in srgb, var(--color-ready) 20%, transparent);
+      }
+      #day .workday-moment.is-passed .workday-moment__marker--slate {
+        background: #94a3b8;
+        transform: translate(-50%, 0) scale(1.12);
+        box-shadow: 0 0 0 3px color-mix(in srgb, #94a3b8 22%, transparent);
+      }
+      #day .workday-moment.is-passed .workday-moment__marker--blue {
+        background: var(--color-seymy);
+        transform: translate(-50%, 0) scale(1.12);
+        box-shadow: 0 0 0 3px color-mix(in srgb, var(--color-seymy) 20%, transparent);
+      }
+      #day .workday-flow--complete .workday-moment--finale .workday-moment__marker {
+        width: 0.5625rem;
+        height: 0.5625rem;
+        background: var(--color-ready);
+        transform: translate(-50%, 0) scale(1.18);
+        box-shadow: 0 0 0 4px color-mix(in srgb, var(--color-ready) 24%, transparent);
+      }
+    }
+    #day .workday-moment:not(:last-child) {
+      margin-bottom: 0.15rem;
+      border-bottom: 1px solid color-mix(in srgb, var(--color-line) 55%, transparent);
+    }
+    #day .workday-moment:last-child {
+      padding-bottom: 0;
+      border-bottom: none;
+    }
+    #day .workday-moment__state-col {
+      display: flex;
+      align-items: center;
+      gap: 0.65rem;
+      flex-wrap: wrap;
+    }
+    #day .workday-moment__time {
+      margin: 0;
+      font-size: 0.75rem;
+      font-weight: 700;
+      letter-spacing: 0.03em;
+      font-variant-numeric: tabular-nums;
+      color: var(--color-navy);
+    }
+    #day .workday-moment__state {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.35rem;
+      margin: 0;
+      font-size: 0.625rem;
+      font-weight: 700;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: color-mix(in srgb, var(--color-navy-muted) 88%, #64748b);
+    }
+    #day .workday-moment__state-dot {
+      width: 0.375rem;
+      height: 0.375rem;
+      border-radius: 9999px;
+      flex-shrink: 0;
+      transition: opacity 250ms ease, transform 250ms ease;
+    }
+    #day .workday-moment__state-dot--green { background: var(--color-ready); }
+    #day .workday-moment__state-dot--slate { background: #94a3b8; }
+    #day .workday-moment__state-dot--blue { background: var(--color-seymy); }
+    #day .workday-moment__situation {
+      margin: 0;
+      font-size: 0.9375rem;
+      font-weight: 700;
+      line-height: 1.3;
+      color: var(--color-navy);
+    }
+    #day .workday-moment__behavior {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.35rem;
+      margin: 0.32rem 0 0;
+      font-size: 0.5625rem;
+      font-weight: 700;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: var(--color-seymy);
+    }
+    #day .workday-moment__behavior-brand {
+      color: var(--color-seymy);
+    }
+    #day .workday-moment__behavior-arrow {
+      font-weight: 500;
+      opacity: 0.72;
+    }
+    #day .workday-moment__behavior-action {
+      color: color-mix(in srgb, var(--color-seymy) 88%, #0b1b33);
+    }
+    #day .workday-moment__support {
+      margin: 0.28rem 0 0;
+      font-size: 0.8125rem;
+      line-height: 1.38;
+      color: var(--color-navy-muted);
+    }
+    #day .workday-moment--quiet {
+      padding-bottom: 0.85rem;
+    }
+    #day .workday-moment--quiet .workday-moment__situation {
+      font-size: 0.875rem;
+      font-weight: 600;
+    }
+    #day .workday-moment--quiet .workday-moment__support {
+      font-size: 0.75rem;
+      color: color-mix(in srgb, var(--color-navy-muted) 90%, #64748b);
+    }
+    #day .workday-notice {
+      margin-top: 0.42rem;
+      padding: 0.42rem 0.55rem;
+      border-radius: 0.625rem;
+      border: 1px solid color-mix(in srgb, #2563eb 12%, transparent);
+      background: color-mix(in srgb, #2563eb 4.5%, #ffffff);
+    }
+    #day .workday-notice__kicker {
+      margin: 0;
+      font-size: 0.5625rem;
+      font-weight: 700;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      color: var(--color-seymy);
+    }
+    #day .workday-notice__title {
+      margin: 0.15rem 0 0;
+      font-size: 0.8125rem;
+      font-weight: 600;
+      line-height: 1.35;
+      color: var(--color-navy);
+    }
+    #day .workday-notice__meta {
+      margin: 0.1rem 0 0;
+      font-size: 0.75rem;
+      line-height: 1.35;
+      color: color-mix(in srgb, var(--color-navy-muted) 90%, #64748b);
+    }
+    #day .workday-notice__foot {
+      margin: 0.15rem 0 0;
+      font-size: 0.6875rem;
+      line-height: 1.35;
+      color: var(--color-navy-muted);
+    }
+    #day .workday-moment__chat {
+      margin-top: 0.42rem;
+      display: flex;
+      flex-direction: column;
+      gap: 0.28rem;
+      width: 100%;
+    }
+    #day .workday-moment__actions {
+      list-style: none;
+      margin: 0.4rem 0 0;
+      padding: 0;
+      display: flex;
+      flex-direction: column;
+      gap: 0.26rem;
+    }
+    #day .workday-moment__actions li {
+      display: flex;
+      align-items: flex-start;
+      gap: 0.38rem;
+      font-size: 0.8125rem;
+      line-height: 1.35;
+      color: color-mix(in srgb, var(--color-navy) 88%, #64748b);
+    }
+    #day .workday-moment__actions li span:first-child {
+      flex-shrink: 0;
+      margin-top: 0.04rem;
+      font-size: 0.6875rem;
+      font-weight: 700;
+      color: var(--color-ready);
+    }
+    #day .workday-moment__actions--compact {
+      margin-top: 0.35rem;
+      gap: 0.2rem;
+    }
+    #day .workday-moment__actions--compact li {
+      font-size: 0.75rem;
+    }
+    #day .workday-moment__actions--compact li span:first-child {
+      font-size: 0.625rem;
+    }
+    #day .workday-moment--finale {
+      margin-top: 1.25rem;
+      padding-top: 1.1rem;
+      border-top: 1px solid var(--color-line);
+      border-bottom: none;
+      padding-bottom: 0;
+    }
+    #day .workday-moment--finale .workday-moment__situation {
+      font-size: 1rem;
+    }
+    #day .workday-moment__payoff {
+      margin: 0.38rem 0 0;
+      font-size: 1.375rem;
+      font-weight: 700;
+      letter-spacing: -0.03em;
+      line-height: 1.15;
+      color: var(--color-seymy);
+    }
+    #day .workday-moment--finale .workday-moment__support {
+      margin-top: 0.32rem;
+    }
+    @media (min-width: 640px) {
+      #day .day-headline {
+        font-size: 2.25rem;
+      }
+      #day .day-subhead {
+        font-size: 1rem;
+      }
+      #day .workday-flow {
+        margin-top: 1.75rem;
+      }
+      #day .workday-moment {
+        padding-bottom: 1.25rem;
+      }
+      #day .workday-moment--finale {
+        margin-top: 1.5rem;
+      }
+      #day .workday-moment__payoff {
+        font-size: 1.625rem;
+      }
+    }
+    @media (min-width: 1024px) {
+      #day .workday-flow {
+        max-width: 56rem;
+        margin-top: 2.25rem;
+        --workday-rail-x: 2rem;
+        padding-left: 0;
+      }
+      #day .workday-moment {
+        grid-template-columns: 7.75rem minmax(0, 1fr);
+        gap: 2.25rem;
+        align-items: start;
+        padding-bottom: 1.35rem;
+        padding-left: 3.5rem;
+      }
+      #day .workday-moment__marker {
+        left: calc(var(--workday-rail-x) - 3.5rem);
+      }
+      #day .workday-moment__state-col {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 0.35rem;
+        padding-top: 0.1rem;
+      }
+      #day .workday-moment--finale {
+        margin-top: 2rem;
+        padding-top: 1.35rem;
+      }
+      #day .workday-moment--finale .workday-moment__marker {
+        top: calc(1.35rem + 0.38rem);
+      }
+      #day .workday-moment__chat {
+        max-width: 24rem;
+      }
+      #day .workday-moment__payoff {
+        font-size: 1.875rem;
+      }
+    }
+
+    /* ONE COWORKER — scoped to #connected only */
+    #connected .connected-header {
+      margin-inline: auto;
+      max-width: 42rem;
+      text-align: center;
+    }
+    #connected .connected-eyebrow {
+      margin: 0;
+      font-size: 0.6875rem;
+      font-weight: 600;
+      letter-spacing: 0.12em;
+      color: var(--color-seymy);
+    }
+    #connected .connected-headline {
+      margin: 0.75rem 0 0;
+      font-size: 1.75rem;
+      font-weight: 700;
+      line-height: 1.15;
+      letter-spacing: -0.025em;
+      color: var(--color-navy);
+    }
+    #connected .connected-subhead {
+      margin: 0.75rem auto 0;
+      max-width: 32rem;
+      font-size: 0.9375rem;
+      line-height: 1.5;
+      color: var(--color-navy-muted);
+    }
+    #connected .connected-journey {
+      margin: 1.75rem auto 0;
+      max-width: 54rem;
+    }
+    #connected .connected-journey__name {
+      margin: 0;
+      text-align: center;
+      font-size: 0.625rem;
+      font-weight: 700;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: var(--color-seymy);
+    }
+    #connected .connected-journey__flow {
+      position: relative;
+      margin: 0.9rem auto 0;
+      max-width: 15rem;
+    }
+    #connected .connected-journey__track {
+      position: absolute;
+      inset: 0;
+      pointer-events: none;
+      z-index: 0;
+    }
+    #connected .connected-journey__base,
+    #connected .connected-journey__progress {
+      position: absolute;
+      width: 1.5px;
+      border-radius: 999px;
+      transform-origin: top center;
+    }
+    #connected .connected-journey__base {
+      background: color-mix(in srgb, var(--color-seymy) 32%, var(--color-line));
+    }
+    #connected .connected-journey__progress {
+      background: var(--color-seymy);
+      transform: scaleY(0);
+    }
+    #connected .connected-journey__steps {
+      list-style: none;
+      margin: 0;
+      padding: 0;
+      position: relative;
+      z-index: 1;
+      display: flex;
+      flex-direction: column;
+      align-items: stretch;
+    }
+    #connected .connected-journey__step {
+      display: flex;
+      align-items: flex-start;
+      gap: 0.65rem;
+      padding-bottom: 0.64rem;
+      opacity: 0.4;
+      transition: opacity 0.32s ease;
+    }
+    #connected .connected-journey__step.is-passed {
+      opacity: 1;
+    }
+    #connected .connected-journey__step:last-child {
+      padding-bottom: 0;
+    }
+    #connected .connected-journey__node {
+      flex-shrink: 0;
+      width: 7px;
+      height: 7px;
+      margin-top: 0.32rem;
+      border-radius: 50%;
+      background: color-mix(in srgb, var(--color-seymy) 42%, var(--color-line));
+      box-shadow: 0 0 0 3px var(--color-surface);
+      transition: background 0.32s ease;
+    }
+    #connected .connected-journey__step.is-passed .connected-journey__node {
+      background: var(--color-seymy);
+    }
+    #connected .connected-journey__step.is-passed .connected-journey__node--done {
+      background: var(--color-ready);
+    }
+    #connected .connected-journey__copy {
+      min-width: 0;
+    }
+    #connected .connected-journey__label {
+      display: block;
+      font-size: 0.8125rem;
+      font-weight: 500;
+      line-height: 1.25;
+      color: var(--color-navy);
+    }
+    #connected .connected-journey__detail {
+      display: block;
+      margin-top: 0.02rem;
+      font-size: 0.75rem;
+      line-height: 1.3;
+      color: var(--color-navy-muted);
+    }
+    #connected .connected-journey__step--continues {
+      align-items: center;
+      padding-top: 0.08rem;
+    }
+    #connected .connected-journey__dots {
+      font-size: 0.875rem;
+      font-weight: 600;
+      letter-spacing: 0.16em;
+      color: var(--color-seymy);
+    }
+    #connected .connected-conclusion {
+      margin: 2rem auto 0;
+      max-width: 28rem;
+      text-align: center;
+    }
+    #connected .connected-conclusion__line {
+      margin: 0;
+      font-size: 0.9375rem;
+      line-height: 1.45;
+      color: var(--color-navy);
+      font-weight: 500;
+    }
+    #connected .connected-payoff {
+      margin: 2.25rem auto 0;
+      max-width: 28rem;
+      text-align: center;
+    }
+    #connected .connected-payoff__lead {
+      margin: 0;
+      font-size: 0.8125rem;
+      line-height: 1.45;
+      color: var(--color-navy-muted);
+    }
+    #connected .connected-payoff__strong {
+      margin: 0.65rem 0 0;
+      font-size: 1.125rem;
+      font-weight: 600;
+      line-height: 1.35;
+      letter-spacing: -0.02em;
+      color: var(--color-navy);
+    }
+    #connected .connected-payoff__strong em {
+      font-style: normal;
+      color: var(--color-seymy);
+    }
+    @media (min-width: 640px) {
+      #connected .connected-headline {
+        font-size: 2.25rem;
+      }
+      #connected .connected-subhead {
+        font-size: 1rem;
+      }
+      #connected .connected-journey {
+        margin-top: 2rem;
+      }
+      #connected .connected-payoff__strong {
+        font-size: 1.25rem;
+      }
+    }
+    @media (min-width: 900px) {
+      #connected .connected-journey__flow {
+        max-width: none;
+        margin-top: 1.2rem;
+        padding-inline: 0.25rem;
+      }
+      #connected .connected-journey__base,
+      #connected .connected-journey__progress {
+        width: auto;
+        height: 1.5px;
+        transform-origin: left center;
+      }
+      #connected .connected-journey__progress {
+        transform: scaleX(0);
+      }
+      #connected .connected-journey__steps {
+        flex-direction: row;
+        align-items: flex-start;
+        justify-content: space-between;
+        gap: 0;
+      }
+      #connected .connected-journey__step {
+        flex: 1 1 0;
+        flex-direction: column;
+        align-items: center;
+        text-align: center;
+        gap: 0.5rem;
+        padding-bottom: 0;
+        min-width: 0;
+      }
+      #connected .connected-journey__node {
+        margin-top: 0;
+      }
+      #connected .connected-journey__label {
+        font-size: 0.6875rem;
+      }
+      #connected .connected-journey__detail {
+        font-size: 0.6875rem;
+      }
+      #connected .connected-journey__step--continues {
+        flex: 0 0 auto;
+        flex-direction: row;
+        align-items: center;
+        padding-top: 0;
+        gap: 0.35rem;
+      }
+      #connected .connected-journey__step--continues::before {
+        content: "→";
+        font-size: 0.6875rem;
+        color: color-mix(in srgb, var(--color-seymy) 55%, var(--color-navy-muted));
+      }
+      #connected .connected-journey__step--continues .connected-journey__node {
+        display: none;
+      }
+      #connected .connected-journey__dots {
+        font-size: 0.8125rem;
+      }
+      #connected .connected-conclusion {
+        margin-top: 2.15rem;
+      }
+      #connected .connected-payoff {
+        margin-top: 2.5rem;
+      }
+    }
+    @media (prefers-reduced-motion: reduce) {
+      #connected .connected-journey__step {
+        opacity: 1;
+        transition: none;
+      }
+      #connected .connected-journey__node {
+        transition: none;
+      }
+      #connected .connected-journey__progress {
+        transform: scaleY(1);
+      }
+    }
+    @media (prefers-reduced-motion: reduce) and (min-width: 900px) {
+      #connected .connected-journey__progress {
+        transform: scaleX(1);
+      }
+    }
+
+    /* SIMPLE PRICING — scoped to #pricing only */
+    #pricing .pricing-header {
+      margin-inline: auto;
+      max-width: 42rem;
+      text-align: center;
+    }
+    #pricing .pricing-eyebrow {
+      margin: 0;
+      font-size: 0.6875rem;
+      font-weight: 600;
+      letter-spacing: 0.12em;
+      color: color-mix(in srgb, var(--color-navy-muted) 88%, #64748b);
+    }
+    #pricing .pricing-headline {
+      margin: 0.75rem 0 0;
+      font-size: 1.75rem;
+      font-weight: 700;
+      line-height: 1.15;
+      letter-spacing: -0.025em;
+      color: var(--color-navy);
+    }
+    #pricing .pricing-subhead {
+      margin: 0.75rem auto 0;
+      max-width: 28rem;
+      font-size: 0.9375rem;
+      line-height: 1.5;
+      color: var(--color-navy-muted);
+    }
+    #pricing .pricing-card {
+      margin: 1.75rem auto 0;
+      max-width: 24rem;
+      padding: 1.2rem 1.2rem 1.15rem;
+      border-radius: 1.25rem;
+      border: 1px solid var(--color-line);
+      background: #ffffff;
+      box-shadow: 0 12px 40px rgb(11 27 51 / 0.06);
+      text-align: center;
+    }
+    #pricing .pricing-card__brand {
+      margin: 0;
+      font-size: 0.6875rem;
+      font-weight: 700;
+      letter-spacing: 0.12em;
+      color: var(--color-navy);
+    }
+    #pricing .pricing-card__hero {
+      margin-top: 0.75rem;
+    }
+    #pricing .pricing-card__rate {
+      margin: 0;
+      font-size: 4.5rem;
+      font-weight: 700;
+      line-height: 1;
+      letter-spacing: -0.04em;
+      color: var(--color-seymy);
+    }
+    #pricing .pricing-card__rate-label {
+      margin: 0.35rem auto 0;
+      max-width: 16rem;
+      font-size: 0.9375rem;
+      font-weight: 600;
+      line-height: 1.35;
+      color: var(--color-navy);
+    }
+    #pricing .pricing-card__rate-note {
+      margin: 0.3rem auto 0;
+      max-width: 18rem;
+      font-size: 0.8125rem;
+      line-height: 1.4;
+      color: var(--color-navy-muted);
+    }
+    #pricing .pricing-card__rate-followup {
+      margin: 0.28rem auto 0;
+      max-width: 18rem;
+      font-size: 0.8125rem;
+      line-height: 1.4;
+      font-weight: 500;
+      color: var(--color-navy);
+    }
+    #pricing .pricing-card__block {
+      margin-top: 0.9rem;
+      padding-top: 0.85rem;
+      border-top: 1px solid color-mix(in srgb, var(--color-line) 85%, transparent);
+      text-align: left;
+    }
+    #pricing .pricing-card__kicker {
+      margin: 0;
+      font-size: 0.5625rem;
+      font-weight: 700;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: var(--color-seymy);
+    }
+    #pricing .pricing-card__copy {
+      margin: 0.28rem 0 0;
+      font-size: 0.8125rem;
+      line-height: 1.4;
+      color: var(--color-navy);
+    }
+    #pricing .pricing-card__copy--muted {
+      color: var(--color-navy-muted);
+    }
+    #pricing .pricing-card__users {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 0.75rem 1rem;
+      align-items: start;
+    }
+    #pricing .pricing-card__users-col {
+      min-width: 0;
+    }
+    #pricing .pricing-card__users-label {
+      margin: 0;
+      font-size: 0.5625rem;
+      font-weight: 700;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: color-mix(in srgb, var(--color-navy) 82%, #64748b);
+    }
+    #pricing .pricing-card__users-value {
+      margin: 0.28rem 0 0;
+      font-size: 0.8125rem;
+      line-height: 1.35;
+    }
+    #pricing .pricing-card__users-value--included {
+      font-weight: 600;
+      color: var(--color-ready);
+    }
+    #pricing .pricing-card__users-value--price {
+      font-weight: 600;
+      color: var(--color-navy);
+    }
+    #pricing .pricing-card__cta {
+      display: inline-flex;
+      min-height: 3rem;
+      width: 100%;
+      align-items: center;
+      justify-content: center;
+      margin-top: 1rem;
+      padding: 0 1.5rem;
+      border-radius: 0.75rem;
+      background: var(--color-seymy);
+      font-size: 1rem;
+      font-weight: 600;
+      color: #ffffff;
+      text-decoration: none;
+      box-shadow: 0 8px 20px rgb(37 99 235 / 0.28);
+      transition: background-color 150ms ease;
+    }
+    #pricing .pricing-card__cta:hover {
+      background: var(--color-seymy-dark, #1558cc);
+    }
+    @media (min-width: 640px) {
+      #pricing .pricing-headline {
+        font-size: 2.25rem;
+      }
+      #pricing .pricing-subhead {
+        font-size: 1rem;
+      }
+      #pricing .pricing-card {
+        margin-top: 2rem;
+        max-width: 26rem;
+        padding: 1.35rem 1.4rem 1.2rem;
+      }
+      #pricing .pricing-card__rate {
+        font-size: 5.25rem;
+      }
+    }
+    @media (min-width: 1024px) {
+      #pricing .pricing-card {
+        max-width: 28rem;
+      }
+      #pricing .pricing-card__rate {
+        font-size: 5.75rem;
+      }
+    }
+
+    /* FAQ — scoped refinements */
+    #faq .faq-header {
+      margin-inline: auto;
+      max-width: 42rem;
+      text-align: center;
+    }
+    #faq .faq-eyebrow {
+      margin: 0;
+      font-size: 0.6875rem;
+      font-weight: 600;
+      letter-spacing: 0.12em;
+      color: color-mix(in srgb, var(--color-navy-muted) 88%, #64748b);
+    }
+    #faq .faq-headline {
+      margin: 0.75rem 0 0;
+      font-size: 1.75rem;
+      font-weight: 700;
+      line-height: 1.15;
+      letter-spacing: -0.025em;
+      color: var(--color-navy);
+    }
+    #faq .faq-list {
+      margin: 1.75rem auto 0;
+      max-width: 36rem;
+    }
+    #faq .faq-item > summary {
+      min-height: 3rem;
+      padding-block: 0.875rem;
+    }
+    #faq .faq-item .faq-panel p {
+      margin: 0;
+      padding-bottom: 0.875rem;
+      padding-right: 2.25rem;
+      font-size: 0.8125rem;
+      line-height: 1.45;
+      color: var(--color-navy-muted);
+    }
+    #faq .faq-item .faq-panel p + p {
+      margin-top: 0.45rem;
+    }
+    @media (min-width: 640px) {
+      #faq .faq-headline {
+        font-size: 2.25rem;
+      }
+      #faq .faq-list {
+        margin-top: 2rem;
+      }
+      #faq .faq-item .faq-panel p {
+        font-size: 0.875rem;
+        padding-bottom: 1rem;
+      }
+    }
+
+    /* FINAL CTA — scoped to #final-cta only */
+    #final-cta {
+      background: var(--color-navy);
+      padding: 3rem 1.25rem 3.25rem;
+    }
+    #final-cta .final-cta-inner {
+      margin-inline: auto;
+      max-width: 28rem;
+      text-align: center;
+    }
+    #final-cta .final-cta-eyebrow {
+      margin: 0;
+      font-size: 0.6875rem;
+      font-weight: 600;
+      letter-spacing: 0.12em;
+      color: rgb(255 255 255 / 0.55);
+    }
+    #final-cta .final-cta-headline {
+      margin: 0.85rem 0 0;
+      font-size: 1.875rem;
+      font-weight: 700;
+      line-height: 1.12;
+      letter-spacing: -0.03em;
+      color: #ffffff;
+    }
+    #final-cta .final-cta-support {
+      margin: 0.75rem auto 0;
+      max-width: 15rem;
+      font-size: 0.9375rem;
+      line-height: 1.45;
+      color: rgb(255 255 255 / 0.66);
+    }
+    #final-cta .final-cta-button {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      width: calc(100% - 0.5rem);
+      max-width: 420px;
+      min-height: 4rem;
+      margin-top: 1.65rem;
+      padding: 0 1.5rem;
+      border-radius: 0.75rem;
+      background: var(--color-seymy);
+      font-size: 1rem;
+      font-weight: 600;
+      color: #ffffff;
+      text-decoration: none;
+      box-shadow: 0 6px 16px rgb(37 99 235 / 0.22);
+      transition: background-color 150ms ease;
+    }
+    #final-cta .final-cta-button:hover {
+      background: var(--color-seymy-dark, #1558cc);
+    }
+    #final-cta .final-cta-button:focus-visible {
+      outline: 2px solid #ffffff;
+      outline-offset: 2px;
+    }
+    #final-cta .final-cta-micro {
+      margin: 0.7rem 0 0;
+      font-size: 0.8125rem;
+      line-height: 1.35;
+      color: rgb(255 255 255 / 0.4);
+    }
+    @media (min-width: 640px) {
+      #final-cta {
+        padding: 3.5rem 1.5rem 3.75rem;
+      }
+      #final-cta .final-cta-headline {
+        font-size: 2.5rem;
+      }
+      #final-cta .final-cta-support {
+        font-size: 1rem;
+      }
+      #final-cta .final-cta-button {
+        min-height: 4.25rem;
+      }
+    }
+  </style>
+  <link rel="stylesheet" href="{% static 'css/site-v11.css' %}">
 </head>
-<body class="min-h-dvh overflow-x-hidden bg-surface font-sans text-navy antialiased">
-  <header class="border-b border-line bg-white">
-    <div class="mx-auto flex h-12 max-w-6xl items-center justify-between px-3 sm:h-16 sm:px-6">
-      <a href="/" class="text-xl font-bold tracking-tight text-navy sm:text-[1.375rem]" aria-label="Seymy home">
-        seymy<span class="text-seymy">.</span>
+<body class="min-h-dvh overflow-x-hidden bg-white font-sans text-navy antialiased">
+  <div class="hero-campaign">
+  <header class="site-header">
+    <div class="mx-auto flex max-w-7xl items-center justify-between gap-4 px-5 py-4 sm:px-6">
+      <a href="{% url 'home' %}" class="logo-mark text-xl font-bold tracking-tight text-navy sm:text-[1.375rem]" aria-label="Seymy home">
+        <span class="wordmark">Sey<span class="wordmark__miss">my.</span></span>
       </a>
-      <a
-        href="{% url 'start_new_estimate' %}"
-        class="inline-flex min-h-9 items-center rounded-lg px-3 text-sm font-semibold text-navy-muted transition-colors hover:text-navy focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-seymy"
-      >
-        Try Seymy
-      </a>
+      <nav class="hidden items-center gap-8 text-sm font-medium text-navy-muted lg:flex" aria-label="Primary">
+        <a href="#day" class="transition-colors hover:text-navy focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-seymy">How it works</a>
+        <a href="#pricing" class="transition-colors hover:text-navy focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-seymy">Pricing</a>
+        <a href="#faq" class="transition-colors hover:text-navy focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-seymy">FAQ</a>
+      </nav>
     </div>
   </header>
 
+    {# 1 — HERO #}
+    <section class="hero" aria-labelledby="hero-heading">
+      <div class="hero-stage">
+        <img
+          class="hero-photo"
+          src="{% static 'images/hero-contractor-services.jpg' %}"
+          alt="Contractor in his work truck talking to Seymy on a dashboard-mounted phone"
+          width="1024"
+          height="576"
+          decoding="async"
+          fetchpriority="high"
+        >
+        <div class="hero-veil" aria-hidden="true"></div>
+        <div class="hero-chat hero-chat--mobile" aria-label="Seymy conversation">
+          <div class="hc-seymy hc-step" data-hc-hold="4000">
+            <div class="hc-bubble">
+              <p class="hc-meta">Seymy · Speaking · 4:47 PM</p>
+              <div class="hc-live" aria-hidden="true">
+                <span></span><span></span><span></span><span></span>
+                <span></span><span></span><span></span><span></span>
+              </div>
+              <p class="hc-body">
+                <span class="hc-nowrap">You're 25 minutes from home.</span><br>
+                <span class="hc-nowrap">I saved 3 quick things for the drive.</span><br>
+                Want to knock them out?
+              </p>
+            </div>
+          </div>
+          <div class="hc-john hc-step" data-hc-hold="2500">
+            <div class="hc-bubble">
+              <p class="hc-meta">John · Voice · 0:02</p>
+              <div class="hc-live" aria-hidden="true">
+                <span></span><span></span><span></span><span></span>
+                <span></span><span></span><span></span><span></span>
+              </div>
+              <p class="hc-body">“Yeah, let's do it.”</p>
+            </div>
+          </div>
+          <div class="hc-seymy hc-step" data-hc-hold="3500">
+            <div class="hc-bubble">
+              <p class="hc-meta">Seymy · Speaking</p>
+              <div class="hc-live" aria-hidden="true">
+                <span></span><span></span><span></span><span></span>
+                <span></span><span></span><span></span><span></span>
+              </div>
+              <p class="hc-body">
+                First one — the Garcia estimate is ready.<br>
+                Want to review it?
+              </p>
+            </div>
+          </div>
+        </div>
+        <div class="hero-chat hero-chat--desktop" aria-label="Seymy conversation">
+          <div class="hc-seymy hc-step" data-hc-hold="4000">
+            <div class="hc-bubble">
+              <p class="hc-meta">Seymy · Speaking · 4:47 PM</p>
+              <div class="hc-live" aria-hidden="true">
+                <span></span><span></span><span></span><span></span>
+                <span></span><span></span><span></span><span></span>
+              </div>
+              <p class="hc-body">
+                You're 25 minutes from home.<br>
+                I saved 3 quick things for the drive.<br>
+                Want to knock them out?
+              </p>
+            </div>
+          </div>
+          <div class="hc-john hc-step" data-hc-hold="2500">
+            <div class="hc-bubble">
+              <p class="hc-meta">John · Voice · 0:02</p>
+              <div class="hc-live" aria-hidden="true">
+                <span></span><span></span><span></span><span></span>
+                <span></span><span></span><span></span><span></span>
+              </div>
+              <p class="hc-body">“Yeah, let's do it.”</p>
+            </div>
+          </div>
+          <div class="hc-seymy hc-step" data-hc-hold="3500">
+            <div class="hc-bubble">
+              <p class="hc-meta">Seymy · Speaking</p>
+              <div class="hc-live" aria-hidden="true">
+                <span></span><span></span><span></span><span></span>
+                <span></span><span></span><span></span><span></span>
+              </div>
+              <p class="hc-body">
+                First one — the Garcia estimate is ready.<br>
+                Want to review it?
+              </p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="hero-copy">
+        <div class="hero-copy-inner">
+          <p class="hero-eyebrow">BUILT FOR CONTRACTORS</p>
+          <h1 id="hero-heading" class="hero-title">
+            <span class="hero-title-line">When the job ends,</span>
+            <span class="hero-title-line text-seymy">your workday ends.</span>
+          </h1>
+          <p class="hero-position">
+            Seymy is your coworker, not your software.
+          </p>
+          <p class="hero-support">
+            Seymy prepares everything around the job.<br>
+            Nothing goes out without your OK.
+          </p>
+          <div class="hero-cta-block">
+            {% include "landing/partials/download_cta.html" with cta_class="hero-cta" %}
+            <p class="hero-reassure">
+              $99/month or $990/year · Owner included · Extra users billed separately.
+            </p>
+          </div>
+        </div>
+      </div>
+
+      <div class="hero-copy-mobile">
+        <p class="hero-position">
+          Seymy is your coworker, not your software.
+        </p>
+        <p class="hero-support">
+          Seymy prepares everything around the job. Nothing goes out without your OK.
+        </p>
+        <div class="hero-cta-block">
+          {% include "landing/partials/download_cta.html" with cta_class="hero-cta" %}
+          <p class="hero-reassure">
+            $99/month or $990/year · Owner included · Extra users billed separately.
+          </p>
+        </div>
+      </div>
+    </section>
+  </div>
+
   <main>
-    <section class="px-3 pb-8 pt-6 sm:px-6 sm:pb-12 sm:pt-10 lg:pb-14 lg:pt-12" aria-labelledby="hero-heading">
-      <div class="mx-auto max-w-2xl text-center">
-        <p class="mb-2.5 inline-flex items-center rounded-full border border-line bg-white px-2 py-0.5 text-[0.5625rem] font-semibold tracking-[0.08em] text-navy-muted sm:mb-4 sm:px-3 sm:py-1 sm:text-[0.6875rem]">
-          AI ESTIMATING FOR CONTRACTORS
-        </p>
-
-        <h1 id="hero-heading" class="text-[2rem] font-bold leading-[1.08] tracking-tight text-navy sm:text-5xl lg:text-[3.25rem]">
-          Quote the job<br>
-          <span class="text-seymy">before you leave.</span>
-        </h1>
-
-        <p class="mx-auto mt-3 max-w-md text-[0.9375rem] leading-relaxed text-navy-muted sm:mt-4 sm:text-lg">
-          Dictate the job from your truck. Seymy creates the PDF,
-          you approve it, and Seymy handles the rest.
-        </p>
-
-        <div class="mt-5 sm:mt-6">
-          <a
-            id="create-estimate"
-            href="{% url 'start_new_estimate' %}"
-            class="inline-flex min-h-12 w-full items-center justify-center rounded-xl bg-seymy px-6 text-base font-semibold text-white shadow-[0_8px_20px_rgba(26,109,255,0.28)] transition-colors hover:bg-seymy-dark focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-seymy sm:w-auto"
-          >
-            Create My First Estimate
-          </a>
-        </div>
-
-        <p class="mt-3 px-1 text-xs leading-relaxed text-navy-muted sm:mt-4">
-          <span class="font-semibold text-navy">14-day free trial</span>
-          <span class="text-navy-muted/70"> · </span>
-          No credit card required
-          <span class="text-navy-muted/70"> · </span>
-          Built for your phone
-        </p>
-      </div>
-    </section>
-
-    <div class="border-t border-line bg-white px-3 py-3 sm:px-6 sm:py-3.5">
-      <div class="mx-auto max-w-3xl text-center">
-        <p class="text-[0.6875rem] leading-relaxed text-navy-muted sm:text-xs">
-          Built for independent contractors and small crews.
-        </p>
-        <p class="mt-1 text-[0.5625rem] leading-relaxed text-navy-muted/70 sm:text-[0.625rem]">
-          Plumbers · Electricians · HVAC · Roofers · Painters · Landscapers · Handymen · and more.
-        </p>
-      </div>
-    </div>
-
-    <section class="border-t border-line bg-surface" aria-labelledby="journey-heading">
-      <div class="mx-auto max-w-6xl px-3 py-12 sm:px-6 sm:py-16 lg:py-20">
+    {# 2 — HOMEWORK #}
+    <section id="homework" class="scroll-mt-24 border-t border-line bg-surface px-5 py-16 sm:px-6 lg:py-24" aria-labelledby="homework-heading">
+      <div class="mx-auto max-w-7xl">
         <header class="mx-auto max-w-2xl text-center">
-          <p class="text-[0.6875rem] font-semibold tracking-[0.1em] text-navy-muted">
-            FROM VOICE TO PAID
+          <p class="text-[0.6875rem] font-semibold tracking-[0.12em] text-navy-muted">
+            THE SECOND SHIFT
           </p>
-          <h2 id="journey-heading" class="mt-3 text-[1.75rem] font-bold tracking-tight text-navy sm:text-4xl">
-            One job. One conversation.
+          <h2 id="homework-heading" class="mt-3 text-[1.75rem] font-bold leading-[1.15] tracking-tight text-navy sm:text-4xl">
+            Your job shouldn’t come<br>
+            with homework.
           </h2>
-          <p class="mx-auto mt-3 max-w-md text-[0.9375rem] leading-relaxed text-navy-muted sm:mt-4 sm:text-base">
-            Tell Seymy about the job. It asks for anything missing.
+          <p class="mx-auto mt-4 max-w-md text-[0.9375rem] leading-relaxed text-navy-muted sm:text-base">
+            Your last job shouldn’t start your second shift.
           </p>
         </header>
 
-        <div class="mx-auto mt-7 max-w-3xl sm:mt-10 lg:mt-14 lg:max-w-none">
-          <p class="text-[0.6875rem] font-semibold tracking-[0.1em] text-navy-muted">YOU</p>
+        <div class="hw-mobile">
+          <article class="hw-block hw-block--without" aria-label="Without Seymy">
+            <p class="hw-label hw-label--muted">Without Seymy</p>
+            <div class="hw-story">
+              <div class="hw-phase">
+                <p class="hw-time">4:30 PM</p>
+                <p class="hw-beat">Last job finished.</p>
+              </div>
+              <div class="hw-phase">
+                <p class="hw-time">5:15 PM</p>
+                <p class="hw-beat">Home. Second shift starts.</p>
+              </div>
+            </div>
+            <ul class="hw-tasks" aria-label="Admin still waiting">
+              <li class="hw-task hw-task--open">Send Garcia estimate</li>
+              <li class="hw-task hw-task--open">Finish 2 invoices</li>
+              <li class="hw-task hw-task--open">Answer Sarah</li>
+              <li class="hw-task hw-task--open">Call Robert back</li>
+              <li class="hw-task hw-task--open">Check tomorrow</li>
+              <li class="hw-task hw-task--open">Chase $2,750 payment</li>
+            </ul>
+            <p class="hw-pull">
+              Your jobs are done.<br>
+              Your workday isn’t.
+            </p>
+          </article>
 
-          <div class="mt-3 grid gap-4 lg:grid-cols-[minmax(0,1fr)_auto_minmax(0,1fr)] lg:items-stretch lg:gap-5 xl:gap-6">
-            <article class="flex h-full w-full flex-col items-stretch rounded-2xl border border-line bg-white p-4 sm:p-5">
-              <p class="text-[0.6875rem] font-semibold tracking-[0.08em] text-seymy">01 — TALK</p>
-              <h3 class="mt-1.5 text-base font-bold text-navy sm:text-lg">Tell Seymy about the job.</h3>
-              <div class="mt-3 flex flex-col rounded-xl bg-seymy px-5 py-5 text-white">
-                <div class="flex items-center gap-2.5">
-                  <svg class="h-7 min-w-0 flex-1" viewBox="0 0 220 32" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true" preserveAspectRatio="none">
-                    <g stroke="rgba(255,255,255,0.88)" stroke-width="1.6" stroke-linecap="round">
-                      <line x1="2" y1="15.2" x2="2" y2="16.8"/>
-                      <line x1="6" y1="14.5" x2="6" y2="17.5"/>
-                      <line x1="10" y1="15" x2="10" y2="17"/>
-                      <line x1="14" y1="13.5" x2="14" y2="18.5"/>
-                      <line x1="18" y1="12" x2="18" y2="20"/>
-                      <line x1="22" y1="10.5" x2="22" y2="21.5"/>
-                      <line x1="26" y1="11.5" x2="26" y2="20.5"/>
-                      <line x1="30" y1="9" x2="30" y2="23"/>
-                      <line x1="34" y1="11" x2="34" y2="21"/>
-                      <line x1="38" y1="13" x2="38" y2="19"/>
-                      <line x1="42" y1="14.2" x2="42" y2="17.8"/>
-                      <line x1="46" y1="15" x2="46" y2="17"/>
-                      <line x1="50" y1="14.5" x2="50" y2="17.5"/>
-                      <line x1="54" y1="13.8" x2="54" y2="18.2"/>
-                      <line x1="58" y1="12.5" x2="58" y2="19.5"/>
-                      <line x1="62" y1="9.5" x2="62" y2="22.5"/>
-                      <line x1="66" y1="6.5" x2="66" y2="25.5"/>
-                      <line x1="70" y1="4.5" x2="70" y2="27.5"/>
-                      <line x1="74" y1="7" x2="74" y2="25"/>
-                      <line x1="78" y1="3.5" x2="78" y2="28.5"/>
-                      <line x1="82" y1="5.5" x2="82" y2="26.5"/>
-                      <line x1="86" y1="8" x2="86" y2="24"/>
-                      <line x1="90" y1="4" x2="90" y2="28"/>
-                      <line x1="94" y1="6" x2="94" y2="26"/>
-                      <line x1="98" y1="9.5" x2="98" y2="22.5"/>
-                      <line x1="102" y1="12" x2="102" y2="20"/>
-                      <line x1="106" y1="14" x2="106" y2="18"/>
-                      <line x1="110" y1="15" x2="110" y2="17"/>
-                      <line x1="114" y1="14.2" x2="114" y2="17.8"/>
-                      <line x1="118" y1="13" x2="118" y2="19"/>
-                      <line x1="122" y1="11" x2="122" y2="21"/>
-                      <line x1="126" y1="9" x2="126" y2="23"/>
-                      <line x1="130" y1="10.5" x2="130" y2="21.5"/>
-                      <line x1="134" y1="8" x2="134" y2="24"/>
-                      <line x1="138" y1="11.5" x2="138" y2="20.5"/>
-                      <line x1="142" y1="9.5" x2="142" y2="22.5"/>
-                      <line x1="146" y1="12.5" x2="146" y2="19.5"/>
-                      <line x1="150" y1="14" x2="150" y2="18"/>
-                      <line x1="154" y1="15" x2="154" y2="17"/>
-                      <line x1="158" y1="14.3" x2="158" y2="17.7"/>
-                      <line x1="162" y1="12" x2="162" y2="20"/>
-                      <line x1="166" y1="8.5" x2="166" y2="23.5"/>
-                      <line x1="170" y1="5.5" x2="170" y2="26.5"/>
-                      <line x1="174" y1="3.5" x2="174" y2="28.5"/>
-                      <line x1="178" y1="6.5" x2="178" y2="25.5"/>
-                      <line x1="182" y1="4" x2="182" y2="28"/>
-                      <line x1="186" y1="7.5" x2="186" y2="24.5"/>
-                      <line x1="190" y1="3" x2="190" y2="29"/>
-                      <line x1="194" y1="5" x2="194" y2="27"/>
-                      <line x1="198" y1="9" x2="198" y2="23"/>
-                      <line x1="202" y1="11.5" x2="202" y2="20.5"/>
-                      <line x1="206" y1="13.5" x2="206" y2="18.5"/>
-                      <line x1="210" y1="14.5" x2="210" y2="17.5"/>
-                      <line x1="214" y1="15" x2="214" y2="17"/>
-                      <line x1="218" y1="15.3" x2="218" y2="16.7"/>
-                    </g>
+          <article class="hw-block hw-block--with" aria-label="With Seymy">
+            <p class="hw-label hw-label--seymy">With Seymy</p>
+            <div class="hw-story">
+              <div class="hw-phase">
+                <p class="hw-time">4:30 PM</p>
+                <p class="hw-beat">Last job finished.</p>
+              </div>
+              <ul class="hw-tasks hw-tasks--between" aria-label="Admin already handled">
+                <li class="hw-task hw-task--done">Garcia estimate approved &amp; sent</li>
+                <li class="hw-task hw-task--done">Invoices approved &amp; sent</li>
+                <li class="hw-task hw-task--done">Sarah’s call answered</li>
+                <li class="hw-task hw-task--done">Robert’s request taken</li>
+                <li class="hw-task hw-task--done">Tomorrow lined up for you</li>
+                <li class="hw-task hw-task--done">Payment follow-up approved</li>
+              </ul>
+              <div class="hw-phase">
+                <p class="hw-time">5:15 PM</p>
+                <p class="hw-beat">Home.</p>
+              </div>
+            </div>
+            <p class="hw-pull">
+              Your jobs are done.<br>
+              So are you.
+            </p>
+          </article>
+        </div>
+
+        <div class="comparison-grid">
+          <div class="comparison-col comparison-col--without" aria-label="Without Seymy">
+            <p class="hw-label hw-label--muted">Without Seymy</p>
+            <div class="hw-story">
+              <div class="hw-phase">
+                <p class="hw-time">4:30 PM</p>
+                <p class="hw-beat">Last job finished.</p>
+              </div>
+              <div class="hw-phase">
+                <p class="hw-time">5:15 PM</p>
+                <p class="hw-beat">Home. Second shift starts.</p>
+              </div>
+            </div>
+            <ul class="hw-tasks" aria-label="Admin still waiting">
+              <li class="hw-task hw-task--open">Send Garcia estimate</li>
+              <li class="hw-task hw-task--open">Finish 2 invoices</li>
+              <li class="hw-task hw-task--open">Answer Sarah</li>
+              <li class="hw-task hw-task--open">Call Robert back</li>
+              <li class="hw-task hw-task--open">Check tomorrow</li>
+              <li class="hw-task hw-task--open">Chase $2,750 payment</li>
+            </ul>
+            <p class="hw-pull">
+              Your jobs are done.<br>
+              Your workday isn’t.
+            </p>
+          </div>
+
+          <div class="comparison-divider" aria-hidden="true"></div>
+
+          <div class="comparison-col comparison-col--with" aria-label="With Seymy">
+            <p class="hw-label hw-label--seymy">With Seymy</p>
+            <div class="hw-story">
+              <div class="hw-phase">
+                <p class="hw-time">4:30 PM</p>
+                <p class="hw-beat">Last job finished.</p>
+              </div>
+              <ul class="hw-tasks hw-tasks--between" aria-label="Admin already handled">
+                <li class="hw-task hw-task--done">Garcia estimate approved &amp; sent</li>
+                <li class="hw-task hw-task--done">Invoices approved &amp; sent</li>
+                <li class="hw-task hw-task--done">Sarah’s call answered</li>
+                <li class="hw-task hw-task--done">Robert’s request taken</li>
+                <li class="hw-task hw-task--done">Tomorrow lined up for you</li>
+                <li class="hw-task hw-task--done">Payment follow-up approved</li>
+              </ul>
+              <div class="hw-phase">
+                <p class="hw-time">5:15 PM</p>
+                <p class="hw-beat">Home.</p>
+              </div>
+            </div>
+            <p class="hw-pull">
+              Your jobs are done.<br>
+              So are you.
+            </p>
+          </div>
+        </div>
+
+        <div class="hw-statement">
+          <p>
+            Other software organizes your admin.<br>
+            <span class="text-seymy">Seymy prepares it. You approve.</span>
+          </p>
+        </div>
+      </div>
+    </section>
+
+    {# 3 — JUST TALK / SEYMY NOTICED / SEYMY LEARNS #}
+    <section id="talk" class="scroll-mt-24 border-t border-line bg-white px-5 py-12 sm:px-6 sm:py-16 lg:py-20" aria-labelledby="talk-heading">
+      <div class="mx-auto max-w-7xl">
+        <div class="talk-chapter talk-chapter--ask">
+          <header class="talk-chapter-header">
+            <p class="talk-eyebrow">JUST TALK</p>
+            <h2 id="talk-heading" class="talk-headline">
+              Conversation is the interface.
+            </h2>
+            <p class="talk-subtitle">
+              No menus. No workflows to learn.<br>
+              Just talk to Seymy.
+            </p>
+          </header>
+
+          <div class="talk-thread" data-talk-sequence="just-talk" aria-label="You ask, Seymy acts">
+            <div class="talk-scenario" aria-label="Estimate">
+              <div class="talk-msg talk-msg--you talk-step">
+                <p class="talk-label">You</p>
+                <p class="talk-text">
+                  Water heater for Anderson.<br>
+                  $1,350 materials, $500 labor.<br>
+                  30% deposit.
+                </p>
+              </div>
+              <div class="talk-msg talk-msg--seymy talk-step">
+                <p class="talk-label">Seymy</p>
+                <p class="talk-text">
+                  Estimate ready — $1,931 total.<br>
+                  $579.30 deposit.<br><br>
+                  Review it before I send it?
+                </p>
+              </div>
+              <button
+                type="button"
+                class="talk-attach talk-step"
+                data-estimate-preview-open
+                aria-haspopup="dialog"
+                aria-controls="talk-estimate-modal"
+              >
+                <span class="talk-attach__icon" aria-hidden="true">
+                  <svg viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M4.5 1.75h4.75L13 5.5v8.75a.75.75 0 0 1-.75.75h-7.5a.75.75 0 0 1-.75-.75V2.5a.75.75 0 0 1 .75-.75Z" stroke="currentColor" stroke-width="1.35" stroke-linejoin="round"/>
+                    <path d="M9.25 1.75V5.5H13" stroke="currentColor" stroke-width="1.35" stroke-linejoin="round"/>
+                    <path d="M5.75 9h4.5M5.75 11.25H9" stroke="currentColor" stroke-width="1.35" stroke-linecap="round"/>
                   </svg>
-                  <span class="shrink-0 text-xs font-semibold tabular-nums text-white/90">0:22</span>
+                </span>
+                <div class="talk-attach__meta">
+                  <p class="talk-attach__title">Estimate #1042</p>
+                  <p class="talk-attach__type">PDF estimate</p>
                 </div>
-                <div class="mt-4 space-y-3 text-left text-sm leading-relaxed text-white/95">
-                  <p>
-                    “Estimate for John Anderson,<br>
-                    24 Main Street, Orlando, FL.
-                  </p>
-                  <p>
-                    Replace a 50-gallon water heater.<br>
-                    $1,350 materials, $500 labor.
-                  </p>
-                  <p>
-                    Apply 6% sales tax.<br>
-                    Start the job on August 20.
-                  </p>
-                  <p>
-                    30% upfront. Balance when finished<br>
-                    on August 24.
-                  </p>
-                  <p>
-                    Pass eligible card fees to the customer.”
-                  </p>
-                </div>
+                <span class="talk-attach__action">Preview estimate →</span>
+              </button>
+              <div class="talk-msg talk-msg--you talk-msg--short talk-step">
+                <p class="talk-label">You</p>
+                <p class="talk-text">Looks good. Send it.</p>
               </div>
-            </article>
-
-            <div class="flex flex-col items-center justify-center gap-1.5 py-1 text-center lg:flex-row lg:items-center lg:justify-center lg:gap-2 lg:self-center lg:px-0.5" aria-hidden="true">
-              <span class="text-sm font-semibold text-seymy lg:hidden">↓</span>
-              <span class="hidden shrink-0 text-xl font-semibold text-seymy lg:inline">→</span>
-              <div class="w-full max-w-[11rem] rounded-xl border border-seymy/15 bg-white px-3 py-2.5 shadow-[0_1px_0_rgba(11,31,58,0.03)] lg:max-w-[9.5rem]">
-                <p class="text-[0.5625rem] font-bold tracking-[0.08em] text-seymy">SEYMY UNDERSTANDS</p>
-                <ul class="mt-1.5 space-y-0.5 text-left text-[0.625rem] leading-tight text-navy-muted">
-                  <li>✓ Customer</li>
-                  <li>✓ Job</li>
-                  <li>✓ Price &amp; tax</li>
-                  <li>✓ Schedule</li>
-                  <li>✓ Payment terms</li>
-                </ul>
-                <p class="mt-2 border-t border-line pt-1.5 text-[0.5625rem] leading-snug text-navy-muted">
-                  Seymy asks only<br class="hidden lg:inline"> if something's missing.
-                </p>
+              <div class="talk-msg talk-msg--seymy talk-step">
+                <p class="talk-label">Seymy</p>
+                <p class="talk-text">Sent to Anderson by email.</p>
               </div>
-              <span class="text-sm font-semibold text-seymy lg:hidden">↓</span>
-              <span class="hidden shrink-0 text-xl font-semibold text-seymy lg:inline">→</span>
             </div>
+          </div>
+        </div>
 
-            <article class="flex h-full w-full flex-col items-stretch rounded-2xl border border-line bg-white p-4 sm:p-5">
-              <p class="text-[0.6875rem] font-semibold tracking-[0.08em] text-seymy">02 — READY</p>
-              <h3 class="mt-1.5 text-base font-bold text-navy sm:text-lg">Your estimate is ready.</h3>
-              <p class="mt-1.5 text-sm leading-relaxed text-navy-muted">
-                Review everything before anything is sent.
-              </p>
+        <hr class="talk-bridge" aria-hidden="true">
 
-              <div class="mt-3 rounded-xl border border-line bg-white p-3 shadow-[0_1px_0_rgba(11,31,58,0.04)]">
-                <div class="flex items-start justify-between gap-2">
-                  <div>
-                    <p class="text-[0.625rem] font-semibold tracking-[0.08em] text-seymy">ESTIMATE</p>
-                    <p class="mt-1 text-sm font-semibold text-navy">Miller Plumbing</p>
-                    <p class="text-xs text-navy-muted">Estimate #1042</p>
-                  </div>
-                  <span class="inline-flex size-8 shrink-0 items-center justify-center rounded-md border border-line bg-surface text-seymy" aria-hidden="true">
-                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                      <path d="M7 3.5h7.5L19 8v12.5a1 1 0 0 1-1 1H7a1 1 0 0 1-1-1v-16a1 1 0 0 1 1-1Z" stroke="currentColor" stroke-width="1.6"/>
-                      <path d="M14.5 3.5V8H19" stroke="currentColor" stroke-width="1.6"/>
-                    </svg>
-                  </span>
+        <div class="talk-chapter talk-chapter--noticed">
+          <header class="talk-chapter-header">
+            <p class="talk-eyebrow">SEYMY NOTICED</p>
+            <h2 id="talk-noticed-heading" class="talk-headline">
+              You focus on the job.<br>
+              <span class="text-seymy">Seymy knows what’s next.</span>
+            </h2>
+            <p class="talk-subtitle">
+              No menus to check. No workflows to manage.<br>
+              Seymy brings you the next thing that needs your attention.
+            </p>
+          </header>
+
+          <div class="talk-thread talk-thread--noticed" data-talk-sequence="noticed" aria-label="Seymy notices, you approve">
+            <div class="talk-scenario" aria-label="Overdue deposit">
+              <div class="talk-msg talk-msg--seymy talk-step">
+                <p class="talk-label">Seymy</p>
+                <p class="talk-text">Sarah’s deposit is 5 days overdue. Want me to send her a reminder?</p>
+              </div>
+              <div class="talk-msg talk-msg--you talk-msg--short talk-step">
+                <p class="talk-label">You</p>
+                <p class="talk-text">Yes.</p>
+              </div>
+              <div class="talk-msg talk-msg--seymy talk-step">
+                <p class="talk-label">Seymy</p>
+                <p class="talk-text">Done. Reminder emailed to Sarah.</p>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <hr class="talk-bridge" aria-hidden="true">
+
+        <div class="talk-chapter talk-chapter--learns" id="learns" aria-labelledby="talk-learns-heading">
+          <header class="talk-chapter-header">
+            <p class="talk-eyebrow">SEYMY LEARNS HOW YOU WORK</p>
+            <h2 id="talk-learns-heading" class="talk-headline">
+              You don’t adapt to Seymy.<br>
+              <span class="text-seymy">Seymy adapts to you.</span>
+            </h2>
+            <p class="talk-subtitle">
+              Tell Seymy once.<br>
+              It remembers how you like to work.
+            </p>
+            <p class="talk-trust">
+              Seymy asks before anything reaches a customer.<br>
+              The more you work together, the better it knows<br>
+              what to prepare for you.
+            </p>
+          </header>
+
+          <div class="learns-visual" data-talk-sequence="learns" aria-label="Teaching Seymy how you work">
+            <div class="learns-instructions talk-step">
+              <p class="learns-instructions__label">You</p>
+              <ul class="learns-instructions__list">
+                <li class="learns-instruction">30% deposit on jobs over $2,000.</li>
+                <li class="learns-instruction">Don't interrupt me while I'm on a job.</li>
+                <li class="learns-instruction">Remind me about unpaid invoices after 7 days.</li>
+              </ul>
+            </div>
+            <p class="learns-connector talk-step" aria-hidden="true">↓</p>
+            <div class="learns-memory talk-step">
+              <p class="learns-memory__badge"><span aria-hidden="true">✓</span> Remembered</p>
+              <p class="learns-memory__text">I'll work that way from now on.</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    {# 4 — A DAY WITH SEYMY #}
+    <section id="day" class="border-t border-line bg-surface px-5 py-12 sm:px-6 sm:py-16 lg:py-20" aria-labelledby="day-heading">
+      <div class="mx-auto max-w-7xl">
+        <header class="day-header">
+          <p class="day-eyebrow">A DAY WITH SEYMY</p>
+          <h2 id="day-heading" class="day-headline">
+            A Florida plumber’s<br>
+            workday — handled.
+          </h2>
+          <p class="day-subhead">
+            Seymy knows when to prepare, when to ask, and when to stay quiet.
+          </p>
+        </header>
+
+        <div class="workday-flow" aria-label="Adaptive workday with Seymy">
+          <div class="workday-rail" aria-hidden="true">
+            <div class="timeline-base"></div>
+            <div class="timeline-progress"></div>
+          </div>
+          <article class="workday-moment">
+            <span class="workday-moment__marker workday-moment__marker--green" aria-hidden="true"></span>
+            <div class="workday-moment__state-col">
+              <p class="workday-moment__time">7:30 AM</p>
+              <p class="workday-moment__state"><span class="workday-moment__state-dot workday-moment__state-dot--green" aria-hidden="true"></span>Available</p>
+            </div>
+            <div class="workday-moment__body-col">
+              <h3 class="workday-moment__situation">A customer reaches out.</h3>
+              <p class="workday-moment__behavior"><span class="workday-moment__behavior-brand">Seymy</span><span class="workday-moment__behavior-arrow" aria-hidden="true">→</span><span class="workday-moment__behavior-action">Answers</span></p>
+              <p class="workday-moment__support"><span class="miss-name">Miss Seymy</span> answers the call, takes the request and puts it in front of you.</p>
+              <div class="workday-notice">
+                <p class="workday-notice__kicker">New lead</p>
+                <p class="workday-notice__title">Leak under kitchen sink</p>
+                <p class="workday-notice__meta">Tampa · Asks for a visit today</p>
+                <p class="workday-notice__foot">Address + notes ready</p>
+              </div>
+            </div>
+          </article>
+
+          <article class="workday-moment workday-moment--quiet">
+            <span class="workday-moment__marker workday-moment__marker--slate" aria-hidden="true"></span>
+            <div class="workday-moment__state-col">
+              <p class="workday-moment__time">9:00 AM</p>
+              <p class="workday-moment__state"><span class="workday-moment__state-dot workday-moment__state-dot--slate" aria-hidden="true"></span>On a job</p>
+            </div>
+            <div class="workday-moment__body-col">
+              <h3 class="workday-moment__situation">You’re on site.</h3>
+              <p class="workday-moment__behavior"><span class="workday-moment__behavior-brand">Seymy</span><span class="workday-moment__behavior-arrow" aria-hidden="true">→</span><span class="workday-moment__behavior-action">Stays quiet</span></p>
+              <p class="workday-moment__support">Non-urgent calls and admin can wait.</p>
+            </div>
+          </article>
+
+          <article class="workday-moment workday-moment--interactive">
+            <span class="workday-moment__marker workday-moment__marker--blue" aria-hidden="true"></span>
+            <div class="workday-moment__state-col">
+              <p class="workday-moment__time">11:30 AM</p>
+              <p class="workday-moment__state"><span class="workday-moment__state-dot workday-moment__state-dot--blue" aria-hidden="true"></span>Driving</p>
+            </div>
+            <div class="workday-moment__body-col">
+              <h3 class="workday-moment__situation">Job finished. You talk from the truck.</h3>
+              <p class="workday-moment__behavior"><span class="workday-moment__behavior-brand">Seymy</span><span class="workday-moment__behavior-arrow" aria-hidden="true">→</span><span class="workday-moment__behavior-action">Listens</span></p>
+              <p class="workday-moment__support">The contractor dictates what happened.</p>
+              <div class="workday-moment__chat">
+                <div class="talk-msg talk-msg--you">
+                  <p class="talk-label">You</p>
+                  <p class="talk-text">Replaced the shutoff valve. $180 labor, $45 parts. Send the invoice.</p>
                 </div>
-
-                <div class="mt-2.5 text-[0.6875rem] leading-snug text-navy">
-                  <p class="font-medium">John Anderson</p>
-                  <p class="text-navy-muted">24 Main Street, Orlando, FL</p>
-                </div>
-
-                <dl class="mt-2 space-y-1 border-t border-line pt-2 text-[0.8125rem] sm:text-sm">
-                  <div class="flex items-baseline justify-between gap-3">
-                    <dt class="min-w-0 text-navy-muted">Materials</dt>
-                    <dd class="shrink-0 font-medium tabular-nums text-navy">$1,350.00</dd>
-                  </div>
-                  <div class="flex items-baseline justify-between gap-3">
-                    <dt class="text-navy-muted">Labor</dt>
-                    <dd class="shrink-0 font-medium tabular-nums text-navy">$500.00</dd>
-                  </div>
-                  <div class="flex items-baseline justify-between gap-3 border-t border-line pt-1.5">
-                    <dt class="text-navy-muted">Subtotal</dt>
-                    <dd class="shrink-0 tabular-nums text-navy">$1,850.00</dd>
-                  </div>
-                  <div class="flex items-baseline justify-between gap-3">
-                    <dt class="text-navy-muted">Tax (6% materials)</dt>
-                    <dd class="shrink-0 tabular-nums text-navy">$81.00</dd>
-                  </div>
-                  <div class="flex items-baseline justify-between gap-3 pt-0.5 font-bold">
-                    <dt class="text-navy">Total</dt>
-                    <dd class="shrink-0 tabular-nums text-navy">$1,931.00</dd>
-                  </div>
-                  <div class="flex items-baseline justify-between gap-3 border-t border-line pt-1.5">
-                    <dt class="text-navy-muted">Deposit (30%)</dt>
-                    <dd class="shrink-0 tabular-nums text-navy">$579.30</dd>
-                  </div>
-                  <div class="flex items-baseline justify-between gap-3">
-                    <dt class="text-navy-muted">Balance</dt>
-                    <dd class="shrink-0 tabular-nums text-navy">$1,351.70</dd>
-                  </div>
-                </dl>
-
-                <div class="mt-2.5 border-t border-line pt-2">
-                  <p class="text-[0.625rem] font-semibold tracking-[0.08em] text-seymy">SCHEDULE</p>
-                  <dl class="mt-1.5 space-y-1 text-[0.8125rem] sm:text-sm">
-                    <div class="flex items-baseline justify-between gap-3">
-                      <dt class="text-navy-muted">Start</dt>
-                      <dd class="shrink-0 text-navy">Aug 20, 2026</dd>
-                    </div>
-                    <div class="flex items-baseline justify-between gap-3">
-                      <dt class="text-navy-muted">Expected completion</dt>
-                      <dd class="shrink-0 text-navy">Aug 24, 2026</dd>
-                    </div>
-                  </dl>
-                </div>
-                <p class="mt-2 text-[0.625rem] leading-snug text-navy-muted">
-                  Scheduling dates are estimates, not guarantees.
-                </p>
-
-                <div class="mt-3 grid grid-cols-2 gap-2">
-                  <a
-                    href="{% url 'landing_demo_estimate_pdf' %}"
-                    target="_blank"
-                    rel="noopener"
-                    class="inline-flex min-h-10 items-center justify-center rounded-lg border border-line bg-white px-2.5 text-xs font-semibold text-navy transition-colors hover:bg-surface focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-seymy sm:text-sm"
-                  >
-                    View PDF
-                  </a>
-                  <a
-                    href="#"
-                    class="inline-flex min-h-10 items-center justify-center rounded-lg bg-seymy px-2.5 text-xs font-semibold text-white transition-colors hover:bg-seymy-dark focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-seymy sm:text-sm"
-                    aria-disabled="true"
-                  >
-                    Approve &amp; Send
-                  </a>
+                <div class="talk-msg talk-msg--seymy">
+                  <p class="talk-label">Seymy</p>
+                  <p class="talk-text">Done. Invoice sent.</p>
                 </div>
               </div>
-
-              <p class="mt-2.5 text-center text-[0.6875rem] text-navy-muted">
-                Nothing is sent until you approve it.
-              </p>
-            </article>
-          </div>
-
-          <p class="mt-4 text-center text-xs leading-relaxed text-navy-muted sm:mt-5">
-            Tell Seymy what you know. Seymy asks for what it needs.
-          </p>
-
-          <div class="my-4 flex flex-col items-center text-center sm:my-8 lg:mb-4 lg:mt-5">
-            <span class="h-3 w-px bg-seymy/30 sm:h-5 lg:h-3" aria-hidden="true"></span>
-            <p class="mt-1.5 inline-flex max-w-full items-center rounded-full border border-seymy/20 bg-white px-3 py-1.5 text-center text-[0.625rem] font-bold tracking-[0.08em] text-seymy sm:mt-2.5 sm:px-4 sm:py-2 sm:text-[0.6875rem] sm:tracking-[0.1em] sm:text-xs lg:mt-1.5">
-              FROM HERE, SEYMY TAKES OVER.
-            </p>
-            <p class="mt-2 text-xs font-medium text-navy-muted sm:mt-2.5 lg:mt-1.5">
-              Seymy anticipates. You approve.
-            </p>
-            <span class="mt-1.5 h-3 w-px bg-seymy/30 sm:mt-2.5 sm:h-5 lg:hidden" aria-hidden="true"></span>
-          </div>
-
-          <div class="lg:mt-0">
-            <p class="text-[0.6875rem] font-semibold tracking-[0.1em] text-navy-muted">SEYMY</p>
-
-            <ol class="seymy-auto-flow relative mt-3 overflow-hidden rounded-2xl border border-line bg-white">
-              <li class="relative flex gap-3 px-3 py-3 sm:gap-3.5 sm:px-4 sm:py-3.5">
-                <div class="seymy-flow-icon flex w-8 shrink-0 flex-col items-center" aria-hidden="true">
-                  <span class="inline-flex size-8 items-center justify-center rounded-full bg-seymy/10 text-seymy">
-                    <svg width="15" height="15" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                      <path d="M7 3.5h7.5L19 8v12.5a1 1 0 0 1-1 1H7a1 1 0 0 1-1-1v-16a1 1 0 0 1 1-1Z" stroke="currentColor" stroke-width="1.6"/>
-                      <path d="M14.5 3.5V8H19" stroke="currentColor" stroke-width="1.6"/>
-                    </svg>
-                  </span>
-                  <span class="mt-1 w-px flex-1 bg-seymy/20 max-lg:block lg:hidden"></span>
-                </div>
-                <div class="min-w-0 flex-1 pb-1 lg:pb-0">
-                  <p class="text-[0.625rem] font-semibold tracking-[0.08em] text-seymy">03 — ESTIMATE SENT</p>
-                  <p class="mt-0.5 text-sm font-medium text-navy">PDF delivered.</p>
-                </div>
-                <span class="seymy-flow-arrow" aria-hidden="true">→</span>
-              </li>
-
-              <li class="relative flex gap-3 border-t border-line px-3 py-3 sm:gap-3.5 sm:px-4 sm:py-3.5">
-                <div class="seymy-flow-icon flex w-8 shrink-0 flex-col items-center" aria-hidden="true">
-                  <span class="inline-flex size-8 items-center justify-center rounded-full bg-seymy/10 text-seymy">
-                    <svg width="15" height="15" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                      <rect x="6" y="2.5" width="12" height="19" rx="2.5" stroke="currentColor" stroke-width="1.6"/>
-                      <path d="M10 18.5h4" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/>
-                    </svg>
-                  </span>
-                  <span class="mt-1 w-px flex-1 bg-seymy/20 max-lg:block lg:hidden"></span>
-                </div>
-                <div class="min-w-0 flex-1 pb-1 lg:pb-0">
-                  <p class="text-[0.625rem] font-semibold tracking-[0.08em] text-seymy">04 — DEPOSIT REQUESTED</p>
-                  <p class="mt-0.5 text-sm font-medium text-navy">Payment link sent.</p>
-                </div>
-                <span class="seymy-flow-arrow" aria-hidden="true">→</span>
-              </li>
-
-              <li class="relative flex gap-3 border-t border-line px-3 py-3 sm:gap-3.5 sm:px-4 sm:py-3.5">
-                <div class="seymy-flow-icon flex w-8 shrink-0 flex-col items-center" aria-hidden="true">
-                  <span class="inline-flex size-8 items-center justify-center rounded-full bg-ready/10 text-ready">
-                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                      <path d="M5 12.5 9.5 17 19 7.5" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/>
-                    </svg>
-                  </span>
-                  <span class="mt-1 w-px flex-1 bg-seymy/20 max-lg:block lg:hidden"></span>
-                </div>
-                <div class="min-w-0 flex-1 pb-1 lg:pb-0">
-                  <p class="text-[0.625rem] font-semibold tracking-[0.08em] text-ready">05 — DEPOSIT PAID</p>
-                  <p class="mt-0.5 text-sm font-semibold tabular-nums text-ready">$555 received</p>
-                </div>
-                <span class="seymy-flow-arrow" aria-hidden="true">→</span>
-              </li>
-
-              <li class="relative flex gap-3 border-t border-line px-3 py-3 sm:gap-3.5 sm:px-4 sm:py-3.5">
-                <div class="seymy-flow-icon flex w-8 shrink-0 flex-col items-center" aria-hidden="true">
-                  <span class="inline-flex size-8 items-center justify-center rounded-full bg-seymy/10 text-seymy">
-                    <svg width="15" height="15" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                      <circle cx="12" cy="12" r="8.25" stroke="currentColor" stroke-width="1.6"/>
-                      <path d="M12 8v4.5l2.75 1.75" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/>
-                    </svg>
-                  </span>
-                  <span class="mt-1 w-px flex-1 bg-seymy/20 max-lg:block lg:hidden"></span>
-                </div>
-                <div class="min-w-0 flex-1 pb-1 lg:pb-0">
-                  <p class="text-[0.625rem] font-semibold tracking-[0.08em] text-seymy">06 — BALANCE DUE</p>
-                  <p class="mt-0.5 text-sm font-medium text-navy">Seymy reminds you.</p>
-                  <p class="mt-1 text-xs leading-snug text-navy-muted lg:mt-0.5">You approve the request.</p>
-                </div>
-                <span class="seymy-flow-arrow" aria-hidden="true">→</span>
-              </li>
-
-              <li class="relative flex gap-3 border-t border-line px-3 py-3 sm:gap-3.5 sm:px-4 sm:py-3.5">
-                <div class="seymy-flow-icon flex w-8 shrink-0 flex-col items-center" aria-hidden="true">
-                  <span class="inline-flex size-8 items-center justify-center rounded-full bg-ready/10 text-ready">
-                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                      <path d="M5 12.5 9.5 17 19 7.5" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/>
-                    </svg>
-                  </span>
-                  <span class="mt-1 w-px flex-1 bg-seymy/20 max-lg:block lg:hidden"></span>
-                </div>
-                <div class="min-w-0 flex-1 pb-1 lg:pb-0">
-                  <p class="text-[0.625rem] font-semibold tracking-[0.08em] text-ready">07 — PAID IN FULL</p>
-                  <p class="mt-0.5 text-sm font-semibold tabular-nums text-ready">$1,295 received</p>
-                </div>
-                <span class="seymy-flow-arrow" aria-hidden="true">→</span>
-              </li>
-
-              <li class="relative flex gap-3 border-t border-line bg-surface/60 px-3 py-3 sm:gap-3.5 sm:px-4 sm:py-3.5 lg:bg-transparent">
-                <div class="seymy-flow-icon flex w-8 shrink-0 flex-col items-center" aria-hidden="true">
-                  <span class="inline-flex size-8 items-center justify-center rounded-full bg-ready text-white">
-                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                      <path d="M5 12.5 9.5 17 19 7.5" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/>
-                    </svg>
-                  </span>
-                </div>
-                <div class="min-w-0 flex-1">
-                  <p class="text-[0.625rem] font-semibold tracking-[0.08em] text-navy-muted">08 — INVOICE SENT</p>
-                  <p class="mt-0.5 text-sm font-semibold text-navy">Final PDF sent.</p>
-                </div>
-              </li>
-            </ol>
-          </div>
-        </div>
-      </div>
-    </section>
-
-    <section class="border-t border-line bg-white" aria-labelledby="speed-heading">
-      <div class="mx-auto max-w-6xl px-3 py-12 sm:px-6 sm:py-16 lg:py-20">
-        <header class="mx-auto max-w-2xl text-center">
-          <p class="text-[0.6875rem] font-semibold tracking-[0.1em] text-navy-muted">
-            SPEED WINS JOBS
-          </p>
-          <h2 id="speed-heading" class="mt-3 text-[1.75rem] font-bold leading-[1.12] tracking-tight text-navy sm:text-4xl">
-            The first to quote<br>
-            <span class="text-seymy">wins the job.</span>
-          </h2>
-          <p class="mx-auto mt-3 max-w-md text-[0.9375rem] leading-relaxed text-navy-muted sm:mt-4 sm:text-base">
-            Don't make your customer wait until tonight.
-            Send the estimate while you're still in the driveway.
-          </p>
-        </header>
-
-        <div class="mx-auto mt-8 grid max-w-3xl gap-3 sm:mt-10 sm:gap-4 lg:grid-cols-2">
-          <article class="rounded-2xl border border-line bg-surface p-4 sm:p-5">
-            <p class="text-[0.6875rem] font-semibold tracking-[0.1em] text-navy-muted">
-              WITHOUT SEYMY
-            </p>
-            <ol class="mt-3.5 space-y-0 text-sm">
-              <li>
-                <p class="text-[0.6875rem] font-semibold tabular-nums tracking-wide text-navy-muted/80">10:00 AM</p>
-                <p class="mt-0.5 font-medium text-navy">Customer visit</p>
-              </li>
-              <li class="py-1.5 text-navy-muted/50" aria-hidden="true">↓</li>
-              <li>
-                <p class="text-[0.6875rem] font-semibold tabular-nums tracking-wide text-navy-muted/80">6:30 PM</p>
-                <p class="mt-0.5 font-medium text-navy">Estimate sent</p>
-              </li>
-            </ol>
-          </article>
-
-          <article class="rounded-2xl border border-seymy/20 bg-white p-4 shadow-[0_8px_28px_rgba(26,109,255,0.06)] sm:p-5">
-            <p class="text-[0.6875rem] font-semibold tracking-[0.1em] text-seymy">
-              WITH SEYMY
-            </p>
-            <ol class="mt-3.5 space-y-0 text-sm">
-              <li>
-                <p class="text-[0.6875rem] font-semibold tabular-nums tracking-wide text-seymy">10:00 AM</p>
-                <p class="mt-0.5 font-medium text-navy">Customer visit</p>
-              </li>
-              <li class="py-1.5 text-seymy/40" aria-hidden="true">↓</li>
-              <li>
-                <p class="text-[0.6875rem] font-semibold tabular-nums tracking-wide text-seymy">10:15 AM</p>
-                <p class="mt-0.5 font-semibold text-seymy">
-                  Estimate sent <span aria-hidden="true">✓</span>
-                </p>
-              </li>
-            </ol>
-            <p class="mt-3 text-xs font-semibold text-ready">
-              Quote sent 8h 15m sooner.
-            </p>
-          </article>
-        </div>
-
-        <div class="mx-auto mt-7 max-w-md text-center sm:mt-8">
-          <p class="text-base font-bold tracking-tight text-navy sm:text-lg">
-            Be the first estimate in their inbox.
-          </p>
-          <p class="mt-1.5 text-sm text-navy-muted">
-            Quote while the job is still fresh.
-          </p>
-        </div>
-      </div>
-    </section>
-
-    <section class="border-t border-line bg-white" aria-labelledby="evening-heading">
-      <div class="mx-auto max-w-6xl px-3 py-12 sm:px-6 sm:py-16 lg:py-20">
-        <header class="mx-auto max-w-2xl text-center">
-          <h2 id="evening-heading" class="text-[1.75rem] font-bold leading-[1.12] tracking-tight text-navy sm:text-4xl">
-            Your last job is done.<br>
-            Your day should be too.
-          </h2>
-          <p class="mx-auto mt-3 max-w-md text-[0.9375rem] leading-relaxed text-navy-muted sm:mt-4 sm:text-base">
-            Stop taking today's paperwork home with you.
-          </p>
-        </header>
-
-        <div class="mt-8 grid gap-4 sm:mt-10 lg:mt-12 lg:grid-cols-2 lg:gap-6">
-          <article class="rounded-2xl border border-line bg-surface p-4 sm:p-5 lg:p-6">
-            <p class="text-[0.6875rem] font-semibold tracking-[0.1em] text-navy-muted">
-              WITHOUT SEYMY
-            </p>
-
-            <ol class="mt-4 space-y-0 text-sm text-navy-muted">
-              <li>
-                <p class="text-[0.6875rem] font-semibold tabular-nums tracking-wide text-navy-muted/80">4:30 PM</p>
-                <p class="mt-0.5 font-medium text-navy">Finish your last job</p>
-              </li>
-              <li class="py-1.5 pl-0.5 text-navy-muted/50" aria-hidden="true">↓</li>
-              <li>
-                <p class="font-medium text-navy">Drive home</p>
-              </li>
-              <li class="py-1.5 pl-0.5 text-navy-muted/50" aria-hidden="true">↓</li>
-              <li>
-                <p class="font-medium text-navy">Open the laptop</p>
-              </li>
-              <li class="py-1.5 pl-0.5 text-navy-muted/50" aria-hidden="true">↓</li>
-              <li>
-                <p class="font-medium text-navy">Write up estimates from the day</p>
-              </li>
-              <li class="py-1.5 pl-0.5 text-navy-muted/50" aria-hidden="true">↓</li>
-              <li>
-                <p class="font-medium text-navy">Send them to customers</p>
-              </li>
-              <li class="py-1.5 pl-0.5 text-navy-muted/50" aria-hidden="true">↓</li>
-              <li>
-                <p class="font-medium text-navy">Follow up</p>
-              </li>
-              <li class="py-1.5 pl-0.5 text-navy-muted/50" aria-hidden="true">↓</li>
-              <li>
-                <p class="font-medium text-navy">Send invoices</p>
-              </li>
-            </ol>
-          </article>
-
-          <div class="flex items-center justify-center py-1 lg:hidden" aria-hidden="true">
-            <span class="inline-flex items-center rounded-full border border-line bg-white px-3 py-1 text-[0.6875rem] font-bold tracking-[0.12em] text-navy-muted">
-              OR
-            </span>
-          </div>
-
-          <article class="rounded-2xl border border-seymy/20 bg-white p-4 shadow-[0_8px_28px_rgba(26,109,255,0.06)] sm:p-5 lg:p-6">
-            <p class="text-[0.6875rem] font-semibold tracking-[0.1em] text-seymy">
-              WITH SEYMY
-            </p>
-
-            <ol class="mt-4 space-y-0 text-sm">
-              <li>
-                <p class="text-[0.6875rem] font-semibold tabular-nums tracking-wide text-seymy">4:30 PM</p>
-                <p class="mt-0.5 font-medium text-navy">Finish your last job</p>
-              </li>
-              <li class="py-1.5 pl-0.5 text-seymy/40" aria-hidden="true">↓</li>
-              <li>
-                <p class="font-medium text-navy">Drive home</p>
-              </li>
-              <li class="py-1.5 pl-0.5 text-seymy/40" aria-hidden="true">↓</li>
-              <li>
-                <p class="text-base font-bold tracking-tight text-seymy sm:text-lg">
-                  GO ENJOY YOUR FAMILY.
-                </p>
-              </li>
-            </ol>
-
-            <p class="mt-4 text-sm leading-relaxed text-navy-muted">
-              Your estimates were already sent throughout the day.
-            </p>
-
-            <p class="mt-5 border-t border-line pt-4 text-sm font-medium leading-relaxed text-navy">
-              Seymy handles the paperwork.<br>
-              You get your evening back.
-            </p>
-          </article>
-        </div>
-      </div>
-    </section>
-
-    <section class="border-t border-line bg-white" aria-labelledby="pricing-heading">
-      <div class="mx-auto max-w-6xl px-3 pb-10 pt-12 sm:px-6 sm:pb-12 sm:pt-16 lg:pb-14 lg:pt-20">
-        <header class="mx-auto max-w-2xl text-center">
-          <p class="text-[0.6875rem] font-semibold tracking-[0.1em] text-navy-muted">
-            SIMPLE PRICING
-          </p>
-          <h2 id="pricing-heading" class="mt-3 text-[1.75rem] font-bold leading-[1.12] tracking-tight text-navy sm:text-4xl">
-            Less paperwork.<br>
-            More time for the work that pays.
-          </h2>
-          <p class="mx-auto mt-3 max-w-md text-[0.9375rem] leading-relaxed text-navy-muted sm:mt-4 sm:text-base">
-            Everything you need to quote, get paid, and invoice from your phone.
-          </p>
-        </header>
-
-        <div class="mx-auto mt-8 max-w-xl sm:mt-10">
-          <article class="rounded-2xl border border-line bg-surface p-5 shadow-[0_12px_40px_rgba(11,31,58,0.06)] sm:p-7">
-            <p class="text-center text-sm font-bold tracking-tight text-navy">SEYMY</p>
-
-            <div class="mt-4 text-center">
-              <p class="flex items-baseline justify-center gap-1">
-                <span class="text-5xl font-bold tracking-tight text-navy sm:text-6xl">$49</span>
-                <span class="text-base font-medium text-navy-muted">/month</span>
-              </p>
-              <p class="mt-2 text-sm font-medium leading-snug text-navy">
-                14 days free.<br>
-                Then $49/month.
-              </p>
-              <p class="mt-1.5 text-xs text-navy-muted">
-                No credit card required to start.
-              </p>
-              <p class="mt-3 text-sm text-navy-muted">
-                Built for independent contractors and small crews.
-              </p>
             </div>
+          </article>
 
-            <div class="mt-6 border-t border-line pt-5">
-              <p class="text-[0.6875rem] font-semibold tracking-[0.08em] text-navy-muted">INCLUDED</p>
-              <ul class="mt-3 space-y-2 text-sm text-navy">
-                <li class="flex items-start gap-2">
-                  <span class="mt-0.5 font-semibold text-ready" aria-hidden="true">✓</span>
-                  <span>Voice-to-estimate</span>
-                </li>
-                <li class="flex items-start gap-2">
-                  <span class="mt-0.5 font-semibold text-ready" aria-hidden="true">✓</span>
-                  <span>Professional PDF estimates</span>
-                </li>
-                <li class="flex items-start gap-2">
-                  <span class="mt-0.5 font-semibold text-ready" aria-hidden="true">✓</span>
-                  <span>Review before sending</span>
-                </li>
-                <li class="flex items-start gap-2">
-                  <span class="mt-0.5 font-semibold text-ready" aria-hidden="true">✓</span>
-                  <span>Send estimates to customers</span>
-                </li>
-                <li class="flex items-start gap-2">
-                  <span class="mt-0.5 font-semibold text-ready" aria-hidden="true">✓</span>
-                  <span>Deposit &amp; balance requests</span>
-                </li>
-                <li class="flex items-start gap-2">
-                  <span class="mt-0.5 font-semibold text-ready" aria-hidden="true">✓</span>
-                  <span>Due-date reminders</span>
-                </li>
-                <li class="flex items-start gap-2">
-                  <span class="mt-0.5 font-semibold text-ready" aria-hidden="true">✓</span>
-                  <span>
-                    Payment links by text
-                    <span class="block text-xs font-normal text-navy-muted">Cards &amp; Apple Pay</span>
-                  </span>
-                </li>
-                <li class="flex items-start gap-2">
-                  <span class="mt-0.5 font-semibold text-ready" aria-hidden="true">✓</span>
-                  <span>Automatic PDF invoices</span>
-                </li>
+          <article class="workday-moment">
+            <span class="workday-moment__marker workday-moment__marker--green" aria-hidden="true"></span>
+            <div class="workday-moment__state-col">
+              <p class="workday-moment__time">2:30 PM</p>
+              <p class="workday-moment__state"><span class="workday-moment__state-dot workday-moment__state-dot--green" aria-hidden="true"></span>Between jobs</p>
+            </div>
+            <div class="workday-moment__body-col">
+              <h3 class="workday-moment__situation">The day keeps moving.</h3>
+              <p class="workday-moment__behavior"><span class="workday-moment__behavior-brand">Seymy</span><span class="workday-moment__behavior-arrow" aria-hidden="true">→</span><span class="workday-moment__behavior-action">Prepares</span></p>
+              <p class="workday-moment__support">Seymy keeps track in the background and lines up what needs your OK.</p>
+              <ul class="workday-moment__actions">
+                <li><span aria-hidden="true">✓</span><span>Deposit received from Anderson</span></li>
+                <li><span aria-hidden="true">✓</span><span>Sarah called back — her request is ready for you</span></li>
+                <li><span aria-hidden="true">✓</span><span>Unpaid invoice reminder ready for your approval</span></li>
               </ul>
             </div>
           </article>
+
+          <article class="workday-moment workday-moment--interactive">
+            <span class="workday-moment__marker workday-moment__marker--blue" aria-hidden="true"></span>
+            <div class="workday-moment__state-col">
+              <p class="workday-moment__time">4:30 PM</p>
+              <p class="workday-moment__state"><span class="workday-moment__state-dot workday-moment__state-dot--blue" aria-hidden="true"></span>Driving home</p>
+            </div>
+            <div class="workday-moment__body-col">
+              <h3 class="workday-moment__situation">Last job finished. Heading home.</h3>
+              <p class="workday-moment__behavior"><span class="workday-moment__behavior-brand">Seymy</span><span class="workday-moment__behavior-arrow" aria-hidden="true">→</span><span class="workday-moment__behavior-action">Asks</span></p>
+              <p class="workday-moment__support">Seymy saved the remaining decisions for the drive home.</p>
+              <div class="workday-moment__chat">
+                <div class="talk-msg talk-msg--seymy">
+                  <p class="talk-label">Seymy</p>
+                  <p class="talk-text">You’re 30 minutes from home.<br>3 things still need your input.<br>Want to knock them out?</p>
+                </div>
+                <div class="talk-msg talk-msg--you talk-msg--short">
+                  <p class="talk-label">You</p>
+                  <p class="talk-text">Yeah, let’s do it.</p>
+                </div>
+              </div>
+            </div>
+          </article>
+
+          <article class="workday-moment workday-moment--finale">
+            <span class="workday-moment__marker workday-moment__marker--green" aria-hidden="true"></span>
+            <div class="workday-moment__state-col">
+              <p class="workday-moment__time">5:00 PM</p>
+              <p class="workday-moment__state"><span class="workday-moment__state-dot workday-moment__state-dot--green" aria-hidden="true"></span>Home</p>
+            </div>
+            <div class="workday-moment__body-col">
+              <h3 class="workday-moment__situation">Home.</h3>
+              <p class="workday-moment__behavior"><span class="workday-moment__behavior-brand">Seymy</span><span class="workday-moment__behavior-arrow" aria-hidden="true">→</span><span class="workday-moment__behavior-action">Done</span></p>
+              <p class="workday-moment__payoff">That’s it. You’re done.</p>
+              <p class="workday-moment__support">See you tomorrow at 7:00 AM.</p>
+            </div>
+          </article>
         </div>
       </div>
     </section>
 
-    <section class="bg-navy" aria-labelledby="final-cta-heading">
-      <div class="mx-auto max-w-2xl px-3 py-12 text-center sm:px-6 sm:py-16 lg:py-20">
-        <p class="text-[0.6875rem] font-semibold tracking-[0.1em] text-white/55">
-          READY TO TRY SEYMY?
-        </p>
-        <h2 id="final-cta-heading" class="mt-3 text-[1.75rem] font-bold leading-[1.12] tracking-tight text-white sm:text-4xl">
-          Send your next estimate<br>
-          before you leave the driveway.
-        </h2>
-        <p class="mx-auto mt-3 max-w-md text-[0.9375rem] leading-relaxed text-white/70 sm:mt-4 sm:text-base">
-          Just tell Seymy about the job.
-          Review the PDF. Approve it. Done.
-        </p>
-        <div class="mt-6 sm:mt-7">
-          <a
-            href="{% url 'start_new_estimate' %}"
-            class="inline-flex min-h-12 w-full items-center justify-center rounded-xl bg-seymy px-6 text-base font-semibold text-white shadow-[0_8px_20px_rgba(26,109,255,0.35)] transition-colors hover:bg-seymy-dark focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-white sm:w-auto"
-          >
-            Create My First Estimate
-          </a>
+    {# 6 — ONE COWORKER / EVERYTHING CONNECTED #}
+    <section id="connected" class="scroll-mt-24 border-t border-line bg-surface px-5 py-12 sm:px-6 sm:py-16 lg:py-20" aria-labelledby="connected-heading">
+      <div class="mx-auto max-w-7xl">
+        <header class="connected-header">
+          <p class="connected-eyebrow">
+            ONE COWORKER
+          </p>
+          <h2 id="connected-heading" class="connected-headline">
+            Everything connected.<br>
+            One conversation.
+          </h2>
+          <p class="connected-subhead">
+            Seymy remembers the whole job — from the first call to the next one.
+          </p>
+        </header>
+
+        <div class="connected-journey" id="connected-journey">
+          <p class="connected-journey__name">John Anderson</p>
+          <div class="connected-journey__flow">
+            <div class="connected-journey__track" aria-hidden="true">
+              <div class="connected-journey__base"></div>
+              <div class="connected-journey__progress"></div>
+            </div>
+            <ol class="connected-journey__steps" aria-label="One customer journey">
+              <li class="connected-journey__step">
+                <span class="connected-journey__node" aria-hidden="true"></span>
+                <div class="connected-journey__copy">
+                  <span class="connected-journey__label">Called about</span>
+                  <span class="connected-journey__detail">a water heater</span>
+                </div>
+              </li>
+              <li class="connected-journey__step">
+                <span class="connected-journey__node" aria-hidden="true"></span>
+                <div class="connected-journey__copy">
+                  <span class="connected-journey__label">Visit</span>
+                  <span class="connected-journey__detail">scheduled by you</span>
+                </div>
+              </li>
+              <li class="connected-journey__step">
+                <span class="connected-journey__node connected-journey__node--done" aria-hidden="true"></span>
+                <div class="connected-journey__copy">
+                  <span class="connected-journey__label">Job</span>
+                  <span class="connected-journey__detail">completed</span>
+                </div>
+              </li>
+              <li class="connected-journey__step">
+                <span class="connected-journey__node" aria-hidden="true"></span>
+                <div class="connected-journey__copy">
+                  <span class="connected-journey__label">Invoice sent</span>
+                  <span class="connected-journey__detail">$1,931</span>
+                </div>
+              </li>
+              <li class="connected-journey__step">
+                <span class="connected-journey__node" aria-hidden="true"></span>
+                <div class="connected-journey__copy">
+                  <span class="connected-journey__label">Deposit</span>
+                  <span class="connected-journey__detail">received</span>
+                </div>
+              </li>
+              <li class="connected-journey__step">
+                <span class="connected-journey__node connected-journey__node--done" aria-hidden="true"></span>
+                <div class="connected-journey__copy">
+                  <span class="connected-journey__label">Balance</span>
+                  <span class="connected-journey__detail">paid</span>
+                </div>
+              </li>
+              <li class="connected-journey__step">
+                <span class="connected-journey__node" aria-hidden="true"></span>
+                <div class="connected-journey__copy">
+                  <span class="connected-journey__label">Thank-you</span>
+                  <span class="connected-journey__detail">approved by you</span>
+                </div>
+              </li>
+              <li class="connected-journey__step connected-journey__step--continues" aria-hidden="true">
+                <span class="connected-journey__node"></span>
+                <span class="connected-journey__dots">· · ·</span>
+              </li>
+            </ol>
+          </div>
         </div>
-        <p class="mt-3 text-sm text-white/55">
-          14-day free trial · No credit card required
+
+        <div class="connected-conclusion">
+          <p class="connected-conclusion__line">One customer. One history.</p>
+        </div>
+
+        <div class="connected-payoff">
+          <p class="connected-payoff__lead">No modules. No dashboards. No disconnected tools.</p>
+          <p class="connected-payoff__strong">Just <em>one coworker</em> who knows what happens next.</p>
+        </div>
+      </div>
+    </section>
+
+    {# 7 — PRICING #}
+    <section id="pricing" class="border-t border-line bg-surface px-5 py-16 sm:px-6 lg:py-24" aria-labelledby="pricing-heading">
+      <div class="mx-auto max-w-7xl">
+        <header class="pricing-header">
+          <p class="pricing-eyebrow">
+            SIMPLE PRICING
+          </p>
+          <h2 id="pricing-heading" class="pricing-headline">
+            One plan.<br>
+            Simple, transparent pricing.
+          </h2>
+          <p class="pricing-subhead">
+            No tiers. No setup fee. No activation fee.
+          </p>
+        </header>
+
+        <article class="pricing-card">
+          <p class="pricing-card__brand">SEYMY</p>
+
+          <div class="pricing-card__hero">
+            <p class="pricing-card__rate" aria-label="99 dollars per month">$99</p>
+            <p class="pricing-card__rate-label">per month, or $990 per year.</p>
+            <p class="pricing-card__rate-note">Your full Seymy Workspace and <span class="miss-name">Miss Seymy</span>.</p>
+          </div>
+
+          <div class="pricing-card__block pricing-card__users">
+            <div class="pricing-card__users-col">
+              <p class="pricing-card__users-label">1 user</p>
+              <p class="pricing-card__users-value pricing-card__users-value--included">Included: you, the owner</p>
+            </div>
+            <div class="pricing-card__users-col">
+              <p class="pricing-card__users-label">Each additional user</p>
+              <p class="pricing-card__users-value pricing-card__users-value--price">$25/month or $250/year</p>
+            </div>
+          </div>
+
+          <div class="pricing-card__block">
+            <p class="pricing-card__kicker">500 <span class="miss-name">Miss Seymy</span> call minutes each month</p>
+            <p class="pricing-card__copy">On monthly and annual plans. A dedicated Seymy business number and a managed business email are included.</p>
+          </div>
+
+          <div class="pricing-card__block">
+            <p class="pricing-card__kicker">1% only on payments collected through Seymy</p>
+            <p class="pricing-card__copy">Payments your customers make through Seymy (Stripe). Cash, check or bank transfers paid to you directly carry no Seymy fee. Creating or sending an estimate is never charged.</p>
+          </div>
+
+          <div class="pricing-card__block">
+            <p class="pricing-card__kicker">The complete Seymy coworker</p>
+            <p class="pricing-card__copy pricing-card__copy--muted">No feature tiers.<br>No paid upgrades to unlock the rest.</p>
+          </div>
+
+          {% include "landing/partials/download_cta.html" with cta_class="pricing-card__cta" %}
+        </article>
+      </div>
+    </section>
+
+    {# FAQ #}
+    <section id="faq" class="border-t border-line bg-white px-5 py-16 sm:px-6 lg:py-24" aria-labelledby="faq-heading">
+      <div class="mx-auto max-w-7xl">
+        <header class="faq-header">
+          <p class="faq-eyebrow">FAQ</p>
+          <h2 id="faq-heading" class="faq-headline">
+            Questions?<br>
+            Straight answers.
+          </h2>
+        </header>
+
+        <div class="faq-list">
+          <div class="rounded-2xl border border-line bg-white px-4 sm:px-6">
+            <details class="faq-item group border-b border-line">
+              <summary class="flex cursor-pointer list-none items-center justify-between gap-4 text-left transition-all hover:text-seymy focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-seymy">
+                <span class="text-[0.9375rem] font-semibold leading-snug text-navy sm:text-base">Is Seymy software I have to learn?</span>
+                <span class="faq-chevron flex h-8 w-8 shrink-0 items-center justify-center rounded-lg bg-surface text-navy-muted" aria-hidden="true">
+                  <svg class="h-4 w-4" viewBox="0 0 16 16" fill="none"><path d="M4 6l4 4 4-4" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"/></svg>
+                </span>
+              </summary>
+              <div class="faq-panel">
+                <p>No. Just talk or type like you would with a coworker. Seymy handles the software behind the scenes.</p>
+              </div>
+            </details>
+
+            <details class="faq-item group border-b border-line">
+              <summary class="flex cursor-pointer list-none items-center justify-between gap-4 text-left transition-all hover:text-seymy focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-seymy">
+                <span class="text-[0.9375rem] font-semibold leading-snug text-navy sm:text-base">Who is Seymy for right now?</span>
+                <span class="faq-chevron flex h-8 w-8 shrink-0 items-center justify-center rounded-lg bg-surface text-navy-muted" aria-hidden="true">
+                  <svg class="h-4 w-4" viewBox="0 0 16 16" fill="none"><path d="M4 6l4 4 4-4" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"/></svg>
+                </span>
+              </summary>
+              <div class="faq-panel">
+                <p>Seymy is built for independent contractors and small crews, starting with plumbers.</p>
+              </div>
+            </details>
+
+            <details class="faq-item group border-b border-line">
+              <summary class="flex cursor-pointer list-none items-center justify-between gap-4 text-left transition-all hover:text-seymy focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-seymy">
+                <span class="text-[0.9375rem] font-semibold leading-snug text-navy sm:text-base">Will Seymy interrupt me while I’m on a job?</span>
+                <span class="faq-chevron flex h-8 w-8 shrink-0 items-center justify-center rounded-lg bg-surface text-navy-muted" aria-hidden="true">
+                  <svg class="h-4 w-4" viewBox="0 0 16 16" fill="none"><path d="M4 6l4 4 4-4" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"/></svg>
+                </span>
+              </summary>
+              <div class="faq-panel">
+                <p>Not unless it really needs you. Seymy prepares what it can, saves non-urgent decisions for later, and learns when you prefer not to be interrupted.</p>
+              </div>
+            </details>
+
+            <details class="faq-item group border-b border-line">
+              <summary class="flex cursor-pointer list-none items-center justify-between gap-4 text-left transition-all hover:text-seymy focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-seymy">
+                <span class="text-[0.9375rem] font-semibold leading-snug text-navy sm:text-base">Can Seymy really answer my customers?</span>
+                <span class="faq-chevron flex h-8 w-8 shrink-0 items-center justify-center rounded-lg bg-surface text-navy-muted" aria-hidden="true">
+                  <svg class="h-4 w-4" viewBox="0 0 16 16" fill="none"><path d="M4 6l4 4 4-4" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"/></svg>
+                </span>
+              </summary>
+              <div class="faq-panel">
+                <p><span class="miss-name">Miss Seymy</span> answers your business line, takes the customer’s request and puts it in front of you. She doesn’t book appointments or make commitments for you, and nothing goes out to a customer until you approve it.</p>
+              </div>
+            </details>
+
+            <details class="faq-item group border-b border-line">
+              <summary class="flex cursor-pointer list-none items-center justify-between gap-4 text-left transition-all hover:text-seymy focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-seymy">
+                <span class="text-[0.9375rem] font-semibold leading-snug text-navy sm:text-base">Does Seymy send estimates without my approval?</span>
+                <span class="faq-chevron flex h-8 w-8 shrink-0 items-center justify-center rounded-lg bg-surface text-navy-muted" aria-hidden="true">
+                  <svg class="h-4 w-4" viewBox="0 0 16 16" fill="none"><path d="M4 6l4 4 4-4" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"/></svg>
+                </span>
+              </summary>
+              <div class="faq-panel">
+                <p>No. Seymy prepares the estimate, you review it, and nothing gets sent until you approve it.</p>
+              </div>
+            </details>
+
+            <details class="faq-item group border-b border-line">
+              <summary class="flex cursor-pointer list-none items-center justify-between gap-4 text-left transition-all hover:text-seymy focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-seymy">
+                <span class="text-[0.9375rem] font-semibold leading-snug text-navy sm:text-base">What happens when Seymy isn’t sure?</span>
+                <span class="faq-chevron flex h-8 w-8 shrink-0 items-center justify-center rounded-lg bg-surface text-navy-muted" aria-hidden="true">
+                  <svg class="h-4 w-4" viewBox="0 0 16 16" fill="none"><path d="M4 6l4 4 4-4" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"/></svg>
+                </span>
+              </summary>
+              <div class="faq-panel">
+                <p>It asks you.</p>
+                <p>Seymy prepares what it knows and brings you in when a decision needs your judgment.</p>
+              </div>
+            </details>
+
+            <details class="faq-item group border-b border-line">
+              <summary class="flex cursor-pointer list-none items-center justify-between gap-4 text-left transition-all hover:text-seymy focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-seymy">
+                <span class="text-[0.9375rem] font-semibold leading-snug text-navy sm:text-base">How does pricing work?</span>
+                <span class="faq-chevron flex h-8 w-8 shrink-0 items-center justify-center rounded-lg bg-surface text-navy-muted" aria-hidden="true">
+                  <svg class="h-4 w-4" viewBox="0 0 16 16" fill="none"><path d="M4 6l4 4 4-4" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"/></svg>
+                </span>
+              </summary>
+              <div class="faq-panel">
+                <p>Seymy is $99/month or $990/year. You, the owner, are included, with 500 Miss Seymy call minutes each month.</p>
+                <p>Each additional user is $25/month or $250/year.</p>
+                <p>Seymy adds a 1% fee only on payments your customers make through Seymy. No feature tiers.</p>
+              </div>
+            </details>
+
+            <details class="faq-item group">
+              <summary class="flex cursor-pointer list-none items-center justify-between gap-4 text-left transition-all hover:text-seymy focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-seymy">
+                <span class="text-[0.9375rem] font-semibold leading-snug text-navy sm:text-base">What if my customer pays by cash, check, or bank transfer?</span>
+                <span class="faq-chevron flex h-8 w-8 shrink-0 items-center justify-center rounded-lg bg-surface text-navy-muted" aria-hidden="true">
+                  <svg class="h-4 w-4" viewBox="0 0 16 16" fill="none"><path d="M4 6l4 4 4-4" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"/></svg>
+                </span>
+              </summary>
+              <div class="faq-panel">
+                <p>No Seymy fee. Just tell Seymy the payment was received and it keeps the job up to date. The 1% applies only to payments collected through Seymy.</p>
+              </div>
+            </details>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    {# FINAL CTA #}
+    <section id="final-cta" aria-labelledby="final-cta-heading">
+      <div class="final-cta-inner">
+        <p class="final-cta-eyebrow">
+          WHEN THE JOB ENDS
         </p>
+        <h2 id="final-cta-heading" class="final-cta-headline">
+          That’s it.<br>
+          You’re done.
+        </h2>
+        <p class="final-cta-support">
+          Seymy has the rest.
+        </p>
+        {% include "landing/partials/download_cta.html" with cta_class="final-cta-button" %}
+        <p class="final-cta-micro">
+          $99/month or $990/year · Owner included · Extra users billed separately.
+        </p>
+        {% if download %}
+        <div class="download-qr" aria-label="Download Seymy on your phone">
+          {{ download.qr_svg }}
+          <p class="download-qr__help">On your computer? Scan with your phone’s camera to get Seymy.</p>
+        </div>
+        {% endif %}
       </div>
     </section>
   </main>
 
-  <footer class="border-t border-line bg-white">
-    <div class="mx-auto flex max-w-6xl flex-col gap-4 px-3 py-8 sm:flex-row sm:items-end sm:justify-between sm:px-6 sm:py-10">
-      <div>
-        <p class="text-lg font-bold tracking-tight text-navy">
-          seymy<span class="text-seymy">.</span>
-        </p>
-        <p class="mt-1 text-sm text-navy-muted">AI estimating for contractors.</p>
+{% include "landing/partials/site_footer.html" %}
+
+  <div
+    id="talk-estimate-modal"
+    class="talk-estimate-modal"
+    role="dialog"
+    aria-modal="true"
+    aria-labelledby="talk-estimate-modal-title"
+    hidden
+  >
+    <div class="talk-estimate-modal__backdrop" data-estimate-preview-close tabindex="-1"></div>
+    <div class="talk-estimate-modal__panel">
+      <div class="talk-estimate-modal__toolbar">
+        <p id="talk-estimate-modal-title" class="talk-estimate-modal__title">Estimate #1042</p>
+        <button
+          type="button"
+          class="talk-estimate-modal__close"
+          data-estimate-preview-close
+          aria-label="Close estimate preview"
+        >
+          ×
+        </button>
       </div>
-      <div class="flex flex-col gap-3 sm:items-end">
-        <nav class="flex gap-4 text-sm text-navy-muted" aria-label="Legal">
-          <a href="#" class="transition-colors hover:text-navy focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-seymy">Privacy</a>
-          <a href="#" class="transition-colors hover:text-navy focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-seymy">Terms</a>
-        </nav>
-        <p class="text-xs text-navy-muted">© 2026 Seymy</p>
+      <div class="talk-estimate-modal__body">
+        <div class="talk-estimate-modal__sheet">
+          {% include "landing/partials/estimate_document_styles.html" %}
+          {{ talk_estimate_document_html|safe }}
+        </div>
+      </div>
+      <div class="talk-estimate-modal__footer">
+        <button type="button" class="talk-estimate-modal__footer-btn" data-estimate-preview-close>
+          Close
+        </button>
       </div>
     </div>
-  </footer>
+  </div>
+
+  <script>
+    (function () {
+      var modal = document.getElementById("talk-estimate-modal");
+      if (!modal) return;
+      var openers = document.querySelectorAll("[data-estimate-preview-open]");
+      var closers = modal.querySelectorAll("[data-estimate-preview-close]");
+      var lastFocus = null;
+
+      function openModal() {
+        lastFocus = document.activeElement;
+        modal.hidden = false;
+        modal.classList.add("is-open");
+        document.body.classList.add("talk-estimate-modal-open");
+        var closeBtn = modal.querySelector(".talk-estimate-modal__close");
+        if (closeBtn) closeBtn.focus();
+      }
+
+      function closeModal() {
+        modal.classList.remove("is-open");
+        modal.hidden = true;
+        document.body.classList.remove("talk-estimate-modal-open");
+        if (lastFocus && typeof lastFocus.focus === "function") {
+          lastFocus.focus();
+        }
+      }
+
+      openers.forEach(function (btn) {
+        btn.addEventListener("click", function (event) {
+          event.preventDefault();
+          openModal();
+        });
+      });
+
+      closers.forEach(function (el) {
+        el.addEventListener("click", function () {
+          closeModal();
+        });
+      });
+
+      document.addEventListener("keydown", function (event) {
+        if (event.key === "Escape" && modal.classList.contains("is-open")) {
+          closeModal();
+        }
+      });
+    })();
+  </script>
+
+  <script>
+    (function () {
+      var items = document.querySelectorAll(".faq-item");
+      items.forEach(function (item) {
+        item.addEventListener("toggle", function () {
+          if (!item.open) return;
+          items.forEach(function (other) {
+            if (other !== item) other.open = false;
+          });
+        });
+      });
+    })();
+
+    (function () {
+      var ENTER_MS = 300;
+      var EXIT_MS = 250;
+      var PAUSE_MS = 1250;
+      var reducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)");
+      var desktopMq = window.matchMedia("(min-width: 1024px)");
+      var timer = null;
+      var runId = 0;
+
+      function clearTimer() {
+        if (timer !== null) {
+          window.clearTimeout(timer);
+          timer = null;
+        }
+      }
+
+      function visibleChat() {
+        return document.querySelector(
+          desktopMq.matches ? ".hero-chat--desktop" : ".hero-chat--mobile"
+        );
+      }
+
+      function cancelStepAnims(step) {
+        if (step.getAnimations) {
+          step.getAnimations().forEach(function (anim) {
+            anim.cancel();
+          });
+        }
+      }
+
+      function hideAllSteps() {
+        document.querySelectorAll(".hero-chat .hc-step").forEach(function (step) {
+          cancelStepAnims(step);
+          step.classList.remove("is-active");
+          step.style.opacity = "";
+          step.style.transform = "";
+          step.setAttribute("aria-hidden", "true");
+        });
+      }
+
+      function animateStep(step, from, to, duration) {
+        cancelStepAnims(step);
+        if (reducedMotion.matches || !step.animate) {
+          step.style.opacity = String(to.opacity);
+          step.style.transform = to.transform;
+          return Promise.resolve();
+        }
+        var anim = step.animate(
+          [
+            { opacity: from.opacity, transform: from.transform },
+            { opacity: to.opacity, transform: to.transform }
+          ],
+          { duration: duration, easing: "ease", fill: "forwards" }
+        );
+        return anim.finished.catch(function () {});
+      }
+
+      function schedule(fn, ms, id) {
+        clearTimer();
+        timer = window.setTimeout(function () {
+          timer = null;
+          if (id === runId) fn();
+        }, ms);
+      }
+
+      function startSequence() {
+        clearTimer();
+        runId += 1;
+        var id = runId;
+        hideAllSteps();
+
+        var mobileChat = document.querySelector(".hero-chat--mobile");
+        var desktopChat = document.querySelector(".hero-chat--desktop");
+        if (mobileChat) {
+          mobileChat.setAttribute("aria-hidden", desktopMq.matches ? "true" : "false");
+        }
+        if (desktopChat) {
+          desktopChat.setAttribute("aria-hidden", desktopMq.matches ? "false" : "true");
+        }
+
+        var chat = visibleChat();
+        if (!chat) return;
+        var steps = Array.prototype.slice.call(chat.querySelectorAll(".hc-step"));
+        if (!steps.length) return;
+
+        if (reducedMotion.matches) {
+          var first = steps[0];
+          first.classList.add("is-active");
+          first.style.opacity = "1";
+          first.style.transform = "none";
+          first.setAttribute("aria-hidden", "false");
+          return;
+        }
+
+        var index = 0;
+
+        function showCurrent() {
+          if (id !== runId) return;
+          var step = steps[index];
+          steps.forEach(function (s) {
+            s.classList.toggle("is-active", s === step);
+            s.setAttribute("aria-hidden", s === step ? "false" : "true");
+          });
+          animateStep(
+            step,
+            { opacity: 0, transform: "translateY(6px)" },
+            { opacity: 1, transform: "translateY(0px)" },
+            ENTER_MS
+          ).then(function () {
+            if (id !== runId) return;
+            var hold = parseInt(step.getAttribute("data-hc-hold"), 10);
+            if (!hold || hold < 1) hold = 3500;
+            schedule(hideCurrent, hold, id);
+          });
+        }
+
+        function hideCurrent() {
+          if (id !== runId) return;
+          var step = steps[index];
+          animateStep(
+            step,
+            { opacity: 1, transform: "translateY(0px)" },
+            { opacity: 0, transform: "translateY(0px)" },
+            EXIT_MS
+          ).then(function () {
+            if (id !== runId) return;
+            step.classList.remove("is-active");
+            step.setAttribute("aria-hidden", "true");
+            step.style.opacity = "";
+            step.style.transform = "";
+            index += 1;
+            if (index >= steps.length) {
+              index = 0;
+              schedule(showCurrent, PAUSE_MS, id);
+            } else {
+              showCurrent();
+            }
+          });
+        }
+
+        showCurrent();
+      }
+
+      startSequence();
+
+      function onChange() {
+        startSequence();
+      }
+
+      if (typeof reducedMotion.addEventListener === "function") {
+        reducedMotion.addEventListener("change", onChange);
+      } else if (typeof reducedMotion.addListener === "function") {
+        reducedMotion.addListener(onChange);
+      }
+      if (typeof desktopMq.addEventListener === "function") {
+        desktopMq.addEventListener("change", onChange);
+      } else if (typeof desktopMq.addListener === "function") {
+        desktopMq.addListener(onChange);
+      }
+    })();
+
+    (function () {
+      var day = document.getElementById("day");
+      if (!day) return;
+      var flow = day.querySelector(".workday-flow");
+      if (!flow) return;
+      var baseEl = flow.querySelector(".timeline-base");
+      var progressEl = flow.querySelector(".timeline-progress");
+      var moments = flow.querySelectorAll(".workday-moment");
+      if (!baseEl || !progressEl || !moments.length) return;
+
+      var reducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)");
+      var ticking = false;
+      var geometry = {
+        firstRel: 0,
+        lineHeight: 0,
+        firstDoc: 0,
+        lastDoc: 0,
+        dotDocs: []
+      };
+
+      function clamp(value, min, max) {
+        return Math.max(min, Math.min(max, value));
+      }
+
+      function getMarkers() {
+        var markers = [];
+        for (var i = 0; i < moments.length; i += 1) {
+          var marker = moments[i].querySelector(".workday-moment__marker");
+          if (!marker) return null;
+          markers.push(marker);
+        }
+        return markers;
+      }
+
+      function dotDocumentY(marker) {
+        var rect = marker.getBoundingClientRect();
+        return rect.top + window.scrollY + rect.height * 0.5;
+      }
+
+      function measureGeometry() {
+        var markers = getMarkers();
+        if (!markers) return false;
+
+        var flowRect = flow.getBoundingClientRect();
+        var firstRect = markers[0].getBoundingClientRect();
+        var lastRect = markers[markers.length - 1].getBoundingClientRect();
+        var firstCenterRel = firstRect.top + firstRect.height * 0.5 - flowRect.top;
+        var lastCenterRel = lastRect.top + lastRect.height * 0.5 - flowRect.top;
+        var lineHeight = Math.max(0, lastCenterRel - firstCenterRel);
+
+        geometry.firstRel = firstCenterRel;
+        geometry.lineHeight = lineHeight;
+        geometry.firstDoc = firstRect.top + window.scrollY + firstRect.height * 0.5;
+        geometry.lastDoc = lastRect.top + window.scrollY + lastRect.height * 0.5;
+        geometry.dotDocs = markers.map(function (marker) {
+          return dotDocumentY(marker);
+        });
+
+        baseEl.style.top = firstCenterRel + "px";
+        baseEl.style.height = lineHeight + "px";
+        progressEl.style.top = firstCenterRel + "px";
+        progressEl.style.height = lineHeight + "px";
+
+        return true;
+      }
+
+      function applyProgress(progress) {
+        progressEl.style.transform = "scaleY(" + progress + ")";
+      }
+
+      function setCompleteState() {
+        if (!measureGeometry()) return;
+        flow.classList.add("workday-flow--complete");
+        applyProgress(1);
+        moments.forEach(function (moment, index) {
+          moment.classList.add("is-passed");
+          moment.classList.toggle("is-active", index === moments.length - 1);
+        });
+      }
+
+      function updateWorkdayTimeline() {
+        ticking = false;
+        if (reducedMotion.matches) {
+          setCompleteState();
+          return;
+        }
+
+        if (!geometry.lineHeight && !measureGeometry()) return;
+
+        var span = geometry.lastDoc - geometry.firstDoc;
+        var triggerY = window.scrollY + window.innerHeight * 0.55;
+        var progress = span <= 0 ? 1 : clamp((triggerY - geometry.firstDoc) / span, 0, 1);
+
+        applyProgress(progress);
+
+        var activeIndex = -1;
+        for (var i = 0; i < moments.length; i += 1) {
+          var passed = geometry.dotDocs[i] <= triggerY;
+          moments[i].classList.toggle("is-passed", passed);
+          if (passed) activeIndex = i;
+        }
+
+        for (var j = 0; j < moments.length; j += 1) {
+          moments[j].classList.toggle("is-active", j === activeIndex);
+        }
+
+        flow.classList.toggle("workday-flow--complete", progress >= 0.999);
+      }
+
+      function requestUpdate() {
+        if (ticking) return;
+        ticking = true;
+        window.requestAnimationFrame(updateWorkdayTimeline);
+      }
+
+      function remeasureAndUpdate() {
+        measureGeometry();
+        requestUpdate();
+      }
+
+      if ("ResizeObserver" in window) {
+        var resizeObserver = new ResizeObserver(function () {
+          remeasureAndUpdate();
+        });
+        resizeObserver.observe(flow);
+      }
+
+      remeasureAndUpdate();
+      window.addEventListener("load", remeasureAndUpdate, { passive: true });
+      if (!reducedMotion.matches) {
+        window.addEventListener("scroll", requestUpdate, { passive: true });
+        window.addEventListener("resize", remeasureAndUpdate, { passive: true });
+      }
+      reducedMotion.addEventListener("change", function () {
+        if (reducedMotion.matches) {
+          window.removeEventListener("scroll", requestUpdate);
+          window.removeEventListener("resize", remeasureAndUpdate);
+          setCompleteState();
+        } else {
+          window.addEventListener("scroll", requestUpdate, { passive: true });
+          window.addEventListener("resize", remeasureAndUpdate, { passive: true });
+          remeasureAndUpdate();
+        }
+      });
+    })();
+
+    (function () {
+      var sequences = {
+        "just-talk": { initial: 150, gaps: [700, 700, 700, 700] },
+        noticed: { initial: 120, gaps: [700, 600] },
+        learns: { initial: 120, gaps: [800, 500] }
+      };
+      var reducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)");
+      var mobileMq = window.matchMedia("(max-width: 767px)");
+      var containers = Array.prototype.slice.call(
+        document.querySelectorAll("[data-talk-sequence]")
+      );
+      if (!containers.length) return;
+
+      function stepsFor(container) {
+        return Array.prototype.slice.call(container.querySelectorAll(".talk-step"));
+      }
+
+      function showAll(container) {
+        stepsFor(container).forEach(function (step) {
+          step.classList.add("is-visible");
+        });
+      }
+
+      function runSequence(container) {
+        var key = container.getAttribute("data-talk-sequence");
+        var config = sequences[key] || { initial: 120, gaps: [] };
+        var steps = stepsFor(container);
+        if (!steps.length) return;
+
+        var delay = config.initial;
+        steps.forEach(function (step, index) {
+          window.setTimeout(function () {
+            step.classList.add("is-visible");
+          }, delay);
+          if (index < steps.length - 1) {
+            delay += config.gaps[index] != null ? config.gaps[index] : 700;
+          }
+        });
+      }
+
+      if (reducedMotion.matches || !("IntersectionObserver" in window)) {
+        containers.forEach(showAll);
+        return;
+      }
+
+      containers.forEach(function (container) {
+        container.classList.add("is-armed");
+      });
+
+      var observer = new IntersectionObserver(
+        function (entries) {
+          entries.forEach(function (entry) {
+            if (!entry.isIntersecting) return;
+            observer.unobserve(entry.target);
+            runSequence(entry.target);
+          });
+        },
+        {
+          root: null,
+          rootMargin: mobileMq.matches ? "0px 0px 8% 0px" : "0px 0px -8% 0px",
+          threshold: mobileMq.matches ? 0.22 : 0.3
+        }
+      );
+
+      containers.forEach(function (container) {
+        observer.observe(container);
+      });
+    })();
+
+    (function () {
+      var journey = document.getElementById("connected-journey");
+      if (!journey) return;
+      var flow = journey.querySelector(".connected-journey__flow");
+      var baseEl = journey.querySelector(".connected-journey__base");
+      var progressEl = journey.querySelector(".connected-journey__progress");
+      var steps = journey.querySelectorAll(".connected-journey__step");
+      if (!flow || !baseEl || !progressEl || !steps.length) return;
+
+      var reducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)");
+      var desktopMq = window.matchMedia("(min-width: 900px)");
+      var ticking = false;
+      var geometry = {
+        horizontal: false,
+        ready: false,
+        firstDoc: 0,
+        lastDoc: 0,
+        nodeDocs: [],
+        nodeFracs: []
+      };
+
+      function clamp(value, min, max) {
+        return Math.max(min, Math.min(max, value));
+      }
+
+      function isDesktop() {
+        return desktopMq.matches;
+      }
+
+      function getEndpoint(step) {
+        var dots = step.querySelector(".connected-journey__dots");
+        var node = step.querySelector(".connected-journey__node");
+        if (isDesktop() && dots) return dots;
+        return node;
+      }
+
+      function getEndpoints() {
+        var endpoints = [];
+        for (var i = 0; i < steps.length; i += 1) {
+          var endpoint = getEndpoint(steps[i]);
+          if (!endpoint) return null;
+          endpoints.push(endpoint);
+        }
+        return endpoints;
+      }
+
+      function measureGeometry() {
+        var endpoints = getEndpoints();
+        if (!endpoints) return false;
+
+        var flowRect = flow.getBoundingClientRect();
+        var first = endpoints[0].getBoundingClientRect();
+        var last = endpoints[endpoints.length - 1].getBoundingClientRect();
+        var horizontal = isDesktop();
+        geometry.horizontal = horizontal;
+        geometry.ready = true;
+
+        if (horizontal) {
+          var firstCenter = first.left + first.width * 0.5 - flowRect.left;
+          var lastCenter = last.left + last.width * 0.5 - flowRect.left;
+          var span = Math.max(0, lastCenter - firstCenter);
+          var lineTop = first.top + first.height * 0.5 - flowRect.top;
+
+          geometry.nodeFracs = endpoints.map(function (endpoint) {
+            var rect = endpoint.getBoundingClientRect();
+            var center = rect.left + rect.width * 0.5 - flowRect.left;
+            return span <= 0 ? 1 : (center - firstCenter) / span;
+          });
+
+          baseEl.style.left = firstCenter + "px";
+          baseEl.style.width = span + "px";
+          baseEl.style.top = lineTop + "px";
+          baseEl.style.height = "";
+          progressEl.style.left = firstCenter + "px";
+          progressEl.style.width = span + "px";
+          progressEl.style.top = lineTop + "px";
+          progressEl.style.height = "";
+        } else {
+          var firstCenter = first.top + first.height * 0.5 - flowRect.top;
+          var lastCenter = last.top + last.height * 0.5 - flowRect.top;
+          var span = Math.max(0, lastCenter - firstCenter);
+          var lineLeft = first.left + first.width * 0.5 - flowRect.left;
+
+          geometry.firstDoc = first.top + window.scrollY + first.height * 0.5;
+          geometry.lastDoc = last.top + window.scrollY + last.height * 0.5;
+          geometry.nodeDocs = endpoints.map(function (endpoint) {
+            var rect = endpoint.getBoundingClientRect();
+            return rect.top + window.scrollY + rect.height * 0.5;
+          });
+
+          baseEl.style.top = firstCenter + "px";
+          baseEl.style.height = span + "px";
+          baseEl.style.left = lineLeft + "px";
+          baseEl.style.width = "";
+          progressEl.style.top = firstCenter + "px";
+          progressEl.style.height = span + "px";
+          progressEl.style.left = lineLeft + "px";
+          progressEl.style.width = "";
+        }
+
+        return true;
+      }
+
+      function applyProgress(progress) {
+        progressEl.style.transform = geometry.horizontal
+          ? "scaleX(" + progress + ")"
+          : "scaleY(" + progress + ")";
+      }
+
+      function applyStepStates(progress) {
+        var triggerY = window.scrollY + window.innerHeight * 0.55;
+        for (var i = 0; i < steps.length; i += 1) {
+          var passed = geometry.horizontal
+            ? progress >= Math.max(geometry.nodeFracs[i], 0.02)
+            : geometry.nodeDocs[i] <= triggerY;
+          steps[i].classList.toggle("is-passed", passed);
+        }
+      }
+
+      function setCompleteState() {
+        if (!measureGeometry()) return;
+        applyProgress(1);
+        for (var i = 0; i < steps.length; i += 1) {
+          steps[i].classList.add("is-passed");
+        }
+      }
+
+      function updateJourney() {
+        ticking = false;
+        if (reducedMotion.matches) {
+          setCompleteState();
+          return;
+        }
+        if (!geometry.ready && !measureGeometry()) return;
+
+        var progress;
+        if (geometry.horizontal) {
+          var start = window.innerHeight * 0.72;
+          var end = window.innerHeight * 0.42;
+          var top = flow.getBoundingClientRect().top;
+          progress = clamp((start - top) / Math.max(1, start - end), 0, 1);
+        } else {
+          var span = geometry.lastDoc - geometry.firstDoc;
+          var triggerY = window.scrollY + window.innerHeight * 0.55;
+          progress = span <= 0 ? 1 : clamp((triggerY - geometry.firstDoc) / span, 0, 1);
+        }
+
+        applyProgress(progress);
+        applyStepStates(progress);
+      }
+
+      function requestUpdate() {
+        if (ticking) return;
+        ticking = true;
+        window.requestAnimationFrame(updateJourney);
+      }
+
+      function remeasureAndUpdate() {
+        geometry.ready = false;
+        measureGeometry();
+        requestUpdate();
+      }
+
+      if ("ResizeObserver" in window) {
+        var resizeObserver = new ResizeObserver(function () {
+          remeasureAndUpdate();
+        });
+        resizeObserver.observe(flow);
+      }
+
+      remeasureAndUpdate();
+      window.addEventListener("load", remeasureAndUpdate, { passive: true });
+      if (!reducedMotion.matches) {
+        window.addEventListener("scroll", requestUpdate, { passive: true });
+        window.addEventListener("resize", remeasureAndUpdate, { passive: true });
+      }
+      if (desktopMq.addEventListener) {
+        desktopMq.addEventListener("change", remeasureAndUpdate);
+      }
+      reducedMotion.addEventListener("change", function () {
+        if (reducedMotion.matches) {
+          window.removeEventListener("scroll", requestUpdate);
+          window.removeEventListener("resize", remeasureAndUpdate);
+          setCompleteState();
+        } else {
+          window.addEventListener("scroll", requestUpdate, { passive: true });
+          window.addEventListener("resize", remeasureAndUpdate, { passive: true });
+          remeasureAndUpdate();
+        }
+      });
+    })();
+  </script>
 </body>
 </html>

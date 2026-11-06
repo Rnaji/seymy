@@ -1,0 +1,75 @@
+"""
+Static sample estimate shown in the landing "Just talk" preview (Estimate #1042).
+
+Fictional data only (555 phone number, no email, no licence number). It is a
+pre-computed copy of the context the retired MVP built in ``views.py``, so the
+public site renders it without importing the MVP code or touching a database.
+"""
+
+TALK_ESTIMATE_CONTEXT = {'balance_due_date_display': 'Aug 24, 2026',
+ 'balance_due_label': 'Aug 24, 2026',
+ 'business_address': '',
+ 'business_city': 'Orlando',
+ 'business_city_line': 'Orlando, FL',
+ 'business_credentials': '',
+ 'business_email': '',
+ 'business_license_number': '',
+ 'business_logo_url': '',
+ 'business_name': 'Miller Plumbing',
+ 'business_phone': '(407) 555-0148',
+ 'business_state': 'Florida',
+ 'business_state_code': 'FL',
+ 'business_zip': '',
+ 'customer_email': '',
+ 'customer_name': 'John Anderson',
+ 'customer_phone': '',
+ 'deposit_amount': '579.30',
+ 'deposit_enabled': True,
+ 'deposit_requirement_label': '30% deposit',
+ 'deposit_row_label': 'Required deposit (30%)',
+ 'estimate_number': '1042',
+ 'estimate_schedule_range_display': 'Aug 20 → Aug 24, 2026',
+ 'expected_completion_date_display': 'Aug 24, 2026',
+ 'expected_completion_date_set': True,
+ 'expiration_date_display': 'Sep 10, 2026',
+ 'issue_date_display': 'Aug 11, 2026',
+ 'job_site_address': '24 Main Street',
+ 'job_site_city': 'Orlando',
+ 'job_site_city_line': 'Orlando, FL',
+ 'job_site_state': 'FL',
+ 'job_site_zip': '',
+ 'job_start_date_display': 'Aug 20, 2026',
+ 'job_start_date_set': True,
+ 'line_items': [{'amount': '1,350.00',
+                 'description': '50 gal. water heater',
+                 'detail': '(Parts & Materials)',
+                 'qty': None,
+                 'rate': ''},
+                {'amount': '500.00',
+                 'description': 'Labor & Professional Installation',
+                 'detail': '',
+                 'qty': None,
+                 'rate': ''}],
+ 'pass_card_fees_to_customer': False,
+ 'payment_terms': {'balance_due_date_display': 'Aug 24, 2026',
+                   'deposit_requirement_label': '30% deposit',
+                   'pass_card_fees_to_customer': False},
+ 'payment_terms_lines': ['A 30% deposit ($579.30) is required to approve this estimate '
+                         'and schedule the work.',
+                         'The remaining balance ($1,351.70) will be due when the job '
+                         'is finished (Aug 24, 2026).'],
+ 'remaining_balance': '1,351.70',
+ 'scope_of_work': 'Replace a 50-gallon water heater.',
+ 'show_project_schedule': True,
+ 'show_qty_rate': False,
+ 'subtotal': '1,850.00',
+ 'tax_amount': '81.00',
+ 'tax_configured': True,
+ 'tax_enabled': True,
+ 'tax_rate_display': '6.0% materials',
+ 'terms_and_conditions': 'Valid for the period shown above. Work begins after approval '
+                         'and any required deposit. Changes to scope, materials, or '
+                         'site conditions may require a written change order and '
+                         'adjusted pricing before additional work proceeds.',
+ 'total': '1,931.00',
+ 'validity_days_display': '30 Days'}

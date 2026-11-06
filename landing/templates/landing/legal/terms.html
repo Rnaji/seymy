@@ -1,0 +1,81 @@
+{% extends "landing/legal/base.html" %}
+{% comment %}
+  Describes only what Seymy offers today. Anything not verified is a visible
+  À FOURNIR marker; never replace one with an assumption.
+{% endcomment %}
+{% block title %}Terms &amp; Conditions{% endblock %}
+{% block description %}The terms that govern the use of Seymy, including plans, billing and its internal SMS testing program.{% endblock %}
+{% block heading %}Terms &amp; Conditions{% endblock %}
+{% block content %}
+      <section class="legal-section" aria-labelledby="tc-agreement">
+        <h2 id="tc-agreement">Agreement</h2>
+        <p>Seymy (“Seymy”, “we”, “us”) is the brand of Seymy, Inc., a Delaware corporation. These Terms govern the use of Seymy by a home-service business (“you”).</p>
+        <p>By subscribing to or using Seymy, you accept these Terms on behalf of your business and confirm that you are at least 18 years old and authorized to bind it.</p>
+      </section>
+
+      <section class="legal-section" aria-labelledby="tc-service">
+        <h2 id="tc-service">The service</h2>
+        <p>Seymy is an app for home-service businesses. It includes:</p>
+        <ul class="legal-list">
+          <li><strong>Miss Seymy</strong>, an AI assistant that answers your business phone line, takes your customers’ requests and puts them in front of you. She does not book appointments or make commitments on your behalf.</li>
+          <li>Help preparing estimates and invoices, by voice or by typing, for you to review.</li>
+          <li>Optional online payments from your customers through Stripe.</li>
+        </ul>
+        <p>Seymy prepares drafts with AI. Drafts can be wrong. Nothing is sent to your customer until you review and approve it.</p>
+      </section>
+
+      <section class="legal-section" aria-labelledby="tc-billing">
+        <h2 id="tc-billing">Plans and billing</h2>
+        <ul class="legal-list">
+          <li>Seymy costs <strong>$99 per month</strong> or <strong>$990 per year</strong>. There is no free trial.</li>
+          <li>The plan includes one user, the account owner, and 500 Miss Seymy call minutes each month, on monthly and annual plans.</li>
+          <li>Each additional user is a paid seat: <strong>$25 per month</strong>, or <strong>$250 per year</strong> on the annual plan. Seymy shows you the price and any prorated amount, and you confirm, before a seat is added.</li>
+          <li>A dedicated Seymy business number and a managed business email are included. There is no setup or activation fee.</li>
+        </ul>
+        <p>These Terms do not by themselves establish a paid subscription or guarantee access to the application. Any paid service is governed by the applicable subscription terms presented at purchase.</p>
+        <p>Your subscription renews automatically at the end of each monthly or annual period until you cancel. Applicable taxes and fees, if any, are shown before you pay. If a payment fails, our payment processor may retry it, and access to the paid service is suspended until the payment succeeds.</p>
+      </section>
+
+      <section class="legal-section" aria-labelledby="tc-payments">
+        <h2 id="tc-payments">Getting paid through Seymy</h2>
+        <ul class="legal-list">
+          <li>Customer payments through Seymy are optional and processed by Stripe, on your own Stripe connected account.</li>
+          <li>Seymy charges a <strong>1% platform fee</strong> on each customer payment collected through Seymy. The fee is not added to what your customer pays.</li>
+          <li>No Seymy platform fee applies to payments made outside Seymy. Payments your customers make to you directly (cash, check, bank transfer) carry no Seymy fee. Creating or sending an estimate is never charged.</li>
+        </ul>
+        <p>Your connected account is subject to Stripe’s terms, including the Stripe Connected Account Agreement, which you accept with Stripe. You are responsible for your sales to your customers, including refunds, disputes and chargebacks.</p>
+      </section>
+
+      <section class="legal-section legal-section--sms" id="sms" aria-labelledby="tc-sms">
+        <h2 id="tc-sms">Text messages (SMS)</h2>
+{% include "landing/legal/sms_internal_testing.html" %}
+        <p>Seymy does not currently offer text messaging between Businesses and their customers. We do not sell or share SMS opt-in information or personal information with third parties for marketing purposes. How we handle the data of this program is described in our <a href="{% url 'privacy' %}#sms">Privacy Policy</a>.</p>
+      </section>
+
+      <section class="legal-section" aria-labelledby="tc-use">
+        <h2 id="tc-use">Website use and your responsibilities</h2>
+        <p>You may use this website to learn about Seymy and to contact us for legitimate business purposes. Do not attempt unauthorized access, disrupt the website, introduce malicious code, or misuse any forms or messaging endpoints.</p>
+        <p>Seymy’s website content, logos and materials are owned by Seymy or its licensors. Information is provided for general purposes and may be updated. Links to other websites are provided for convenience and are subject to their operators’ policies.</p>
+        <p>If you use the Seymy app, you are responsible for activity on your account, for keeping your sign-in credentials confidential, and for the information you and your team enter. You must review what Seymy prepares before it is sent. You may not use Seymy for unlawful, deceptive or harassing communications, or to contact people without any consent the law requires.</p>
+      </section>
+
+      <section class="legal-section" aria-labelledby="tc-liability">
+        <h2 id="tc-liability">Disclaimers and limitation of liability</h2>
+        <p>To the extent permitted by applicable law, the website and prelaunch materials are made available without guarantees of uninterrupted operation or fitness for a particular purpose. We do not guarantee the availability of prelaunch features. Nothing in these Terms excludes rights or remedies that cannot lawfully be excluded.</p>
+        <p>TO THE EXTENT PERMITTED BY LAW, SEYMY IS NOT LIABLE FOR ANY INDIRECT, INCIDENTAL, SPECIAL, CONSEQUENTIAL OR PUNITIVE DAMAGES, OR FOR ANY LOSS OF PROFITS, REVENUE, BUSINESS OR DATA, ARISING OUT OF OR RELATING TO SEYMY OR THESE TERMS.</p>
+      </section>
+
+      <section class="legal-section" aria-labelledby="tc-termination">
+        <h2 id="tc-termination">Cancellation and termination</h2>
+        <p>You can cancel your subscription at any time by writing to rachid@seymy.com from the account owner’s email address. Cancellation takes effect at the end of the current paid period: you keep access until then, and fees already paid are not refunded, including for a partial period. We may suspend or end your account for non-payment or a material breach of these Terms, with notice where practicable.</p>
+      </section>
+
+      <section class="legal-section" aria-labelledby="tc-law">
+        <h2 id="tc-law">Governing law and changes</h2>
+        <p>These Terms are governed by the laws of the State of Delaware, without regard to its conflict-of-laws rules. Any dispute arising out of or relating to these Terms or Seymy will be brought exclusively in the state or federal courts located in the State of Delaware, and you and Seymy consent to their jurisdiction. Nothing in this section limits rights that cannot be waived under applicable law.</p>
+        <p>We may update these Terms by publishing a revised version with an updated effective date. If a change is material, we will notify subscribers by email at least 30 days before it applies to them.</p>
+      </section>
+
+{% include "landing/legal/contact.html" with prefix="tc" %}
+{% endblock %}
+{% block related %}<a href="{% url 'privacy' %}">Privacy Policy →</a>{% endblock %}

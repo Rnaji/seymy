@@ -1,0 +1,100 @@
+{% extends "landing/legal/base.html" %}
+{% comment %}
+  Describes only processing that is active today. Anything not verified is a
+  visible À FOURNIR marker; never replace one with an assumption.
+{% endcomment %}
+{% block title %}Privacy Policy{% endblock %}
+{% block description %}How Seymy collects and uses information, including its internal SMS testing program.{% endblock %}
+{% block heading %}Privacy Policy{% endblock %}
+{% block content %}
+      <section class="legal-section" aria-labelledby="pp-who">
+        <h2 id="pp-who">Who we are</h2>
+        <p>Seymy (“Seymy”, “we”, “us”) is the brand of Seymy, Inc., a Delaware corporation. Seymy provides software for home-service businesses (“Businesses”): an app that helps them prepare estimates and invoices, get paid, and answer their business phone line with an AI assistant, Miss Seymy.</p>
+        <p>This policy explains what information we process when you visit www.seymy.com, when a Business uses Seymy, when you call a Business that uses Miss Seymy, and in our internal SMS testing program.</p>
+      </section>
+
+      <section class="legal-section" aria-labelledby="pp-collect">
+        <h2 id="pp-collect">Information we collect</h2>
+        <ul class="legal-list">
+          <li><strong>This website.</strong> www.seymy.com has no account, no sign-in and no forms. Like any website, our hosting provider receives the technical data needed to deliver pages, such as your IP address, browser type and the page requested.</li>
+          <li><strong>Business account information</strong>, provided by a Business when it uses the Seymy app: names, email addresses and phone numbers of the owner and team members, and business details such as the business name and address.</li>
+          <li><strong>Information about a Business’s customers</strong>, provided by the Business or by the customer: name, phone number, email address, service address, job details, photos, estimates, invoices and payment status.</li>
+          <li><strong>Calls answered by Miss Seymy</strong>: the caller’s phone number, call details (such as time and duration), a written transcript of the conversation and an AI-generated summary. Calls are transcribed; they are not recorded as audio.</li>
+          <li><strong>Payments</strong>, processed by Stripe: we receive the payment status and limited details about the payment.</li>
+          <li><strong>App and device information</strong>: app version, device type, push notification tokens and technical logs.</li>
+          <li><strong>Internal SMS testing program</strong>: a participating tester’s mobile number, consent and opt-out status, message content, delivery status, timestamps and support requests.</li>
+        </ul>
+        <p>Please do not send sensitive personal information through an SMS test.</p>
+      </section>
+
+      <section class="legal-section" aria-labelledby="pp-use">
+        <h2 id="pp-use">How we use information</h2>
+        <ul class="legal-list">
+          <li>To provide Seymy to Businesses: answering their calls, taking their customers’ requests, preparing estimates, invoices and messages for the Business to review, processing payments and sending app notifications.</li>
+          <li>To support Businesses, and to keep Seymy secure and working.</li>
+          <li>To administer internal product testing: sending test messages to testers who opted in, troubleshooting delivery, and keeping consent and opt-out records (see “Text messages (SMS)”).</li>
+          <li>To meet our legal obligations.</li>
+        </ul>
+        <p>A Business reviews and approves what Seymy prepares before anything is sent to its customers.</p>
+        <p>We do not sell or share your SMS opt-in data or personal information with third parties for marketing purposes.</p>
+      </section>
+
+      <section class="legal-section" aria-labelledby="pp-ai">
+        <h2 id="pp-ai">AI processing and call confidentiality</h2>
+        <p>Calls answered by Miss Seymy are transcribed through our telephony provider, Twilio, and the speech recognition services it uses. Transcripts, dictation and messages are processed by AI models of our service provider OpenAI to understand requests, summarize and draft content. Miss Seymy keeps a written transcript of each call, not an audio recording. Transcripts and summaries are available to the Business the caller contacted.</p>
+        <p>Before a call is transcribed, callers hear: “Thank you for calling [the Business’s name]. This call may be transcribed, meaning converted to text. By continuing, you consent.”</p>
+      </section>
+
+      <section class="legal-section legal-section--sms" id="sms" aria-labelledby="pp-sms">
+        <h2 id="pp-sms">Text messages (SMS)</h2>
+{% include "landing/legal/sms_internal_testing.html" %}
+        <p class="legal-sms__sharing">Mobile information will not be shared with third parties or affiliates for marketing or promotional purposes. Text messaging originator opt-in data and consent will not be shared with any third parties.</p>
+      </section>
+
+      <section class="legal-section" aria-labelledby="pp-share">
+        <h2 id="pp-share">Service providers</h2>
+        <p>We use service providers to run Seymy. They process information on our behalf to perform services for Seymy, not to conduct their own marketing:</p>
+        <ul class="legal-list">
+          <li><strong>Heroku</strong> (Salesforce): hosting of the Seymy application, its API and databases.</li>
+          <li><strong>Render</strong>, behind <strong>Cloudflare</strong>: hosting of this website.</li>
+          <li><strong>Stripe</strong>: subscription and customer payments.</li>
+          <li><strong>Twilio</strong>: phone numbers, calls answered by Miss Seymy and text messages, including call transcription and voice through the speech services it uses, which may include Google, Deepgram and ElevenLabs.</li>
+          <li><strong>OpenAI</strong>: understanding requests, summaries and drafts.</li>
+          <li><strong>Resend</strong> (on Amazon SES infrastructure): email delivery.</li>
+          <li><strong>Google Firebase Cloud Messaging</strong> and <strong>Expo</strong>: app push notifications.</li>
+          <li><strong>Google Workspace</strong>: Seymy’s email.</li>
+        </ul>
+        <p>Outside the SMS program described above, whose mobile information and opt-in data are never shared for marketing, we also share information with the Business you deal with, and where required by law or to protect the security and integrity of our services.</p>
+      </section>
+
+      <section class="legal-section" aria-labelledby="pp-retention">
+        <h2 id="pp-retention">Retention and protection</h2>
+        <p>We keep information for as long as reasonably necessary for the purposes described above, including keeping SMS opt-in and opt-out records and meeting legal requirements. Some technical records are deleted automatically: call diagnostics after 7 days; photo requests and team invitations after 7 days; satisfaction requests after 14 days; evidence packages after 30 days; onboarding discovery sessions after 7 days.</p>
+        <p>Other information, including account information, call transcripts and summaries, estimates, invoices and payment records, is kept while the Business’s account exists. It is not deleted automatically, including when a Business stops using Seymy.</p>
+        <p>We use reasonable technical and organizational safeguards. No method of electronic transmission or storage is completely secure.</p>
+      </section>
+
+      <section class="legal-section" aria-labelledby="pp-rights">
+        <h2 id="pp-rights">Your choices and rights</h2>
+        <p>You may contact us about the information we hold about you, including to ask for access, correction or deletion. We will respond as required by applicable law. You may withdraw SMS consent at any time by replying STOP. To make a privacy request, contact us using the details below.</p>
+        <p>If you are a customer of a Business that uses Seymy, that Business decides how your information is used and we process it on its behalf; please contact the Business directly. If you contact us, we will forward your request to that Business.</p>
+      </section>
+
+      <section class="legal-section" aria-labelledby="pp-children">
+        <h2 id="pp-children">Children</h2>
+        <p>Seymy is a service for businesses and is not directed to children under 13. We do not knowingly collect personal information from children under 13. If you believe a child has provided us personal information, contact us using the details below.</p>
+      </section>
+
+      <section class="legal-section" aria-labelledby="pp-cookies">
+        <h2 id="pp-cookies">Cookies and external links</h2>
+        <p>This website does not set cookies. If optional analytics or advertising technologies are ever added, this policy and your choices will be updated before they are activated. Third-party websites linked from Seymy have their own privacy practices.</p>
+      </section>
+
+      <section class="legal-section" aria-labelledby="pp-changes">
+        <h2 id="pp-changes">Changes to this policy</h2>
+        <p>We may update this policy as Seymy develops. Material updates will be posted here with a revised effective date.</p>
+      </section>
+
+{% include "landing/legal/contact.html" with prefix="pp" %}
+{% endblock %}
+{% block related %}<a href="{% url 'terms' %}">Terms &amp; Conditions →</a>{% endblock %}

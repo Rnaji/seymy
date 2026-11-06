@@ -1,9 +1,3 @@
-databases:
-  - name: seymy-db
-    plan: free
-    databaseName: seymy
-    user: seymy
-
 services:
   - type: web
     plan: free
@@ -12,10 +6,6 @@ services:
     buildCommand: "./build.sh"
     startCommand: "python -m gunicorn config.asgi:application -k uvicorn.workers.UvicornWorker"
     envVars:
-      - key: DATABASE_URL
-        fromDatabase:
-          name: seymy-db
-          property: connectionString
       - key: DJANGO_SECRET_KEY
         generateValue: true
       - key: DEBUG

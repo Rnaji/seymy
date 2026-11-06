@@ -1,0 +1,332 @@
+/*
+ * Seymy site identity.
+ * Tokens mirror the Seymy mobile app theme (src/theme.ts).
+ * Loaded after the Tailwind build and the page styles; unlayered, so these
+ * values override the Tailwind theme variables.
+ */
+:root {
+  --color-navy: #0b1b33;          /* textPrimary */
+  --color-navy-muted: #5b6b82;    /* textSecondary */
+  --color-seymy: #2563eb;         /* primary */
+  --color-seymy-dark: #1d4ed8;    /* tones.info.fg */
+  --color-seymy-soft: #dbeafe;    /* primarySoft */
+  --color-surface: #f4f7fc;       /* background */
+  --color-surface-2: #eef2f8;     /* surfaceSecondary */
+  --color-line: #e2e8f0;          /* border */
+  --color-line-strong: #cbd3df;   /* borderStrong */
+  --color-ready: #16a34a;         /* success */
+  --color-miss: #ec4899;          /* Miss Seymy (wordmark, large text, strokes) */
+  --color-miss-text: #be185d;     /* tones.miss.fg: Miss text on white (AA) */
+  --color-miss-soft: #fce7f3;     /* missSoft */
+  --radius-control: 12px;
+  --radius-card: 18px;
+  --radius-hero: 20px;
+  --shadow-card: 0 1px 2px rgba(11, 27, 51, 0.04), 0 8px 24px rgba(11, 27, 51, 0.05);
+  --shadow-raised: 0 1px 2px rgba(11, 27, 51, 0.04), 0 10px 28px rgba(11, 27, 51, 0.06);
+  --shadow-float: 0 1px 2px rgba(11, 27, 51, 0.05), 0 6px 18px rgba(11, 27, 51, 0.06);
+}
+
+/* Wordmark: "Sey" Seymy blue, "my." Miss pink (SeymyWordmark). */
+.wordmark {
+  color: var(--color-seymy);
+  font-weight: 700;
+  letter-spacing: -0.03em;
+  text-decoration: none;
+}
+.wordmark__miss { color: var(--color-miss); }
+
+/* Miss Seymy is named in pink, distinct from Seymy blue. */
+.miss-name { color: var(--color-miss-text); font-weight: 600; }
+
+/* Cards: radius 18-20, two-layer shadows (theme.ts shadows.card / raised). */
+#pricing .pricing-card {
+  border-radius: var(--radius-hero);
+  box-shadow: var(--shadow-raised);
+}
+#talk .talk-attach,
+#talk .learns-instructions,
+#talk .learns-memory,
+#day .workday-notice,
+#connected .connected-journey,
+.hw-block,
+.comparison-grid,
+.faq-list > div {
+  border-radius: var(--radius-card);
+  box-shadow: var(--shadow-card);
+}
+
+/* Primary action: PrimaryButton xl (52 dp, radius 12, primary fill). */
+.hero-cta,
+.final-cta-button,
+#pricing .pricing-card__cta,
+.btn-primary {
+  border-radius: var(--radius-control);
+  background: var(--color-seymy);
+  box-shadow: 0 1px 2px rgba(11, 27, 51, 0.05), 0 8px 20px rgba(37, 99, 235, 0.26);
+}
+.hero-cta:hover,
+.final-cta-button:hover,
+#pricing .pricing-card__cta:hover,
+.btn-primary:hover { background: var(--color-seymy-dark); }
+
+a:focus-visible,
+button:focus-visible,
+summary:focus-visible {
+  outline: 2px solid var(--color-seymy);
+  outline-offset: 2px;
+}
+
+/* No validated download channel = a neutral note, never a link. */
+.pilot-note {
+  display: flex;
+  min-height: 3.25rem;
+  width: 100%;
+  align-items: center;
+  justify-content: center;
+  margin: 0;
+  padding: 0.75rem 1.25rem;
+  border: 1px solid var(--color-line-strong);
+  border-radius: var(--radius-control);
+  background: rgba(255, 255, 255, 0.92);
+  color: var(--color-navy);
+  font-size: 1rem;
+  font-weight: 600;
+  text-align: center;
+}
+
+/* Desktop only: the same download URL as a QR code. */
+.download-qr { display: none; }
+@media (min-width: 1024px) {
+  .download-qr {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    max-width: 22rem;
+    margin: 1.5rem auto 0;
+    padding: 0.875rem 1rem;
+    border-radius: var(--radius-card);
+    background: #fff;
+    box-shadow: var(--shadow-card);
+    text-align: left;
+  }
+  .download-qr svg { width: 6.5rem; height: 6.5rem; flex: none; }
+  .download-qr__help {
+    margin: 0;
+    color: var(--color-navy-muted);
+    font-size: 0.875rem;
+    line-height: 1.4;
+  }
+}
+
+/* Shared footer legal links (landing and legal pages). */
+.site-footer__legal a {
+  color: var(--color-navy-muted);
+  text-decoration: none;
+}
+.site-footer__legal a:hover { color: var(--color-navy); }
+.site-footer__legal a[aria-current="page"] {
+  color: var(--color-seymy-dark);
+  font-weight: 600;
+}
+
+/* Visible placeholder for content still to be supplied. Never ship one. */
+mark.todo {
+  background: #fef3c7;   /* tones.warn.bg */
+  color: #92400e;        /* tones.warn.fg */
+  border: 1px dashed #b45309;
+  border-radius: 6px;
+  padding: 0.05rem 0.35rem;
+  font-weight: 600;
+  overflow-wrap: anywhere;
+}
+
+/* Legal pages (Privacy, Terms) in the landing's identity. */
+.legal-body {
+  margin: 0;
+  min-height: 100dvh;
+  background: var(--color-surface);
+  color: var(--color-navy);
+  font-family: var(--font-sans, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif);
+  -webkit-font-smoothing: antialiased;
+}
+.skip-link {
+  position: absolute;
+  left: -9999px;
+  top: 0.5rem;
+  z-index: 10;
+  padding: 0.5rem 0.75rem;
+  border-radius: var(--radius-control);
+  background: #fff;
+  color: var(--color-seymy-dark);
+  font-weight: 600;
+}
+.skip-link:focus { left: 1rem; }
+.legal-header {
+  position: sticky;
+  top: 0;
+  z-index: 5;
+  border-bottom: 1px solid var(--color-line);
+  background: rgba(255, 255, 255, 0.94);
+  -webkit-backdrop-filter: saturate(1.4) blur(10px);
+  backdrop-filter: saturate(1.4) blur(10px);
+}
+.legal-header__inner {
+  display: flex;
+  max-width: 48rem;
+  margin: 0 auto;
+  padding: 0.875rem 1rem;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+}
+.legal-header__logo { font-size: 1.375rem; line-height: 1; }
+.legal-switch {
+  display: inline-flex;
+  padding: 0.2rem;
+  gap: 0.2rem;
+  border-radius: 999px;
+  background: var(--color-surface-2);
+}
+.legal-switch a {
+  display: inline-flex;
+  min-height: 2.25rem;
+  align-items: center;
+  padding: 0 0.95rem;
+  border-radius: 999px;
+  color: var(--color-navy-muted);
+  font-size: 0.875rem;
+  font-weight: 600;
+  text-decoration: none;
+}
+.legal-switch a[aria-current="page"] {
+  background: #fff;
+  color: var(--color-navy);
+  box-shadow: 0 1px 3px rgba(11, 27, 51, 0.12);
+}
+.legal-main {
+  max-width: 48rem;
+  margin: 0 auto;
+  padding: 1.25rem 1rem 3rem;
+}
+.legal-card {
+  padding: 1.5rem 1.25rem 1.75rem;
+  border-radius: var(--radius-hero);
+  background: #fff;
+  box-shadow: var(--shadow-raised);
+}
+@media (min-width: 640px) {
+  .legal-main { padding: 2.5rem 1.5rem 4rem; }
+  .legal-card { padding: 2.5rem 2.75rem 2.75rem; }
+}
+.legal-eyebrow {
+  margin: 0;
+  color: var(--color-seymy-dark);
+  font-size: 0.6875rem;
+  font-weight: 600;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+}
+.legal-title {
+  margin: 0.4rem 0 0;
+  font-size: 1.875rem;
+  font-weight: 700;
+  line-height: 1.15;
+  letter-spacing: -0.02em;
+}
+@media (min-width: 640px) { .legal-title { font-size: 2.25rem; } }
+.legal-updated {
+  margin: 0.6rem 0 0;
+  color: var(--color-navy-muted);
+  font-size: 0.875rem;
+}
+.legal-section {
+  margin-top: 1.75rem;
+  padding-top: 1.5rem;
+  border-top: 1px solid var(--color-line);
+  scroll-margin-top: 5rem;
+}
+.legal-section h2 {
+  margin: 0 0 0.6rem;
+  font-size: 1.125rem;
+  font-weight: 700;
+  line-height: 1.3;
+}
+.legal-section p,
+.legal-section li,
+.legal-section dd {
+  color: #33445c;
+  font-size: 0.9375rem;
+  line-height: 1.65;
+}
+.legal-section p { margin: 0 0 0.75rem; }
+.legal-list { margin: 0.25rem 0 0; padding-left: 1.2rem; }
+.legal-list li { margin: 0.35rem 0; }
+.legal-section--sms {
+  margin-top: 1.75rem;
+  padding: 1.25rem;
+  border: 1px solid var(--color-seymy-soft);
+  border-radius: var(--radius-card);
+  background: #f7faff;
+}
+.legal-contact__list,
+.legal-sms { margin: 0; }
+.legal-contact__list > div,
+.legal-sms > div {
+  display: grid;
+  gap: 0.15rem;
+  padding: 0.6rem 0;
+  border-bottom: 1px solid var(--color-line);
+}
+@media (min-width: 640px) {
+  .legal-sms > div { grid-template-columns: 11rem 1fr; gap: 1rem; }
+  .legal-contact__list > div { grid-template-columns: 7rem 1fr; gap: 1rem; }
+}
+.legal-sms dt,
+.legal-contact__list dt {
+  color: var(--color-navy-muted);
+  font-size: 0.8125rem;
+  font-weight: 600;
+}
+.legal-sms dd,
+.legal-contact__list dd { margin: 0; }
+.legal-sms__sharing { margin-top: 1rem !important; font-weight: 600; color: var(--color-navy) !important; }
+.legal-related {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  gap: 0.75rem;
+  margin-top: 2rem;
+  padding-top: 1.25rem;
+  border-top: 1px solid var(--color-line);
+}
+.legal-related a {
+  color: var(--color-seymy-dark);
+  font-size: 0.9375rem;
+  font-weight: 600;
+  text-decoration: none;
+}
+.legal-related a:hover { text-decoration: underline; }
+
+/* The mobile hero voice bubble sat on the photo with low contrast. */
+@media (max-width: 1023px) {
+  .hero-chat--mobile .hc-bubble {
+    background: rgba(255, 255, 255, 0.94);
+    box-shadow: var(--shadow-float);
+    -webkit-backdrop-filter: blur(6px);
+    backdrop-filter: blur(6px);
+  }
+  .hero-chat--mobile .hc-body { color: var(--color-navy); }
+}
+
+/* Small text contrast (WCAG AA 4.5:1). */
+#final-cta .final-cta-micro { color: rgba(255, 255, 255, 0.72); }
+#final-cta .final-cta-eyebrow { color: rgba(255, 255, 255, 0.72); }
+#pricing .pricing-card__users-value--included { color: #15803d; } /* tones.good.accent */
+.legal-sms__title {
+  margin: 0.25rem 0 0.5rem;
+  font-size: 1rem;
+  font-weight: 700;
+  color: var(--color-navy);
+}
+.legal-section a { color: var(--color-seymy-dark); }
+.legal-section strong { color: var(--color-navy); }
