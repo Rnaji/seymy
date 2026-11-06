@@ -98,7 +98,8 @@ class V11ContentTests(SimpleTestCase):
 
     def test_price_microcopy_says_only_the_owner_is_included(self):
         self.assertEqual(self.html.count('Owner included · Extra users billed separately.'), 3)
-        self.assertNotIn('· Everything included', self.html)
+        self.assertNotIn('Everything included', self.html)
+        self.assertIn('Simple, transparent pricing.', self.html)
 
     def test_retired_offers_and_promises_are_gone(self):
         for text in [
