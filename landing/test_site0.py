@@ -452,6 +452,31 @@ class SmsTestConsentPageTests(SimpleTestCase):
                             self.client.get('/privacy', secure=True).content.decode(), flags=re.S).group(1)
         self.assertIn(self._visible_text(sharing).strip(), page)
 
+    def test_pdf_text_is_the_page_form_text(self):
+        """The PDF (uncompressed, one Tj per line) says what the page says, so a
+        change to the legal SMS block fails here until build.py is rerun."""
+        import re
+        from pathlib import Path
+        pdf = (Path(__file__).resolve().parent.parent / 'public_root' / self.PDF.lstrip('/')).read_bytes()
+        lines = re.findall(rb'\((.*?)(?<!\\)\) Tj', pdf)
+        pdf_text = ' '.join(re.sub(r'\\([()\\])', r'\1', line.decode('latin-1')) for line in lines)
+        pdf_text = re.sub(r'\s+', ' ', pdf_text)
+        page = self._visible_text(self.html)
+        start = page.index('Text of the form SMS Test Recipient Consent') + len('Text of the form ')
+        section = page[start:page.index('Fields completed by the tester')]
+        for chunk in re.split(r'(?<=[.!?]) |(?<=only) ', section.replace('☐ ', '')):
+            chunk = chunk.strip()
+            if chunk and chunk not in {'Program', 'How testers opt in', 'Important disclosures'}:
+                for heading in ['Program ', 'How testers opt in ', 'Important disclosures ',
+                                'Consent - please check the box and sign ']:
+                    chunk = chunk.replace(heading, '')
+                with self.subTest(chunk=chunk[:60]):
+                    self.assertIn(chunk, pdf_text)
+        for label in ['Tester full name', 'Mobile phone number (including country code)', 'Signature',
+                      'Date (MM/DD/YYYY)', 'Consent - please check the box and sign']:
+            with self.subTest(label=label):
+                self.assertIn(label, pdf_text)
+
     def test_published_files_are_version_1_1(self):
         from pathlib import Path
         pdf = (Path(__file__).resolve().parent.parent / 'public_root' / self.PDF.lstrip('/')).read_bytes()
