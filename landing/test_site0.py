@@ -486,6 +486,7 @@ class SmsTestConsentPageTests(SimpleTestCase):
         self.assertIn(b'(Version 1.2  |  November 2026)', pdf)
         self.assertIn(b'/Title (Seymy SMS Test Recipient Consent Form \\(blank\\))', pdf)
         self.assertNotIn(b'Version 1.1', pdf)
+        self.assertNotIn(b'Version 1.0', pdf)
 
     def test_links_to_privacy_terms_and_contact(self):
         self.assertIn('href="/privacy"', self.html)
