@@ -401,7 +401,8 @@ class SmsTestConsentPageTests(SimpleTestCase):
     def _visible_text(html_source):
         import html as html_lib
         import re
-        return re.sub(r'\s+', ' ', html_lib.unescape(re.sub(r'<[^>]+>', ' ', html_source)))
+        text = re.sub(r'\s+', ' ', html_lib.unescape(re.sub(r'<[^>]+>', ' ', html_source)))
+        return re.sub(r' ([.,;:])', r'\1', text)  # "<a>x</a>." must read "x."
 
     def test_form_text_matches_the_paper_form(self):
         text = self._visible_text(self.html)
