@@ -43,7 +43,7 @@ endobj
 endobj
 8 0 obj
 <<
-/Length 5054
+/Length 5206
 >>
 stream
 1 0 0 1 0 0 cm  BT /F1 12 Tf 14.4 TL ET
@@ -81,90 +81,91 @@ BT /F2 10.5 Tf 12.6 TL ET
 BT 1 0 0 1 43 590 Tm (Program) Tj T* ET
 BT /F1 10 Tf 12 TL ET
 BT 1 0 0 1 43 575 Tm (Seymy sends non-marketing test text messages only to internal testers who expressly consent in advance. Test) Tj T* ET
-BT 1 0 0 1 43 562.3 Tm (messages can simulate customer service conversations, service requests, appointment reminders, quote updates and) Tj T* ET
-BT 1 0 0 1 43 549.6 Tm (invoice notifications. The program does not send promotional messages, messages to the public, or messages on) Tj T* ET
-BT 1 0 0 1 43 536.9 Tm (behalf of independent contractor businesses.) Tj T* ET
+BT 1 0 0 1 43 562.3 Tm (messages can simulate customer service conversations, service requests, appointment reminders, quote updates,) Tj T* ET
+BT 1 0 0 1 43 549.6 Tm (invoice notifications and payment links. Links in test messages open test pages that use test data only; no real) Tj T* ET
+BT 1 0 0 1 43 536.9 Tm (payment is requested or processed. The program does not send promotional messages, messages to the public, or) Tj T* ET
+BT 1 0 0 1 43 524.2 Tm (messages on behalf of independent contractor businesses.) Tj T* ET
 BT /F2 10.5 Tf 12.6 TL ET
-BT 1 0 0 1 43 517.2 Tm (How testers opt in) Tj T* ET
+BT 1 0 0 1 43 504.5 Tm (How testers opt in) Tj T* ET
 BT /F1 10 Tf 12 TL ET
-BT 1 0 0 1 43 502.2 Tm (Participation is voluntary. A Seymy representative obtains consent from each tester before their phone number is) Tj T* ET
-BT 1 0 0 1 43 489.5 Tm (enrolled. Consent is specific to this testing program and is not a condition of purchasing any service.) Tj T* ET
+BT 1 0 0 1 43 489.5 Tm (Participation is voluntary. A Seymy representative obtains consent from each tester before their phone number is) Tj T* ET
+BT 1 0 0 1 43 476.8 Tm (enrolled. Consent is specific to this testing program and is not a condition of purchasing any service.) Tj T* ET
 BT /F2 10.5 Tf 12.6 TL ET
-BT 1 0 0 1 43 469.8 Tm (Important disclosures) Tj T* ET
+BT 1 0 0 1 43 457.1 Tm (Important disclosures) Tj T* ET
 BT /F1 10 Tf 12 TL ET
-BT 1 0 0 1 55 454.8 Tm (-) Tj T* ET
+BT 1 0 0 1 55 442.1 Tm (-) Tj T* ET
 BT /F1 10 Tf 12 TL ET
-BT 1 0 0 1 70 454.8 Tm (Message frequency varies depending on test activity.) Tj T* ET
+BT 1 0 0 1 70 442.1 Tm (Message frequency varies depending on test activity.) Tj T* ET
 BT /F1 10 Tf 12 TL ET
-BT 1 0 0 1 55 439.6 Tm (-) Tj T* ET
+BT 1 0 0 1 55 426.9 Tm (-) Tj T* ET
 BT /F1 10 Tf 12 TL ET
-BT 1 0 0 1 70 439.6 Tm (Message and data rates may apply. Seymy does not charge any fee for joining the internal SMS testing) Tj T* ET
-BT 1 0 0 1 70 426.9 Tm (program.) Tj T* ET
+BT 1 0 0 1 70 426.9 Tm (Message and data rates may apply. Seymy does not charge any fee for joining the internal SMS testing) Tj T* ET
+BT 1 0 0 1 70 414.2 Tm (program.) Tj T* ET
 BT /F1 10 Tf 12 TL ET
-BT 1 0 0 1 55 411.7 Tm (-) Tj T* ET
+BT 1 0 0 1 55 399 Tm (-) Tj T* ET
 BT /F1 10 Tf 12 TL ET
-BT 1 0 0 1 70 411.7 Tm (Reply STOP at any time to opt out. You will receive no further test messages, except a confirmation of your) Tj T* ET
-BT 1 0 0 1 70 399 Tm (opt-out.) Tj T* ET
+BT 1 0 0 1 70 399 Tm (Reply STOP at any time to opt out. You will receive no further test messages, except a confirmation of your) Tj T* ET
+BT 1 0 0 1 70 386.3 Tm (opt-out.) Tj T* ET
 BT /F1 10 Tf 12 TL ET
-BT 1 0 0 1 55 383.8 Tm (-) Tj T* ET
+BT 1 0 0 1 55 371.1 Tm (-) Tj T* ET
 BT /F1 10 Tf 12 TL ET
-BT 1 0 0 1 70 383.8 Tm (Reply HELP for help. For help with the testing program, contact us at rachid@seymy.com.) Tj T* ET
+BT 1 0 0 1 70 371.1 Tm (Reply HELP for help. For help with the testing program, contact us at rachid@seymy.com.) Tj T* ET
 BT /F1 10 Tf 12 TL ET
-BT 1 0 0 1 55 368.6 Tm (-) Tj T* ET
+BT 1 0 0 1 55 355.9 Tm (-) Tj T* ET
 BT /F1 10 Tf 12 TL ET
-BT 1 0 0 1 70 368.6 Tm (Carriers are not liable for any delayed or undelivered messages.) Tj T* ET
+BT 1 0 0 1 70 355.9 Tm (Carriers are not liable for any delayed or undelivered messages.) Tj T* ET
 BT /F1 10 Tf 12 TL ET
-BT 1 0 0 1 55 353.4 Tm (-) Tj T* ET
+BT 1 0 0 1 55 340.7 Tm (-) Tj T* ET
 BT /F1 10 Tf 12 TL ET
-BT 1 0 0 1 70 353.4 Tm (Mobile information will not be shared with third parties or affiliates for marketing or promotional purposes. Text) Tj T* ET
-BT 1 0 0 1 70 340.7 Tm (messaging originator opt-in data and consent will not be shared with any third parties.) Tj T* ET
+BT 1 0 0 1 70 340.7 Tm (Mobile information will not be shared with third parties or affiliates for marketing or promotional purposes. Text) Tj T* ET
+BT 1 0 0 1 70 328 Tm (messaging originator opt-in data and consent will not be shared with any third parties.) Tj T* ET
 .945098 .960784 .984314 rg
 n
-52 255.5 m
-560 255.5 l
-564.9752 255.5 569 259.5248 569 264.5 c
-569 312.5 l
-569 317.4752 564.9752 321.5 560 321.5 c
-52 321.5 l
-47.0248 321.5 43 317.4752 43 312.5 c
-43 264.5 l
-43 259.5248 47.0248 255.5 52 255.5 c
+52 242.8 m
+560 242.8 l
+564.9752 242.8 569 246.8248 569 251.8 c
+569 299.8 l
+569 304.7752 564.9752 308.8 560 308.8 c
+52 308.8 l
+47.0248 308.8 43 304.7752 43 299.8 c
+43 251.8 l
+43 246.8248 47.0248 242.8 52 242.8 c
 h
 f*
 .078431 .152941 .262745 rg
 BT /F2 10.5 Tf 12.6 TL ET
-BT 1 0 0 1 57 304.5 Tm (Consent - please check the box and sign) Tj T* ET
+BT 1 0 0 1 57 291.8 Tm (Consent - please check the box and sign) Tj T* ET
 .196078 .396078 .85098 RG
 1.5 w
-n 57 272.5 15 15 re S
+n 57 259.8 15 15 re S
 BT /F1 9.7 Tf 11.64 TL ET
-BT 1 0 0 1 82 283.5 Tm (I agree to receive test text messages from Seymy at this number. Message frequency varies. Msg & data) Tj T* ET
-BT 1 0 0 1 82 270.5 Tm (rates may apply. Reply STOP to opt out, HELP for help.) Tj T* ET
+BT 1 0 0 1 82 270.8 Tm (I agree to receive test text messages from Seymy at this number. Message frequency varies. Msg & data) Tj T* ET
+BT 1 0 0 1 82 257.8 Tm (rates may apply. Reply STOP to opt out, HELP for help.) Tj T* ET
 1 w
 .078431 .152941 .262745 rg
 BT /F2 10 Tf 12 TL ET
-BT 1 0 0 1 43 229.5 Tm (Tester full name) Tj T* ET
-BT 1 0 0 1 318 229.5 Tm (Mobile phone number \(including country code\)) Tj T* ET
+BT 1 0 0 1 43 216.8 Tm (Tester full name) Tj T* ET
+BT 1 0 0 1 318 216.8 Tm (Mobile phone number \(including country code\)) Tj T* ET
 .839216 .878431 .929412 RG
-n 43 198.5 m 286 198.5 l S
-n 318 198.5 m 569 198.5 l S
+n 43 185.8 m 286 185.8 l S
+n 318 185.8 m 569 185.8 l S
 .078431 .152941 .262745 rg
 BT /F2 10 Tf 12 TL ET
-BT 1 0 0 1 43 171.5 Tm (Signature) Tj T* ET
-BT 1 0 0 1 318 171.5 Tm (Date \(MM/DD/YYYY\)) Tj T* ET
+BT 1 0 0 1 43 162.8 Tm (Signature) Tj T* ET
+BT 1 0 0 1 318 162.8 Tm (Date \(MM/DD/YYYY\)) Tj T* ET
 .839216 .878431 .929412 RG
-n 43 140.5 m 286 140.5 l S
-n 318 140.5 m 569 140.5 l S
+n 43 131.8 m 286 131.8 l S
+n 318 131.8 m 569 131.8 l S
 .32549 .384314 .458824 rg
 BT /F1 9 Tf 10.8 TL ET
-BT 1 0 0 1 43 113.5 Tm (Privacy Policy: https://www.seymy.com/privacy) Tj T* ET
-BT 1 0 0 1 43 99.5 Tm (Terms & Conditions: https://www.seymy.com/terms) Tj T* ET
-BT 1 0 0 1 43 85.5 Tm (Seymy retains the completed, signed form privately as evidence of consent.) Tj T* ET
+BT 1 0 0 1 43 108.8 Tm (Privacy Policy: https://www.seymy.com/privacy) Tj T* ET
+BT 1 0 0 1 43 94.8 Tm (Terms & Conditions: https://www.seymy.com/terms) Tj T* ET
+BT 1 0 0 1 43 80.8 Tm (Seymy retains the completed, signed form privately as evidence of consent.) Tj T* ET
 .839216 .878431 .929412 RG
 n 43 59 m 569 59 l S
 BT /F1 8.2 Tf 9.84 TL ET
 BT 1 0 0 1 43 44 Tm (Seymy, Inc.  |  Blank form for consent collection and A2P review) Tj T* ET
-BT 1 0 0 1 457.9392 44 Tm (Version 1.1  |  November 2026) Tj T* ET
+BT 1 0 0 1 457.9392 44 Tm (Version 1.2  |  November 2026) Tj T* ET
  
 endstream
 endobj
@@ -190,5 +191,5 @@ trailer
 /Size 9
 >>
 startxref
-6100
+6252
 %%EOF

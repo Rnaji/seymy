@@ -223,7 +223,10 @@ class LegalPagesTests(SimpleTestCase):
                              'Msg &amp; data rates may apply.', 'Reply STOP', 'HELP for help.',
                              'For help with the testing program, contact us using the details in the Contact section below.',
                              'does not send promotional messages',
-                             'Carriers are not liable for any delayed or undelivered messages.']:
+                             'Carriers are not liable for any delayed or undelivered messages.',
+                             'quote updates, invoice notifications and payment links.',
+                             'Links in test messages open test pages that use test data only; '
+                             'no real payment is requested or processed.']:
                     self.assertIn(item, html)
         privacy = self.client.get('/privacy', secure=True).content.decode()
         self.assertIn(
@@ -413,11 +416,11 @@ class SmsTestConsentPageTests(SimpleTestCase):
             'Fields completed by the tester: tester full name; mobile phone number (including country code); '
             'signature; date (MM/DD/YYYY).',
             'Seymy retains the completed, signed form privately as evidence of consent.',
-            'Form version 1.1 · November 2026',
+            'Form version 1.2 · November 2026',
         ]:
             with self.subTest(item=item):
                 self.assertIn(item, text)
-        for retired in ['Form version 1.0', 'I agree to receive SMS test messages from Seymy, Inc.',
+        for retired in ['Form version 1.0', 'Form version 1.1', 'I agree to receive SMS test messages from Seymy, Inc.',
                         'reply HELP for assistance', 'based on testing activity']:
             with self.subTest(retired=retired):
                 self.assertNotIn(retired, text)
@@ -477,12 +480,12 @@ class SmsTestConsentPageTests(SimpleTestCase):
             with self.subTest(label=label):
                 self.assertIn(label, pdf_text)
 
-    def test_published_files_are_version_1_1(self):
+    def test_published_files_are_version_1_2(self):
         from pathlib import Path
         pdf = (Path(__file__).resolve().parent.parent / 'public_root' / self.PDF.lstrip('/')).read_bytes()
-        self.assertIn(b'(Version 1.1  |  November 2026)', pdf)
+        self.assertIn(b'(Version 1.2  |  November 2026)', pdf)
         self.assertIn(b'/Title (Seymy SMS Test Recipient Consent Form \\(blank\\))', pdf)
-        self.assertNotIn(b'Version 1.0', pdf)
+        self.assertNotIn(b'Version 1.1', pdf)
 
     def test_links_to_privacy_terms_and_contact(self):
         self.assertIn('href="/privacy"', self.html)

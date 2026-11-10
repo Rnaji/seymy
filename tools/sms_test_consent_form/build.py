@@ -30,7 +30,7 @@ from reportlab.lib.pagesizes import letter  # noqa: E402
 from reportlab.lib.utils import simpleSplit  # noqa: E402
 from reportlab.pdfgen import canvas  # noqa: E402
 
-VERSION = 'Version 1.1  |  November 2026'
+VERSION = 'Version 1.2  |  November 2026'
 ROOT = Path(__file__).resolve().parents[2]
 LEGAL = ROOT / 'landing' / 'templates' / 'landing' / 'legal'
 OUT = ROOT / 'public_root' / 'assets'
@@ -176,7 +176,7 @@ def build_pdf(texts, path):
         c.setStrokeColor(LINE)
         c.line(left, y - 31, 286, y - 31)
         c.line(318, y - 31, right, y - 31)
-        y -= 58
+        y -= 54
 
     c.setFillColor(MUTED)
     c.setFont('Helvetica', 9)
