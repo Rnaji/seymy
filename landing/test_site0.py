@@ -389,8 +389,8 @@ class SmsTestConsentPageTests(SimpleTestCase):
         for tag in ['<form', '<input', '<textarea', '<select', '<button', '<script', '<iframe', 'csrfmiddlewaretoken']:
             with self.subTest(tag=tag):
                 self.assertNotIn(tag, self.html.lower())
-        self.assertIn('This website has no sign-up form and does not collect phone numbers.', self.html)
-        self.assertNotIn('Set-Cookie', str(self.response.headers))
+        self.assertIn('this website has no sign-up form and does not collect phone numbers.', self.html)
+        self.assertEqual(len(self.response.cookies), 0)
 
     def test_page_shows_and_links_both_files(self):
         self.assertIn(f'<img src="{self.PNG}" width="1224" height="1584"', self.html)
@@ -420,8 +420,9 @@ class SmsTestConsentPageTests(SimpleTestCase):
 
     def test_no_personal_data_is_published(self):
         import re
-        visible = re.sub(r'<a [^>]*>|mailto:[^"]+', '', self.html)
-        self.assertNotRegex(visible, r'\+?\d[\d .()-]{8,}\d')
+        self.assertNotIn('tel:', self.html.lower())
+        text = re.sub(r'\s+', ' ', re.sub(r'<[^>]+>', ' ', self.html))
+        self.assertNotRegex(text, r'\+?\(?\d[\d .()-]{8,}\d')
 
     def test_legal_pages_keep_their_effective_date_line(self):
         for path in ['/privacy', '/terms']:
