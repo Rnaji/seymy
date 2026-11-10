@@ -397,20 +397,66 @@ class SmsTestConsentPageTests(SimpleTestCase):
         self.assertIn(f'href="{self.PDF}"', self.html)
         self.assertIn(f'href="{self.PNG}"', self.html)
 
+    @staticmethod
+    def _visible_text(html_source):
+        import html as html_lib
+        import re
+        return re.sub(r'\s+', ' ', html_lib.unescape(re.sub(r'<[^>]+>', ' ', html_source)))
+
     def test_form_text_matches_the_paper_form(self):
+        text = self._visible_text(self.html)
         for item in [
-            'Seymy, Inc. sends non-marketing SMS messages to its authorized internal testers',
-            'Message frequency varies based on testing activity.',
-            'Message and data rates may apply.',
-            'Reply STOP to opt out at any time; reply HELP for assistance.',
-            'Consent is voluntary and is not a condition of purchase.',
-            'This program is not used for marketing or for independent contractors’ customers.',
-            'I agree to receive SMS test messages from Seymy, Inc. at the mobile number I provide below.',
+            'Seymy, Inc. | Seymy Internal SMS Testing | Internal software testing only',
+            'Reply HELP for help. For help with the testing program, contact us at rachid@seymy.com.',
+            'Consent - please check the box and sign',
+            'Fields completed by the tester: tester full name; mobile phone number (including country code); '
+            'signature; date (MM/DD/YYYY).',
             'Seymy retains the completed, signed form privately as evidence of consent.',
-            'Form version 1.0 · November 2026',
+            'Form version 1.1 · November 2026',
         ]:
             with self.subTest(item=item):
-                self.assertIn(item, self.html)
+                self.assertIn(item, text)
+        for retired in ['Form version 1.0', 'I agree to receive SMS test messages from Seymy, Inc.',
+                        'reply HELP for assistance', 'based on testing activity']:
+            with self.subTest(retired=retired):
+                self.assertNotIn(retired, text)
+
+    def test_form_text_is_the_published_legal_text(self):
+        """Program, opt-in, disclosures and consent statement are those of the
+        SMS block shown on /privacy and /terms, word for word (A2P reference)."""
+        import re
+        page = self._visible_text(self.html)
+        for path in ['/privacy', '/terms']:
+            legal_html = self.client.get(path, secure=True).content.decode()
+            block = re.search(r'<dl class="legal-sms">(.*?)</dl>', legal_html, flags=re.S).group(1)
+            items = {self._visible_text(dt).strip(): self._visible_text(dd).strip()
+                     for dt, dd in re.findall(r'<dt>(.*?)</dt><dd>(.*?)</dd>', block, flags=re.S)}
+            opt_in = items['How testers opt in']
+            statement = re.search(r'Testers agree to this statement: “(.*?)”', opt_in).group(1)
+            expected = [
+                items['Program'],
+                opt_in.split(' Testers agree to this statement:')[0],
+                opt_in.split('” ')[1],
+                statement,
+                items['Message frequency'],
+                items['Costs'],
+                items['Opt out'],
+                items['Delivery'],
+            ]
+            for sentence in expected:
+                with self.subTest(path=path, sentence=sentence[:60]):
+                    self.assertIn(sentence, page)
+            self.assertIn(f'☐ {statement}', page)
+        sharing = re.search(r'<p class="legal-sms__sharing">(.*?)</p>',
+                            self.client.get('/privacy', secure=True).content.decode(), flags=re.S).group(1)
+        self.assertIn(self._visible_text(sharing).strip(), page)
+
+    def test_published_files_are_version_1_1(self):
+        from pathlib import Path
+        pdf = (Path(__file__).resolve().parent.parent / 'public_root' / self.PDF.lstrip('/')).read_bytes()
+        self.assertIn(b'(Version 1.1  |  November 2026)', pdf)
+        self.assertIn(b'/Title (Seymy SMS Test Recipient Consent Form \\(blank\\))', pdf)
+        self.assertNotIn(b'Version 1.0', pdf)
 
     def test_links_to_privacy_terms_and_contact(self):
         self.assertIn('href="/privacy"', self.html)
