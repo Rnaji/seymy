@@ -9,6 +9,8 @@ from django.urls import NoReverseMatch, URLPattern, URLResolver, get_resolver, r
 
 TOKEN = 'abcDEF123_-xyz'
 
+PUBLIC_PAGES = ['/', '/privacy', '/terms', '/sms-test-consent']
+
 RETIRED_FUNNEL_PATHS = [
     '/start',
     '/start/',
@@ -221,7 +223,10 @@ class LegalPagesTests(SimpleTestCase):
                              'Msg &amp; data rates may apply.', 'Reply STOP', 'HELP for help.',
                              'For help with the testing program, contact us using the details in the Contact section below.',
                              'does not send promotional messages',
-                             'Carriers are not liable for any delayed or undelivered messages.']:
+                             'Carriers are not liable for any delayed or undelivered messages.',
+                             'quote updates, invoice notifications and payment links.',
+                             'Links in test messages open test pages that use test data only; '
+                             'no real payment is requested or processed.']:
                     self.assertIn(item, html)
         privacy = self.client.get('/privacy', secure=True).content.decode()
         self.assertIn(
@@ -336,7 +341,7 @@ class SmsHonestyTests(SimpleTestCase):
     ]
 
     def test_no_page_offers_customer_texting(self):
-        for path in ['/', '/privacy', '/terms']:
+        for path in PUBLIC_PAGES:
             html = self.client.get(path, secure=True).content.decode().lower()
             for phrase in self.FORBIDDEN:
                 with self.subTest(path=path, phrase=phrase):
@@ -361,12 +366,179 @@ class SmsHonestyTests(SimpleTestCase):
                 self.assertNotIn('sms_contractor_business', visible)
 
 
+class SmsTestConsentPageTests(SimpleTestCase):
+    """/sms-test-consent: the blank paper form of the internal SMS testing
+    program, public for the A2P review. Read-only: no data is collected."""
+
+    PNG = '/assets/seymy-sms-test-consent-form.png'
+    PDF = '/assets/seymy-sms-test-consent-form.pdf'
+
+    def setUp(self):
+        self.response = self.client.get('/sms-test-consent', secure=True)
+        self.html = self.response.content.decode()
+
+    def test_page_renders_without_login_or_database(self):
+        for variant in ('/sms-test-consent', '/sms-test-consent/'):
+            with self.subTest(path=variant):
+                response = self.client.get(variant, secure=True)
+                self.assertEqual(response.status_code, 200)
+                self.assertTemplateUsed(response, 'landing/legal/sms_test_consent.html')
+        self.assertIn('<h1 class="legal-title">SMS Test Consent Form</h1>', self.html)
+        self.assertIn('<title>SMS Test Consent Form — Seymy</title>', self.html)
+        self.assertIn('<meta name="description" content="The blank paper form', self.html)
+        self.assertNotIn('noindex', self.html)
+
+    def test_page_collects_no_data(self):
+        for tag in ['<form', '<input', '<textarea', '<select', '<button', '<script', '<iframe', 'csrfmiddlewaretoken']:
+            with self.subTest(tag=tag):
+                self.assertNotIn(tag, self.html.lower())
+        self.assertIn('this website has no sign-up form and does not collect phone numbers.', self.html)
+        self.assertEqual(len(self.response.cookies), 0)
+
+    def test_page_shows_and_links_both_files(self):
+        self.assertIn(f'<img src="{self.PNG}" width="1224" height="1584"', self.html)
+        self.assertIn(f'href="{self.PDF}"', self.html)
+        self.assertIn(f'href="{self.PNG}"', self.html)
+
+    @staticmethod
+    def _visible_text(html_source):
+        import html as html_lib
+        import re
+        text = re.sub(r'\s+', ' ', html_lib.unescape(re.sub(r'<[^>]+>', ' ', html_source)))
+        return re.sub(r' ([.,;:])', r'\1', text)  # "<a>x</a>." must read "x."
+
+    def test_form_text_matches_the_paper_form(self):
+        text = self._visible_text(self.html)
+        for item in [
+            'Seymy, Inc. | Seymy Internal SMS Testing | Internal software testing only',
+            'Reply HELP for help. For help with the testing program, contact us at rachid@seymy.com.',
+            'Consent - please check the box and sign',
+            'Fields completed by the tester: tester full name; mobile phone number (including country code); '
+            'signature; date (MM/DD/YYYY).',
+            'Seymy retains the completed, signed form privately as evidence of consent.',
+            'Form version 1.2 · November 2026',
+        ]:
+            with self.subTest(item=item):
+                self.assertIn(item, text)
+        for retired in ['Form version 1.0', 'Form version 1.1', 'I agree to receive SMS test messages from Seymy, Inc.',
+                        'reply HELP for assistance', 'based on testing activity']:
+            with self.subTest(retired=retired):
+                self.assertNotIn(retired, text)
+
+    def test_form_text_is_the_published_legal_text(self):
+        """Program, opt-in, disclosures and consent statement are those of the
+        SMS block shown on /privacy and /terms, word for word (A2P reference)."""
+        import re
+        page = self._visible_text(self.html)
+        for path in ['/privacy', '/terms']:
+            legal_html = self.client.get(path, secure=True).content.decode()
+            block = re.search(r'<dl class="legal-sms">(.*?)</dl>', legal_html, flags=re.S).group(1)
+            items = {self._visible_text(dt).strip(): self._visible_text(dd).strip()
+                     for dt, dd in re.findall(r'<dt>(.*?)</dt><dd>(.*?)</dd>', block, flags=re.S)}
+            opt_in = items['How testers opt in']
+            statement = re.search(r'Testers agree to this statement: “(.*?)”', opt_in).group(1)
+            expected = [
+                items['Program'],
+                opt_in.split(' Testers agree to this statement:')[0],
+                opt_in.split('” ')[1],
+                statement,
+                items['Message frequency'],
+                items['Costs'],
+                items['Opt out'],
+                items['Delivery'],
+            ]
+            for sentence in expected:
+                with self.subTest(path=path, sentence=sentence[:60]):
+                    self.assertIn(sentence, page)
+            self.assertIn(f'☐ {statement}', page)
+        sharing = re.search(r'<p class="legal-sms__sharing">(.*?)</p>',
+                            self.client.get('/privacy', secure=True).content.decode(), flags=re.S).group(1)
+        self.assertIn(self._visible_text(sharing).strip(), page)
+
+    def test_pdf_text_is_the_page_form_text(self):
+        """The PDF (uncompressed, one Tj per line) says what the page says, so a
+        change to the legal SMS block fails here until build.py is rerun."""
+        import re
+        from pathlib import Path
+        pdf = (Path(__file__).resolve().parent.parent / 'public_root' / self.PDF.lstrip('/')).read_bytes()
+        lines = re.findall(rb'\((.*?)(?<!\\)\) Tj', pdf)
+        pdf_text = ' '.join(re.sub(r'\\([()\\])', r'\1', line.decode('latin-1')) for line in lines)
+        pdf_text = re.sub(r'\s+', ' ', pdf_text)
+        page = self._visible_text(self.html)
+        start = page.index('Text of the form SMS Test Recipient Consent') + len('Text of the form ')
+        section = page[start:page.index('Fields completed by the tester')]
+        for chunk in re.split(r'(?<=[.!?]) |(?<=only) ', section.replace('☐ ', '')):
+            chunk = chunk.strip()
+            if chunk and chunk not in {'Program', 'How testers opt in', 'Important disclosures'}:
+                for heading in ['Program ', 'How testers opt in ', 'Important disclosures ',
+                                'Consent - please check the box and sign ']:
+                    chunk = chunk.replace(heading, '')
+                with self.subTest(chunk=chunk[:60]):
+                    self.assertIn(chunk, pdf_text)
+        for label in ['Tester full name', 'Mobile phone number (including country code)', 'Signature',
+                      'Date (MM/DD/YYYY)', 'Consent - please check the box and sign']:
+            with self.subTest(label=label):
+                self.assertIn(label, pdf_text)
+
+    def test_published_files_are_version_1_2(self):
+        from pathlib import Path
+        pdf = (Path(__file__).resolve().parent.parent / 'public_root' / self.PDF.lstrip('/')).read_bytes()
+        self.assertIn(b'(Version 1.2  |  November 2026)', pdf)
+        self.assertIn(b'/Title (Seymy SMS Test Recipient Consent Form \\(blank\\))', pdf)
+        self.assertNotIn(b'Version 1.1', pdf)
+        self.assertNotIn(b'Version 1.0', pdf)
+
+    def test_links_to_privacy_terms_and_contact(self):
+        self.assertIn('href="/privacy"', self.html)
+        self.assertIn('href="/terms"', self.html)
+        self.assertIn('href="/privacy#sms"', self.html)
+        self.assertIn('id="contact"', self.html)
+
+    def test_no_personal_data_is_published(self):
+        import re
+        self.assertNotIn('tel:', self.html.lower())
+        text = re.sub(r'\s+', ' ', re.sub(r'<[^>]+>', ' ', self.html))
+        self.assertNotRegex(text, r'\+?\(?\d[\d .()-]{8,}\d')
+
+    def test_legal_pages_keep_their_effective_date_line(self):
+        for path in ['/privacy', '/terms']:
+            with self.subTest(path=path):
+                html = self.client.get(path, secure=True).content.decode()
+                self.assertIn('<p class="legal-updated">Effective date: ', html)
+                self.assertNotIn('Form version', html)
+
+    def test_files_are_served_publicly_with_the_right_type(self):
+        from pathlib import Path
+        root = Path(__file__).resolve().parent.parent / 'public_root'
+        for path, kind, magic in [(self.PNG, 'image/png', b'\x89PNG'), (self.PDF, 'application/pdf', b'%PDF-')]:
+            with self.subTest(path=path):
+                response = self.client.get(path, secure=True)
+                self.assertEqual(response.status_code, 200)
+                self.assertEqual(response['Content-Type'], kind)
+                body = b''.join(response.streaming_content) if response.streaming else response.content
+                self.assertTrue(body.startswith(magic))
+                self.assertEqual(body, (root / path.lstrip('/')).read_bytes())
+
+    def test_public_root_holds_only_the_two_blank_files(self):
+        from pathlib import Path
+        root = Path(__file__).resolve().parent.parent / 'public_root'
+        files = sorted(str(p.relative_to(root)) for p in root.rglob('*') if p.is_file())
+        self.assertEqual(files, ['assets/seymy-sms-test-consent-form.pdf', 'assets/seymy-sms-test-consent-form.png'])
+
+    def test_pdf_has_no_active_content(self):
+        from pathlib import Path
+        pdf = (Path(__file__).resolve().parent.parent / 'public_root' / self.PDF.lstrip('/')).read_bytes()
+        for marker in [b'/JavaScript', b'/JS', b'/OpenAction', b'/Launch', b'/EmbeddedFile', b'/AcroForm', b'/URI']:
+            with self.subTest(marker=marker):
+                self.assertNotIn(marker, pdf)
+
+
 class FictionalBrandTests(SimpleTestCase):
     """The hero shirt shows a fictional "SUNSHINE Services" logo: no page may
     name it or present it as a Seymy customer (caption, alt text, testimonial)."""
 
     def test_no_page_mentions_the_shirt_brand(self):
-        for path in ['/', '/privacy', '/terms']:
+        for path in PUBLIC_PAGES:
             with self.subTest(path=path):
                 html = self.client.get(path, secure=True).content.decode().lower()
                 self.assertNotIn('sunshine', html)
@@ -413,7 +585,7 @@ class PublicationReadinessTests(SimpleTestCase):
     missing information instead (and set SITE_LEGAL_EFFECTIVE_DATE)."""
 
     def test_no_placeholder_left_on_public_pages(self):
-        for path in ['/', '/privacy', '/terms']:
+        for path in PUBLIC_PAGES:
             with self.subTest(path=path):
                 html = self.client.get(path, secure=True).content.decode()
                 self.assertNotIn('data-todo', html)
@@ -458,7 +630,7 @@ class RetiredRouteTests(SimpleTestCase):
 class RoutingSurfaceTests(SimpleTestCase):
     def test_every_route_is_served_by_the_public_module(self):
         patterns = list(_all_patterns())
-        self.assertEqual(len(patterns), 5)
+        self.assertEqual(len(patterns), 6)
         for pattern in patterns:
             with self.subTest(route=str(pattern.pattern)):
                 self.assertEqual(pattern.callback.__module__, 'landing.public')

@@ -46,6 +46,15 @@ def terms(request):
     return render(request, 'landing/legal/terms.html', _legal_context('terms'))
 
 
+def sms_test_consent(request):
+    """The blank paper consent form of the internal SMS testing program.
+
+    Read-only: no form, no data collection. The PNG and PDF are static files
+    served from public_root/assets/.
+    """
+    return render(request, 'landing/legal/sms_test_consent.html', {'page': 'sms-test-consent'})
+
+
 def retired_funnel(request):
     """Old ``/start/…`` CTA targets: send visitors back to the home page."""
     return redirect('home')

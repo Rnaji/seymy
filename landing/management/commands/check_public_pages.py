@@ -1,7 +1,7 @@
 """
 Publication gate, run by build.sh before every deploy.
 
-Renders the public pages (/, /privacy, /terms) and fails while any
+Renders the public pages (/, /privacy, /terms, /sms-test-consent) and fails while any
 "À FOURNIR" placeholder remains, so a build with unfinished legal pages
 never goes live: Render keeps serving the current deploy when a build fails.
 """
@@ -10,7 +10,12 @@ from django.test import RequestFactory
 
 from landing import public
 
-PAGES = {'/': public.home, '/privacy': public.privacy, '/terms': public.terms}
+PAGES = {
+    '/': public.home,
+    '/privacy': public.privacy,
+    '/terms': public.terms,
+    '/sms-test-consent': public.sms_test_consent,
+}
 MARKERS = ('data-todo', 'À FOURNIR')
 
 

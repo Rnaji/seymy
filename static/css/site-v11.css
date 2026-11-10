@@ -330,3 +330,20 @@ mark.todo {
 }
 .legal-section a { color: var(--color-seymy-dark); }
 .legal-section strong { color: var(--color-navy); }
+
+/* /sms-test-consent: the blank paper form, shown as an image. */
+.legal-form-figure { margin: 0.5rem 0 0; }
+.legal-form-figure img {
+  display: block;
+  width: 100%;
+  height: auto;
+  border: 1px solid var(--color-line);
+  border-radius: var(--radius-card);
+}
+.legal-form-figure figcaption {
+  margin-top: 0.5rem;
+  color: var(--color-navy-muted);
+  font-size: 0.8125rem;
+}
+.legal-form-links { display: flex; flex-wrap: wrap; gap: 0.5rem 1.5rem; margin-top: 1rem !important; }
+.legal-form-links a { font-weight: 600; }
