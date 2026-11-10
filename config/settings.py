@@ -190,6 +190,11 @@ if not DEBUG:
     # and renames the files with unique names for each version to support long-term caching
     STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
 
+# Public files with fixed, unhashed URLs, served by WhiteNoise from the site
+# root: public_root/assets/x.pdf -> /assets/x.pdf. Blank documents only, never
+# a signed form or any personal data.
+WHITENOISE_ROOT = BASE_DIR / 'public_root'
+
 # Default primary key field type
 # https://docs.djangoproject.com/en/5.0/ref/settings/#default-auto-field
 

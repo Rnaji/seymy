@@ -25,7 +25,7 @@
       <header class="legal-intro">
         <p class="legal-eyebrow">Legal</p>
         <h1 class="legal-title">{% block heading %}{% endblock %}</h1>
-        <p class="legal-updated">Effective date: {% include "landing/legal/effective_date.html" %}</p>
+        {% block updated %}<p class="legal-updated">Effective date: {% include "landing/legal/effective_date.html" %}</p>{% endblock %}
       </header>
       {% block content %}{% endblock %}
       <nav class="legal-related" aria-label="Related">

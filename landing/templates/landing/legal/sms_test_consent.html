@@ -1,0 +1,60 @@
+{% extends "landing/legal/base.html" %}
+{% comment %}
+  Public reference page for the A2P review of "Seymy Internal SMS Testing".
+  Shows the BLANK paper consent form only. Never publish a completed or signed
+  form, a tester's name, number or signature, and never add an online form here.
+  The PNG and PDF live in public_root/assets/ (fixed URLs, served by WhiteNoise).
+  The form text below must stay identical to the PNG/PDF (version 1.0).
+{% endcomment %}
+{% block title %}SMS Test Consent Form{% endblock %}
+{% block description %}The blank paper form Seymy, Inc. uses to collect consent from internal testers before sending them SMS test messages.{% endblock %}
+{% block heading %}SMS Test Consent Form{% endblock %}
+{% block updated %}<p class="legal-updated">Form version 1.0 · November 2026</p>{% endblock %}
+{% block content %}
+      <section class="legal-section" aria-labelledby="stc-about">
+        <h2 id="stc-about">About this form</h2>
+        <p>Seymy, Inc. uses this paper form to collect consent from its internal testers before sending them SMS test messages in the Seymy Internal SMS Testing program. A Seymy representative obtains the tester’s consent on this form before their phone number is enrolled.</p>
+        <p>Consent is collected on paper only. This website has no sign-up form and does not collect phone numbers. Seymy retains completed, signed forms privately as evidence of consent; they are never published.</p>
+      </section>
+
+      <section class="legal-section" aria-labelledby="stc-form">
+        <h2 id="stc-form">The blank form</h2>
+        <figure class="legal-form-figure">
+          <a href="/assets/seymy-sms-test-consent-form.png">
+            <img src="/assets/seymy-sms-test-consent-form.png" width="1224" height="1584"
+                 alt="Blank Seymy SMS Test Recipient Consent form, version 1.0, November 2026: program description, disclosures, an unchecked consent box, and empty fields for tester full name, mobile phone number, signature and date. Its full text is reproduced below.">
+          </a>
+          <figcaption>Blank form, version 1.0 (November 2026). No personal information is shown.</figcaption>
+        </figure>
+        <p class="legal-form-links">
+          <a href="/assets/seymy-sms-test-consent-form.pdf">Download the blank form (PDF)</a>
+          <a href="/assets/seymy-sms-test-consent-form.png">View the form as an image (PNG)</a>
+        </p>
+      </section>
+
+      <section class="legal-section" aria-labelledby="stc-text">
+        <h2 id="stc-text">Text of the form</h2>
+        <h3 class="legal-sms__title">SMS Test Recipient Consent</h3>
+        <p>Seymy, Inc. | Internal software development and QA testing only</p>
+        <h3 class="legal-sms__title">Program and messages</h3>
+        <p>Seymy, Inc. sends non-marketing SMS messages to its authorized internal testers to verify SMS delivery and handling in the Seymy software platform. Examples include simulated service updates, quote and invoice notifications, customer-support scenarios, and technical test messages.</p>
+        <h3 class="legal-sms__title">Important disclosures</h3>
+        <ul class="legal-list">
+          <li>Message frequency varies based on testing activity.</li>
+          <li>Message and data rates may apply.</li>
+          <li>Reply STOP to opt out at any time; reply HELP for assistance.</li>
+          <li>Consent is voluntary and is not a condition of purchase.</li>
+          <li>This program is not used for marketing or for independent contractors’ customers.</li>
+        </ul>
+        <h3 class="legal-sms__title">Consent - please check the box and sign</h3>
+        <p>☐ I agree to receive SMS test messages from Seymy, Inc. at the mobile number I provide below.</p>
+        <p>Fields completed by the tester: tester full name; mobile phone number (including country code); signature; date (MM/DD/YYYY).</p>
+        <p>Privacy Policy: <a href="{% url 'privacy' %}">https://www.seymy.com/privacy</a><br>
+          Terms &amp; Conditions: <a href="{% url 'terms' %}">https://www.seymy.com/terms</a><br>
+          Seymy retains the completed, signed form privately as evidence of consent.</p>
+      </section>
+{% include "landing/legal/contact.html" with prefix="stc" %}
+{% endblock %}
+{% block related %}
+        <a href="{% url 'privacy' %}#sms">SMS program in the Privacy Policy →</a>
+{% endblock %}
